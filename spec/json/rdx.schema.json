@@ -1,0 +1,483 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asrg.io/ns/rdx/schema/0.1.0/rdx.schema.json",
+  "title": "Risk Data Exchange (RDX)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentId",
+    "riskSet"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^0\\.1\\.0$"
+    },
+    "documentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "createdBy": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bomRefRef": {
+      "type": "string"
+    },
+    "riskSet": {
+      "type": "object",
+      "required": [
+        "itemDefinition"
+      ],
+      "properties": {
+        "itemDefinition": {
+          "type": "object",
+          "required": [
+            "id",
+            "title"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "boundary": {
+              "type": "string"
+            },
+            "functions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "architecture": {
+              "type": "string"
+            },
+            "interfaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "environment": {
+              "type": "string"
+            },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "properties": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "confidentiality",
+                    "integrity",
+                    "availability"
+                  ]
+                }
+              },
+              "linkedDamageScenarioIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "externalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "damageScenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "impactedFunctions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "affectedRoadUsers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "threatScenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "targetedAssetIds"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "targetedAssetIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "compromisedProperties": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "confidentiality",
+                    "integrity",
+                    "availability"
+                  ]
+                }
+              },
+              "cause": {
+                "type": "string"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "attackPaths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "threatScenarioId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "threatScenarioId": {
+                "type": "string"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "version"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "attackFeasibilityRatings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "attackPathId",
+              "methodId",
+              "score"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "attackPathId": {
+                "type": "string"
+              },
+              "methodId": {
+                "type": "string"
+              },
+              "inputFactors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "number",
+                    "string",
+                    "boolean"
+                  ]
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "band": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "impactRatings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "damageScenarioId",
+              "methodId",
+              "score"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "damageScenarioId": {
+                "type": "string"
+              },
+              "methodId": {
+                "type": "string"
+              },
+              "categories": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "rationale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "riskValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "threatScenarioId",
+              "afrRef",
+              "impactRef",
+              "methodId",
+              "score"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "threatScenarioId": {
+                "type": "string"
+              },
+              "afrRef": {
+                "type": "string"
+              },
+              "impactRef": {
+                "type": "string"
+              },
+              "methodId": {
+                "type": "string"
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "band": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "catalog": {
+                "type": "string"
+              },
+              "controlId": {
+                "type": "string"
+              },
+              "implementationStatus": {
+                "type": "string"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "riskTreatmentDecisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "riskValueId",
+              "decision"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "riskValueId": {
+                "type": "string"
+              },
+              "decision": {
+                "enum": [
+                  "treat",
+                  "avoid",
+                  "accept",
+                  "share"
+                ]
+              },
+              "controls": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "justification": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

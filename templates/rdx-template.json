@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "REPLACE-WITH-UUID",
+  "created": "YYYY-MM-DDThh:mm:ssZ",
+  "createdBy": "Tool/Org",
+  "sources": [],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-XXX",
+      "title": "...",
+      "boundary": "...",
+      "functions": [],
+      "architecture": "...",
+      "interfaces": [],
+      "environment": "...",
+      "assumptions": []
+    },
+    "assets": [],
+    "damageScenarios": [],
+    "threatScenarios": [],
+    "attackPaths": [],
+    "methods": [],
+    "attackFeasibilityRatings": [],
+    "impactRatings": [],
+    "riskValues": [],
+    "controls": [],
+    "riskTreatmentDecisions": []
+  }
+}

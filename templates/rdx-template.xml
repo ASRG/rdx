@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdx:riskSet xmlns:rdx="https://asrg.io/ns/rdx" schemaVersion="0.1.0" documentId="REPLACE-WITH-UUID">
+  <rdx:itemDefinition>
+    <rdx:id>ITEM-XXX</rdx:id>
+    <rdx:title>...</rdx:title>
+    <rdx:boundary>...</rdx:boundary>
+    <rdx:functions/>
+    <rdx:architecture>...</rdx:architecture>
+    <rdx:interfaces/>
+    <rdx:environment>...</rdx:environment>
+    <rdx:assumptions/>
+  </rdx:itemDefinition>
+  <!-- Add assets, damageScenarios, threatScenarios, etc. -->
+</rdx:riskSet>

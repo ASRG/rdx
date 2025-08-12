@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://asrg.io/ns/rdx"
+           xmlns:rdx="https://asrg.io/ns/rdx"
+           elementFormDefault="qualified" attributeFormDefault="unqualified"
+           version="0.1.0">
+  <xs:element name="riskSet" type="rdx:riskSetType"/>
+  <xs:complexType name="riskSetType">
+    <xs:sequence>
+      <xs:element name="itemDefinition" type="rdx:itemDefinitionType"/>
+      <xs:element name="assets" type="rdx:assetsType" minOccurs="0"/>
+      <xs:element name="damageScenarios" type="rdx:damageScenariosType" minOccurs="0"/>
+      <xs:element name="threatScenarios" type="rdx:threatScenariosType" minOccurs="0"/>
+      <xs:element name="attackPaths" type="rdx:attackPathsType" minOccurs="0"/>
+      <xs:element name="methods" type="rdx:methodsType" minOccurs="0"/>
+      <xs:element name="attackFeasibilityRatings" type="rdx:afrsType" minOccurs="0"/>
+      <xs:element name="impactRatings" type="rdx:irsType" minOccurs="0"/>
+      <xs:element name="riskValues" type="rdx:riskValuesType" minOccurs="0"/>
+      <xs:element name="controls" type="rdx:controlsType" minOccurs="0"/>
+      <xs:element name="riskTreatmentDecisions" type="rdx:rtdsType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
+    <xs:attribute name="documentId" type="xs:string" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="itemDefinitionType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="boundary" type="xs:string" minOccurs="0"/>
+      <xs:element name="functions" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="architecture" type="xs:string" minOccurs="0"/>
+      <xs:element name="interfaces" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="environment" type="xs:string" minOccurs="0"/>
+      <xs:element name="assumptions" type="rdx:stringList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="assetsType">
+    <xs:sequence>
+      <xs:element name="asset" type="rdx:assetType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="assetType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="properties" type="rdx:ciaList" minOccurs="0"/>
+      <xs:element name="linkedDamageScenarioIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="damageScenariosType">
+    <xs:sequence>
+      <xs:element name="damageScenario" type="rdx:damageScenarioType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="damageScenarioType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="impactedFunctions" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="affectedRoadUsers" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="threatScenariosType">
+    <xs:sequence>
+      <xs:element name="threatScenario" type="rdx:threatScenarioType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="threatScenarioType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="targetedAssetIds" type="rdx:stringList"/>
+      <xs:element name="compromisedProperties" type="rdx:ciaList" minOccurs="0"/>
+      <xs:element name="cause" type="xs:string" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attackPathsType">
+    <xs:sequence>
+      <xs:element name="attackPath" type="rdx:attackPathType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attackPathType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="threatScenarioId" type="xs:string"/>
+      <xs:element name="steps" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="methodsType">
+    <xs:sequence>
+      <xs:element name="method" type="rdx:methodType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="methodType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="version" type="xs:string"/>
+      <xs:element name="factors" type="rdx:stringList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="afrsType">
+    <xs:sequence>
+      <xs:element name="afr" type="rdx:afrType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="afrType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="attackPathId" type="xs:string"/>
+      <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="score" type="xs:string"/>
+      <xs:element name="band" type="xs:string" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="irsType">
+    <xs:sequence>
+      <xs:element name="ir" type="rdx:irType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="irType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="damageScenarioId" type="xs:string"/>
+      <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="score" type="xs:string"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskValuesType">
+    <xs:sequence>
+      <xs:element name="riskValue" type="rdx:riskValueType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskValueType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="threatScenarioId" type="xs:string"/>
+      <xs:element name="afrRef" type="xs:string"/>
+      <xs:element name="impactRef" type="xs:string"/>
+      <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="score" type="xs:string"/>
+      <xs:element name="band" type="xs:string" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="controlsType">
+    <xs:sequence>
+      <xs:element name="control" type="rdx:controlType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="controlType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="catalog" type="xs:string" minOccurs="0"/>
+      <xs:element name="controlId" type="xs:string" minOccurs="0"/>
+      <xs:element name="implementationStatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="rtdsType">
+    <xs:sequence>
+      <xs:element name="rtd" type="rdx:rtdType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="rtdType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="riskValueId" type="xs:string"/>
+      <xs:element name="decision" type="xs:string"/>
+      <xs:element name="controls" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="justification" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- helpers -->
+  <xs:complexType name="ciaList">
+    <xs:sequence><xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stringList">
+    <xs:sequence><xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="anyUriList">
+    <xs:sequence><xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+</xs:schema>

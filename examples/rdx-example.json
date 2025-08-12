@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "11111111-1111-4111-8111-111111111111",
+  "created": "2025-08-12T20:51:06.976397Z",
+  "createdBy": "RDX Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:EV-SUV-2026"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-001",
+      "title": "Connected Gateway ECU",
+      "boundary": "Gateway ECU responsible for in-vehicle networks, OTA, and diagnostics",
+      "functions": [
+        "Routing",
+        "Firewall",
+        "OTA update",
+        "Diagnostics"
+      ],
+      "architecture": "Tri-core MCU, AutoSAR, 2x CAN, 1x LIN, 1x Ethernet, WiFi/Cellular external link",
+      "interfaces": [
+        "CAN0",
+        "CAN1",
+        "ETH0",
+        "DoIP",
+        "UDS",
+        "Cellular"
+      ],
+      "environment": "Series vehicle, US/EU, 2026 launch",
+      "assumptions": [
+        "Root-of-trust present",
+        "Secure boot enabled"
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-PII",
+        "title": "Owner PII in Telematics",
+        "properties": [
+          "confidentiality"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIV-1"
+        ]
+      },
+      {
+        "id": "ASSET-BRK",
+        "title": "Brake Control Data",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-1"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-PRIV-1",
+        "title": "Privacy harm via data exfiltration",
+        "description": "Customer data disclosure"
+      },
+      {
+        "id": "DS-SAF-1",
+        "title": "Safety hazard via brake message spoofing",
+        "description": "Potential loss of braking"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-1",
+        "title": "Exploit exposed DoIP service",
+        "targetedAssetIds": [
+          "ASSET-BRK"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Auth bypass on UDS over DoIP"
+      },
+      {
+        "id": "TS-2",
+        "title": "Exfiltrate PII via compromised telematics",
+        "targetedAssetIds": [
+          "ASSET-PII"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Weak access control on backend API"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-1",
+        "title": "Compromise service -> send spoofed CAN",
+        "threatScenarioId": "TS-1",
+        "steps": [
+          "Scan DoIP",
+          "Exploit vuln",
+          "Pivot to CAN",
+          "Inject frames"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy",
+          "legal"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-AP-1",
+        "attackPathId": "AP-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires specialized ECU access"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-DS-1",
+        "damageScenarioId": "DS-SAF-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "high"
+        },
+        "score": "4",
+        "rationale": "Could affect braking"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-TS-1",
+        "threatScenarioId": "TS-1",
+        "afrRef": "AFR-AP-1",
+        "impactRef": "IR-DS-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "High impact + medium feasibility"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-MSG-1",
+        "title": "CAN message authentication",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "MSG-AUTH-01"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-TS-1",
+        "riskValueId": "RV-TS-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-MSG-1"
+        ],
+        "justification": "Reduce spoofing feasibility"
+      }
+    ]
+  }
+}
