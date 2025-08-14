@@ -474,6 +474,51 @@
             },
             "additionalProperties": false
           }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "relationshipType",
+              "sourceRef",
+              "targetRef"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "relationshipType": {
+                "enum": [
+                  "causes",
+                  "mitigates",
+                  "implements",
+                  "assesses",
+                  "contains",
+                  "targets",
+                  "threatens",
+                  "protects",
+                  "related_to"
+                ]
+              },
+              "sourceRef": {
+                "type": "string"
+              },
+              "targetRef": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "justification": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false

@@ -1,0 +1,428 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "22222222-2222-4222-8222-222222222222",
+  "created": "2025-08-14T20:50:00.000000Z",
+  "createdBy": "RDX Relationships Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:EV-SUV-2026-relationships"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-001",
+      "title": "Connected Infotainment ECU",
+      "boundary": "Infotainment ECU with connectivity, media, and vehicle interface capabilities",
+      "functions": [
+        "Media playback",
+        "Navigation",
+        "Vehicle diagnostics display",
+        "Smartphone integration"
+      ],
+      "architecture": "ARM-based SoC, Android Automotive, CAN interface, WiFi/Bluetooth/Cellular",
+      "interfaces": [
+        "CAN0",
+        "WiFi",
+        "Bluetooth",
+        "USB",
+        "Cellular"
+      ],
+      "environment": "Production vehicle, Global markets, 2026 launch"
+    },
+    "assets": [
+      {
+        "id": "ASSET-NAV",
+        "title": "Navigation and Location Data",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ]
+      },
+      {
+        "id": "ASSET-DIAG",
+        "title": "Vehicle Diagnostic Data",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ]
+      },
+      {
+        "id": "ASSET-ENGINE",
+        "title": "Engine Control Commands",
+        "properties": [
+          "integrity",
+          "availability"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-PRIVACY-1",
+        "title": "Location tracking privacy violation",
+        "description": "Unauthorized access to user location and travel patterns"
+      },
+      {
+        "id": "DS-SAFETY-1",
+        "title": "Engine malfunction via command injection",
+        "description": "Unintended engine behavior causing safety hazard"
+      },
+      {
+        "id": "DS-FINANCIAL-1",
+        "title": "Diagnostic data theft for insurance fraud",
+        "description": "Stolen diagnostic data used for fraudulent insurance claims"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-1",
+        "title": "Exploit vulnerable media parser",
+        "targetedAssetIds": [
+          "ASSET-NAV"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Buffer overflow in audio codec allows code execution"
+      },
+      {
+        "id": "TS-2",
+        "title": "CAN injection via compromised infotainment",
+        "targetedAssetIds": [
+          "ASSET-ENGINE"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Lateral movement from infotainment to vehicle CAN bus"
+      },
+      {
+        "id": "TS-3",
+        "title": "Malicious app data exfiltration",
+        "targetedAssetIds": [
+          "ASSET-DIAG",
+          "ASSET-NAV"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Malicious Android app with excessive permissions"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-1",
+        "title": "Media file → Code execution → Location theft",
+        "threatScenarioId": "TS-1",
+        "steps": [
+          "Craft malicious media file",
+          "Trigger buffer overflow",
+          "Execute shellcode",
+          "Access location database"
+        ]
+      },
+      {
+        "id": "AP-2",
+        "title": "App store → Malicious app → CAN access",
+        "threatScenarioId": "TS-2",
+        "steps": [
+          "Upload malicious app",
+          "User installs app",
+          "Privilege escalation",
+          "Access CAN interface"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-AP-1",
+        "attackPathId": "AP-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "medium",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Low",
+        "rationale": "Common attack vector with available tools"
+      },
+      {
+        "id": "AFR-AP-2",
+        "attackPathId": "AP-2",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires specialized knowledge of vehicle systems"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-DS-PRIVACY-1",
+        "damageScenarioId": "DS-PRIVACY-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "high"
+        },
+        "score": "3",
+        "rationale": "Significant privacy violation with location tracking"
+      },
+      {
+        "id": "IR-DS-SAFETY-1",
+        "damageScenarioId": "DS-SAFETY-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "high"
+        },
+        "score": "4",
+        "rationale": "Potential for serious injury due to engine malfunction"
+      },
+      {
+        "id": "IR-DS-FINANCIAL-1",
+        "damageScenarioId": "DS-FINANCIAL-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "financial": "medium"
+        },
+        "score": "2",
+        "rationale": "Limited financial impact to individual users"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-TS-1",
+        "threatScenarioId": "TS-1",
+        "afrRef": "AFR-AP-1",
+        "impactRef": "IR-DS-PRIVACY-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Low feasibility but high privacy impact"
+      },
+      {
+        "id": "RV-TS-2",
+        "threatScenarioId": "TS-2",
+        "afrRef": "AFR-AP-2",
+        "impactRef": "IR-DS-SAFETY-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility with very high safety impact"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-INPUT-VAL",
+        "title": "Input validation for media parsers",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "INPUT-VAL-01"
+      },
+      {
+        "id": "CTRL-APP-SANDBOXING",
+        "title": "Application sandboxing and permission model",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "APP-SANDBOX-01"
+      },
+      {
+        "id": "CTRL-CAN-ISOLATION",
+        "title": "CAN bus isolation and firewall",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "CAN-FW-01"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-TS-1",
+        "riskValueId": "RV-TS-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-INPUT-VAL"
+        ],
+        "justification": "Implement robust input validation to prevent exploitation"
+      },
+      {
+        "id": "RTD-TS-2",
+        "riskValueId": "RV-TS-2",
+        "decision": "treat",
+        "controls": [
+          "CTRL-APP-SANDBOXING",
+          "CTRL-CAN-ISOLATION"
+        ],
+        "justification": "Multiple controls needed due to high safety risk"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-001",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-1",
+        "targetRef": "ASSET-NAV",
+        "confidence": 0.9,
+        "justification": "Media parser vulnerability directly threatens navigation data confidentiality"
+      },
+      {
+        "id": "REL-002",
+        "relationshipType": "causes",
+        "sourceRef": "TS-1",
+        "targetRef": "DS-PRIVACY-1",
+        "confidence": 0.8,
+        "justification": "Successful exploitation leads to location privacy violation"
+      },
+      {
+        "id": "REL-003",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-2",
+        "targetRef": "ASSET-ENGINE",
+        "confidence": 0.95,
+        "justification": "CAN injection directly threatens engine control integrity"
+      },
+      {
+        "id": "REL-004",
+        "relationshipType": "causes",
+        "sourceRef": "TS-2",
+        "targetRef": "DS-SAFETY-1",
+        "confidence": 0.9,
+        "justification": "Engine command injection can cause safety hazards"
+      },
+      {
+        "id": "REL-005",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-3",
+        "targetRef": "ASSET-DIAG",
+        "confidence": 0.85,
+        "justification": "Malicious app can access diagnostic data through permissions"
+      },
+      {
+        "id": "REL-006",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-3",
+        "targetRef": "ASSET-NAV",
+        "confidence": 0.85,
+        "justification": "Malicious app can also access navigation data"
+      },
+      {
+        "id": "REL-007",
+        "relationshipType": "causes",
+        "sourceRef": "TS-3",
+        "targetRef": "DS-FINANCIAL-1",
+        "confidence": 0.7,
+        "justification": "Stolen diagnostic data could be used for insurance fraud"
+      },
+      {
+        "id": "REL-008",
+        "relationshipType": "implements",
+        "sourceRef": "AP-1",
+        "targetRef": "TS-1",
+        "confidence": 1.0,
+        "justification": "Attack path implements the media parser threat scenario"
+      },
+      {
+        "id": "REL-009",
+        "relationshipType": "implements",
+        "sourceRef": "AP-2",
+        "targetRef": "TS-2",
+        "confidence": 1.0,
+        "justification": "Attack path implements the CAN injection threat scenario"
+      },
+      {
+        "id": "REL-010",
+        "relationshipType": "assesses",
+        "sourceRef": "AFR-AP-1",
+        "targetRef": "AP-1",
+        "confidence": 1.0,
+        "justification": "Feasibility rating assesses the media parser attack path"
+      },
+      {
+        "id": "REL-011",
+        "relationshipType": "assesses",
+        "sourceRef": "AFR-AP-2",
+        "targetRef": "AP-2",
+        "confidence": 1.0,
+        "justification": "Feasibility rating assesses the CAN injection attack path"
+      },
+      {
+        "id": "REL-012",
+        "relationshipType": "assesses",
+        "sourceRef": "IR-DS-PRIVACY-1",
+        "targetRef": "DS-PRIVACY-1",
+        "confidence": 1.0,
+        "justification": "Impact rating assesses the privacy damage scenario"
+      },
+      {
+        "id": "REL-013",
+        "relationshipType": "assesses",
+        "sourceRef": "IR-DS-SAFETY-1",
+        "targetRef": "DS-SAFETY-1",
+        "confidence": 1.0,
+        "justification": "Impact rating assesses the safety damage scenario"
+      },
+      {
+        "id": "REL-014",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-INPUT-VAL",
+        "targetRef": "TS-1",
+        "confidence": 0.8,
+        "justification": "Input validation significantly reduces media parser attack success"
+      },
+      {
+        "id": "REL-015",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-APP-SANDBOXING",
+        "targetRef": "TS-2",
+        "confidence": 0.7,
+        "justification": "Sandboxing limits lateral movement capabilities"
+      },
+      {
+        "id": "REL-016",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CAN-ISOLATION",
+        "targetRef": "TS-2",
+        "confidence": 0.9,
+        "justification": "CAN isolation prevents unauthorized bus access"
+      },
+      {
+        "id": "REL-017",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-001",
+        "targetRef": "ASSET-NAV",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU contains navigation asset"
+      },
+      {
+        "id": "REL-018",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-001",
+        "targetRef": "ASSET-DIAG",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU contains diagnostic display asset"
+      }
+    ]
+  }
+}
