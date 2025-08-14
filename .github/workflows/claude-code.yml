@@ -1,0 +1,40 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+      
+      - name: Run Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          review-type: 'pr-review'
+          # Optional: customize the review focus
+          review-focus: |
+            - Check compliance with ISO/SAE 21434 requirements
+            - Validate schema consistency
+            - Review data model changes
+            - Ensure backwards compatibility
+          # Optional: add custom instructions
+          custom-instructions: |
+            This is the RDX (Risk Data Exchange) project for automotive cybersecurity TARA data.
+            Please ensure all changes maintain compatibility with CycloneDX embedding.
