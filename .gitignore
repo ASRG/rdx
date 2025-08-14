@@ -1,7 +1,6 @@
 # Claude Code
 .claude/
-CLAUDE.md
-.claude.json
+
 
 # OS files
 .DS_Store
