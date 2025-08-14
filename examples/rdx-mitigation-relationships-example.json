@@ -1,0 +1,451 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "44444444-4444-4444-8444-444444444444",
+  "created": "2025-08-14T20:50:00.000000Z",
+  "createdBy": "RDX Mitigation Relationships Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:mitigation-relationships-demo"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-TCU",
+      "title": "Telematics Control Unit (TCU)",
+      "boundary": "Cellular-connected ECU providing remote services and fleet management",
+      "functions": [
+        "Emergency call (eCall)",
+        "Remote diagnostics",
+        "Over-the-air updates",
+        "Fleet tracking"
+      ],
+      "architecture": "Cellular modem, secure processor, CAN interface, GPS",
+      "interfaces": [
+        "Cellular (4G/5G)",
+        "CAN",
+        "GPS",
+        "Emergency button"
+      ],
+      "environment": "Production vehicles across fleet operations"
+    },
+    "assets": [
+      {
+        "id": "ASSET-LOCATION",
+        "title": "Vehicle Location Data",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ]
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "TCU Firmware",
+        "properties": [
+          "integrity",
+          "availability"
+        ]
+      },
+      {
+        "id": "ASSET-ECALL",
+        "title": "Emergency Call System",
+        "properties": [
+          "integrity",
+          "availability"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-PRIVACY-FLEET",
+        "title": "Fleet location privacy breach",
+        "description": "Unauthorized disclosure of vehicle locations affecting business operations"
+      },
+      {
+        "id": "DS-SAFETY-ECALL",
+        "title": "Emergency call system failure",
+        "description": "Inability to place emergency calls in critical situations"
+      },
+      {
+        "id": "DS-OPERATIONAL",
+        "title": "Fleet management disruption",
+        "description": "Loss of remote fleet management capabilities"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CELLULAR-ATTACK",
+        "title": "Cellular network protocol attack",
+        "targetedAssetIds": [
+          "ASSET-LOCATION",
+          "ASSET-FIRMWARE"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Exploitation of cellular protocol vulnerabilities"
+      },
+      {
+        "id": "TS-OTA-HIJACK",
+        "title": "OTA update hijacking",
+        "targetedAssetIds": [
+          "ASSET-FIRMWARE"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Man-in-the-middle attack on update process"
+      },
+      {
+        "id": "TS-BACKEND-BREACH",
+        "title": "Backend server compromise",
+        "targetedAssetIds": [
+          "ASSET-LOCATION"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Compromise of telematics backend infrastructure"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CELLULAR-1",
+        "title": "IMSI catcher → Protocol exploit → Data extraction",
+        "threatScenarioId": "TS-CELLULAR-ATTACK",
+        "steps": [
+          "Deploy IMSI catcher",
+          "Intercept cellular traffic",
+          "Exploit protocol vulnerability",
+          "Extract location data"
+        ]
+      },
+      {
+        "id": "AP-OTA-1",
+        "title": "DNS hijack → MITM → Malicious firmware",
+        "threatScenarioId": "TS-OTA-HIJACK",
+        "steps": [
+          "Compromise DNS",
+          "Redirect OTA requests",
+          "Inject malicious firmware",
+          "Gain persistent access"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CELLULAR-1",
+        "attackPathId": "AP-CELLULAR-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high",
+          "expertise": "very-high",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Requires sophisticated equipment and expertise"
+      },
+      {
+        "id": "AFR-OTA-1",
+        "attackPathId": "AP-OTA-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "equipment": "standard"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Well-understood attack vector with available tools"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-PRIVACY-FLEET",
+        "damageScenarioId": "DS-PRIVACY-FLEET",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "high",
+          "operational": "medium"
+        },
+        "score": "3",
+        "rationale": "Significant privacy and business impact"
+      },
+      {
+        "id": "IR-SAFETY-ECALL",
+        "damageScenarioId": "DS-SAFETY-ECALL",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "very-high"
+        },
+        "score": "5",
+        "rationale": "Life-critical emergency communication system"
+      },
+      {
+        "id": "IR-OPERATIONAL",
+        "damageScenarioId": "DS-OPERATIONAL",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "operational": "high",
+          "financial": "medium"
+        },
+        "score": "3",
+        "rationale": "Significant business disruption"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CELLULAR-1",
+        "threatScenarioId": "TS-CELLULAR-ATTACK",
+        "afrRef": "AFR-CELLULAR-1",
+        "impactRef": "IR-PRIVACY-FLEET",
+        "methodId": "iso21434-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "High feasibility and significant privacy impact"
+      },
+      {
+        "id": "RV-OTA-1",
+        "threatScenarioId": "TS-OTA-HIJACK",
+        "afrRef": "AFR-OTA-1",
+        "impactRef": "IR-SAFETY-ECALL",
+        "methodId": "iso21434-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "Medium feasibility but very high safety impact"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CELLULAR-AUTH",
+        "title": "Cellular network authentication",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "CELL-AUTH-01"
+      },
+      {
+        "id": "CTRL-TRAFFIC-ENCRYPT",
+        "title": "End-to-end traffic encryption",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "E2E-ENCRYPT-01"
+      },
+      {
+        "id": "CTRL-OTA-SIGNING",
+        "title": "Cryptographic OTA package signing",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-SIGN-01"
+      },
+      {
+        "id": "CTRL-CERT-PINNING",
+        "title": "Certificate pinning for OTA",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "CERT-PIN-01"
+      },
+      {
+        "id": "CTRL-NETWORK-MONITORING",
+        "title": "Network anomaly detection",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "NET-MONITOR-01"
+      },
+      {
+        "id": "CTRL-BACKUP-COMM",
+        "title": "Backup emergency communication channel",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "BACKUP-COMM-01"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CELLULAR-1",
+        "riskValueId": "RV-CELLULAR-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-CELLULAR-AUTH",
+          "CTRL-TRAFFIC-ENCRYPT",
+          "CTRL-NETWORK-MONITORING"
+        ],
+        "justification": "Multiple controls needed to address sophisticated cellular attacks"
+      },
+      {
+        "id": "RTD-OTA-1",
+        "riskValueId": "RV-OTA-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-OTA-SIGNING",
+          "CTRL-CERT-PINNING",
+          "CTRL-BACKUP-COMM"
+        ],
+        "justification": "Critical safety system requires comprehensive protection and backup"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-MIT-001",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-CELLULAR-ATTACK",
+        "targetRef": "ASSET-LOCATION",
+        "confidence": 0.95,
+        "justification": "Cellular attacks directly target location data confidentiality"
+      },
+      {
+        "id": "REL-MIT-002",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-OTA-HIJACK",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.9,
+        "justification": "OTA hijacking directly compromises firmware integrity"
+      },
+      {
+        "id": "REL-MIT-003",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CELLULAR-ATTACK",
+        "targetRef": "DS-PRIVACY-FLEET",
+        "confidence": 0.8,
+        "justification": "Successful cellular attack leads to privacy breach"
+      },
+      {
+        "id": "REL-MIT-004",
+        "relationshipType": "causes",
+        "sourceRef": "TS-OTA-HIJACK",
+        "targetRef": "DS-SAFETY-ECALL",
+        "confidence": 0.85,
+        "justification": "Firmware compromise can disable emergency call system"
+      },
+      {
+        "id": "REL-MIT-005",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CELLULAR-AUTH",
+        "targetRef": "TS-CELLULAR-ATTACK",
+        "confidence": 0.7,
+        "justification": "Authentication helps verify legitimate cellular networks"
+      },
+      {
+        "id": "REL-MIT-006",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-TRAFFIC-ENCRYPT",
+        "targetRef": "TS-CELLULAR-ATTACK",
+        "confidence": 0.9,
+        "justification": "End-to-end encryption protects against eavesdropping"
+      },
+      {
+        "id": "REL-MIT-007",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-NETWORK-MONITORING",
+        "targetRef": "TS-CELLULAR-ATTACK",
+        "confidence": 0.6,
+        "justification": "Monitoring can detect anomalous network behavior"
+      },
+      {
+        "id": "REL-MIT-008",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-OTA-SIGNING",
+        "targetRef": "TS-OTA-HIJACK",
+        "confidence": 0.95,
+        "justification": "Cryptographic signing prevents firmware tampering"
+      },
+      {
+        "id": "REL-MIT-009",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CERT-PINNING",
+        "targetRef": "TS-OTA-HIJACK",
+        "confidence": 0.8,
+        "justification": "Certificate pinning prevents MITM attacks"
+      },
+      {
+        "id": "REL-MIT-010",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-BACKUP-COMM",
+        "targetRef": "ASSET-ECALL",
+        "confidence": 0.9,
+        "justification": "Backup channel ensures emergency communication availability"
+      },
+      {
+        "id": "REL-MIT-011",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-TRAFFIC-ENCRYPT",
+        "targetRef": "ASSET-LOCATION",
+        "confidence": 0.95,
+        "justification": "Encryption directly protects location data confidentiality"
+      },
+      {
+        "id": "REL-MIT-012",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-OTA-SIGNING",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.98,
+        "justification": "Signing ensures firmware integrity"
+      },
+      {
+        "id": "REL-MIT-013",
+        "relationshipType": "implements",
+        "sourceRef": "RTD-CELLULAR-1",
+        "targetRef": "CTRL-CELLULAR-AUTH",
+        "confidence": 1.0,
+        "justification": "Risk treatment decision implements cellular authentication control"
+      },
+      {
+        "id": "REL-MIT-014",
+        "relationshipType": "implements",
+        "sourceRef": "RTD-CELLULAR-1",
+        "targetRef": "CTRL-TRAFFIC-ENCRYPT",
+        "confidence": 1.0,
+        "justification": "Risk treatment decision implements traffic encryption control"
+      },
+      {
+        "id": "REL-MIT-015",
+        "relationshipType": "implements",
+        "sourceRef": "RTD-OTA-1",
+        "targetRef": "CTRL-OTA-SIGNING",
+        "confidence": 1.0,
+        "justification": "Risk treatment decision implements OTA signing control"
+      },
+      {
+        "id": "REL-MIT-016",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-TCU",
+        "targetRef": "ASSET-LOCATION",
+        "confidence": 1.0,
+        "justification": "TCU contains and processes location data"
+      },
+      {
+        "id": "REL-MIT-017",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-TCU",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 1.0,
+        "justification": "TCU contains the firmware being protected"
+      },
+      {
+        "id": "REL-MIT-018",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-TCU",
+        "targetRef": "ASSET-ECALL",
+        "confidence": 1.0,
+        "justification": "TCU contains the emergency call system"
+      }
+    ]
+  }
+}

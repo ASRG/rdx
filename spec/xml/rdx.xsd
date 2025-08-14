@@ -18,6 +18,7 @@
       <xs:element name="riskValues" type="rdx:riskValuesType" minOccurs="0"/>
       <xs:element name="controls" type="rdx:controlsType" minOccurs="0"/>
       <xs:element name="riskTreatmentDecisions" type="rdx:rtdsType" minOccurs="0"/>
+      <xs:element name="relationships" type="rdx:relationshipsType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
     <xs:attribute name="documentId" type="xs:string" use="optional"/>
@@ -177,6 +178,42 @@
       <xs:element name="riskValueId" type="xs:string"/>
       <xs:element name="decision" type="xs:string"/>
       <xs:element name="controls" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="justification" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipsType">
+    <xs:sequence>
+      <xs:element name="relationship" type="rdx:relationshipType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="relationshipType">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="causes"/>
+            <xs:enumeration value="mitigates"/>
+            <xs:enumeration value="implements"/>
+            <xs:enumeration value="assesses"/>
+            <xs:enumeration value="contains"/>
+            <xs:enumeration value="targets"/>
+            <xs:enumeration value="threatens"/>
+            <xs:enumeration value="protects"/>
+            <xs:enumeration value="related_to"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="sourceRef" type="xs:string"/>
+      <xs:element name="targetRef" type="xs:string"/>
+      <xs:element name="confidence" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>

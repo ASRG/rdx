@@ -1,0 +1,371 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "33333333-3333-4333-8333-333333333333",
+  "created": "2025-08-14T20:50:00.000000Z",
+  "createdBy": "RDX Multiple Threats Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:multiple-threats-scenario"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-OBD",
+      "title": "On-Board Diagnostics (OBD) Port",
+      "boundary": "Physical OBD-II connector providing diagnostic access to vehicle systems",
+      "functions": [
+        "Emissions diagnostics",
+        "Vehicle fault reporting",
+        "Service tool interface"
+      ],
+      "architecture": "Physical connector with CAN/KWP2000 protocols",
+      "interfaces": [
+        "CAN-H",
+        "CAN-L",
+        "K-Line",
+        "L-Line"
+      ],
+      "environment": "Passenger compartment, accessible to occupants and service technicians"
+    },
+    "assets": [
+      {
+        "id": "ASSET-ECU-DATA",
+        "title": "ECU Configuration and Calibration Data",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-THEFT-1",
+        "title": "Vehicle theft via key reprogramming",
+        "description": "Unauthorized key programming enabling vehicle theft"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-PHYSICAL-1",
+        "title": "Physical OBD port access by thief",
+        "targetedAssetIds": [
+          "ASSET-ECU-DATA"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Unauthorized physical access to OBD port"
+      },
+      {
+        "id": "TS-MALICIOUS-TOOL-1",
+        "title": "Malicious diagnostic tool deployment",
+        "targetedAssetIds": [
+          "ASSET-ECU-DATA"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Use of compromised or malicious diagnostic equipment"
+      },
+      {
+        "id": "TS-INSIDER-1",
+        "title": "Malicious insider with legitimate access",
+        "targetedAssetIds": [
+          "ASSET-ECU-DATA"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Service technician with malicious intent"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-PHYSICAL-1",
+        "title": "Break-in → OBD access → Key programming",
+        "threatScenarioId": "TS-PHYSICAL-1",
+        "steps": [
+          "Break vehicle window",
+          "Connect to OBD port",
+          "Program new key",
+          "Start vehicle"
+        ]
+      },
+      {
+        "id": "AP-TOOL-1",
+        "title": "Deploy tool → Extract data → Program key",
+        "threatScenarioId": "TS-MALICIOUS-TOOL-1",
+        "steps": [
+          "Deploy malicious tool",
+          "Extract ECU data",
+          "Program unauthorized key"
+        ]
+      },
+      {
+        "id": "AP-INSIDER-1",
+        "title": "Service access → Data extraction → Key cloning",
+        "threatScenarioId": "TS-INSIDER-1",
+        "steps": [
+          "Legitimate service access",
+          "Extract key data",
+          "Clone keys offline"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-PHYSICAL-1",
+        "attackPathId": "AP-PHYSICAL-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "medium",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Low-Medium",
+        "rationale": "Requires basic tools and moderate knowledge"
+      },
+      {
+        "id": "AFR-TOOL-1",
+        "attackPathId": "AP-TOOL-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires specialized diagnostic tools and expertise"
+      },
+      {
+        "id": "AFR-INSIDER-1",
+        "attackPathId": "AP-INSIDER-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "High expertise but legitimate access and tools"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-THEFT-1",
+        "damageScenarioId": "DS-THEFT-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "financial": "high",
+          "operational": "medium"
+        },
+        "score": "4",
+        "rationale": "High financial loss from vehicle theft"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-PHYSICAL-1",
+        "threatScenarioId": "TS-PHYSICAL-1",
+        "afrRef": "AFR-PHYSICAL-1",
+        "impactRef": "IR-THEFT-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Moderate feasibility with high impact"
+      },
+      {
+        "id": "RV-TOOL-1",
+        "threatScenarioId": "TS-MALICIOUS-TOOL-1",
+        "afrRef": "AFR-TOOL-1",
+        "impactRef": "IR-THEFT-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility with high impact"
+      },
+      {
+        "id": "RV-INSIDER-1",
+        "threatScenarioId": "TS-INSIDER-1",
+        "afrRef": "AFR-INSIDER-1",
+        "impactRef": "IR-THEFT-1",
+        "methodId": "iso21434-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "High feasibility with high impact"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-OBD-LOCK",
+        "title": "Physical OBD port lock",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "PHYS-LOCK-01"
+      },
+      {
+        "id": "CTRL-AUTH-TOOL",
+        "title": "Diagnostic tool authentication",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "TOOL-AUTH-01"
+      },
+      {
+        "id": "CTRL-KEY-PROTECT",
+        "title": "Enhanced key programming protection",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "KEY-PROT-01"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-PHYSICAL-1",
+        "riskValueId": "RV-PHYSICAL-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-OBD-LOCK"
+        ],
+        "justification": "Physical protection reduces unauthorized access"
+      },
+      {
+        "id": "RTD-TOOL-1",
+        "riskValueId": "RV-TOOL-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-AUTH-TOOL",
+          "CTRL-KEY-PROTECT"
+        ],
+        "justification": "Authentication and enhanced protection needed"
+      },
+      {
+        "id": "RTD-INSIDER-1",
+        "riskValueId": "RV-INSIDER-1",
+        "decision": "accept",
+        "justification": "Risk accepted due to business necessity of service access"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-MULTI-001",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-PHYSICAL-1",
+        "targetRef": "ASSET-ECU-DATA",
+        "confidence": 0.9,
+        "justification": "Physical access directly threatens ECU data integrity"
+      },
+      {
+        "id": "REL-MULTI-002",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-MALICIOUS-TOOL-1",
+        "targetRef": "ASSET-ECU-DATA",
+        "confidence": 0.95,
+        "justification": "Malicious tools designed to compromise ECU data"
+      },
+      {
+        "id": "REL-MULTI-003",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-INSIDER-1",
+        "targetRef": "ASSET-ECU-DATA",
+        "confidence": 0.98,
+        "justification": "Insider access provides direct threat to ECU data"
+      },
+      {
+        "id": "REL-MULTI-004",
+        "relationshipType": "causes",
+        "sourceRef": "TS-PHYSICAL-1",
+        "targetRef": "DS-THEFT-1",
+        "confidence": 0.8,
+        "justification": "Physical access can lead to key programming and theft"
+      },
+      {
+        "id": "REL-MULTI-005",
+        "relationshipType": "causes",
+        "sourceRef": "TS-MALICIOUS-TOOL-1",
+        "targetRef": "DS-THEFT-1",
+        "confidence": 0.85,
+        "justification": "Malicious tools specifically enable theft scenarios"
+      },
+      {
+        "id": "REL-MULTI-006",
+        "relationshipType": "causes",
+        "sourceRef": "TS-INSIDER-1",
+        "targetRef": "DS-THEFT-1",
+        "confidence": 0.9,
+        "justification": "Insider threat is highly effective for theft enablement"
+      },
+      {
+        "id": "REL-MULTI-007",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-PHYSICAL-1",
+        "targetRef": "TS-MALICIOUS-TOOL-1",
+        "confidence": 0.6,
+        "justification": "Both threats target the same attack vector through OBD port"
+      },
+      {
+        "id": "REL-MULTI-008",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-MALICIOUS-TOOL-1",
+        "targetRef": "TS-INSIDER-1",
+        "confidence": 0.7,
+        "justification": "Insiders may use malicious tools to enhance their attacks"
+      },
+      {
+        "id": "REL-MULTI-009",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-OBD-LOCK",
+        "targetRef": "TS-PHYSICAL-1",
+        "confidence": 0.8,
+        "justification": "Physical lock significantly reduces unauthorized physical access"
+      },
+      {
+        "id": "REL-MULTI-010",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-AUTH-TOOL",
+        "targetRef": "TS-MALICIOUS-TOOL-1",
+        "confidence": 0.9,
+        "justification": "Tool authentication prevents unauthorized diagnostic access"
+      },
+      {
+        "id": "REL-MULTI-011",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-KEY-PROTECT",
+        "targetRef": "TS-PHYSICAL-1",
+        "confidence": 0.7,
+        "justification": "Enhanced protection makes key programming more difficult"
+      },
+      {
+        "id": "REL-MULTI-012",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-KEY-PROTECT",
+        "targetRef": "TS-MALICIOUS-TOOL-1",
+        "confidence": 0.8,
+        "justification": "Protection mechanisms resist malicious tool attacks"
+      }
+    ]
+  }
+}
