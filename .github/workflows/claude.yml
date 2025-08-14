@@ -16,12 +16,13 @@ jobs:
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (github.event_name == 'issues' && github.event.action == 'opened') ||
+      (github.event_name == 'issues' && github.event.action == 'assigned' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
       id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
@@ -35,6 +36,34 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          
+          # Conditional prompt based on trigger type
+          direct_prompt: |
+            ${{ github.event_name == 'issues' && github.event.action == 'opened' && format('
+            🔍 **New Issue Analysis**
+            
+            A new issue has been created that requires analysis:
+            
+            **Title:** {0}
+            **Issue #{1}**
+            **Author:** @{2}
+            
+            **Description:**
+            {3}
+            
+            Please analyze this issue and provide helpful assistance by:
+            1. Determining if this is a bug report, feature request, question, or other type of issue
+            2. If it''s a bug report, investigate the codebase for potential causes and suggest fixes
+            3. If it''s a feature request, outline a high-level implementation approach
+            4. If it''s a question, provide a helpful answer based on the codebase
+            5. Suggest next steps or ask clarifying questions if needed
+            6. Add relevant labels if appropriate
+            
+            Please be thorough in your analysis and provide actionable feedback.', 
+            github.event.issue.title, 
+            github.event.issue.number, 
+            github.event.issue.user.login, 
+            github.event.issue.body) || '' }}
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
@@ -53,12 +82,15 @@ jobs:
           # allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test:*),Bash(npm run lint:*)"
           
           # Optional: Add custom instructions for Claude to customize its behavior for your project
-          # custom_instructions: |
-          #   Follow our coding standards
-          #   Ensure all new code has tests
-          #   Use TypeScript for new files
-          
+          custom_instructions: |
+            When analyzing new issues:
+            - Be thorough but concise in your analysis
+            - Always suggest actionable next steps
+            - Ask clarifying questions when issue details are unclear
+            - Suggest appropriate labels for issue categorization
+            - If investigating bugs, check related files and recent changes
+            - For feature requests, consider impact on existing architecture
+            
           # Optional: Custom environment variables for Claude
           # claude_env: |
           #   NODE_ENV: test
-
