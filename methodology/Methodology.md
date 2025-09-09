@@ -1,5 +1,5 @@
 # RDX Methodology
-RDX provides interoperable objects for Threat Analysis and Risk Assessment (TARA) aligned to ISO/SAE 21434.
+RDX provides interoperable objects for Threat Analysis and Risk Assessment (TARA) aligned to ISO/SAE 21434 and enhanced with ISO/SAE PAS 8475 CAL and TAF frameworks.
 RDX can travel inside a CycloneDX BOM or as a standalone document.
 
 ## Design principles
@@ -9,6 +9,8 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - Open governance: public repo, SemVer, deprecations, CI validation
 
 ## Object model (minimums in **bold**)
+
+### Core Risk Assessment Objects
 - **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions)
 - **assets**: (**id**, **title**, properties[C|I|A], linkedDamageScenarioIds, externalIds?)
 - **damageScenarios**: (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
@@ -17,8 +19,15 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - **attackFeasibilityRatings**: (**id**, attackPathId, methodId, inputFactors, score, band?, rationale?)
 - **impactRatings**: (**id**, damageScenarioId, methodId, categories, score, rationale?)
 - **riskValues**: (**id**, threatScenarioId, afrRef, impactRef, methodId, score, band?, rationale?)
-- **controls**: (**id**, title, catalog?, controlId?, implementationStatus?, references?)
+- **controls**: (**id**, title, catalog?, controlId?, implementationStatus?, requiredCalLevel?, achievedCalLevel?, references?)
 - **riskTreatmentDecisions**: (**id**, riskValueId, decision[treat|avoid|accept|share], controls[], justification)
+
+### CAL (Cybersecurity Assurance Levels) Framework - ISO/SAE PAS 8475
+- **calAssuranceLevels**: (**id**, **level**[CAL1-4], **objectives**[], title?, description?, assuranceActivities?, references?)
+- **calAssessments**: (**id**, **controlId**, **targetCalLevel**, **assessmentResult**[sufficient|insufficient|pending], achievedCalLevel?, evidenceRef?, assessmentDate?, assessor?, rationale?)
+
+### TAF (Targeted Attack Feasibility) Framework - ISO/SAE PAS 8475  
+- **tafAssessments**: (**id**, **attackPathId**, **methodId**, **tafScore**, targetContext?, tafBand?, factorRatings?, rationale?, assessmentDate?)
 
 ## Encoding patterns
 - CycloneDX JSON: embed minified RDX JSON in `metadata.properties`
