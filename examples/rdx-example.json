@@ -30,7 +30,8 @@
       "assumptions": [
         "Root-of-trust present",
         "Secure boot enabled"
-      ]
+      ],
+      "countryOfOrigin": "DE"
     },
     "assets": [
       {
