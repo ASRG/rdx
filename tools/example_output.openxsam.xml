@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='utf-8'?>
+<OpenXSAM xmlns="http://www.itemis.com/openxsam/v1.0" version="1.0">
+  <Header>
+    <DocumentInformation>
+      <DocumentId>11111111-1111-4111-8111-111111111111</DocumentId>
+      <DocumentVersion>1.0</DocumentVersion>
+      <DocumentDate>2025-08-12T20:51:06.976397Z</DocumentDate>
+      <CreatedBy>RDX Example Tool 0.1.0</CreatedBy>
+    </DocumentInformation>
+    <ToolInformation>
+      <ToolName>RDX to OpenXSAM Converter</ToolName>
+      <ToolVersion>1.0.0</ToolVersion>
+      <ToolVendor>ASRG RDX Project</ToolVendor>
+    </ToolInformation>
+    <Sources>
+      <Source>urn:oem:example:project:EV-SUV-2026</Source>
+    </Sources>
+  </Header>
+  <ItemDefinition id="ITEM-001">
+    <Name>Connected Gateway ECU</Name>
+    <Boundary>Gateway ECU responsible for in-vehicle networks, OTA, and diagnostics</Boundary>
+    <Architecture>Tri-core MCU, AutoSAR, 2x CAN, 1x LIN, 1x Ethernet, WiFi/Cellular external link</Architecture>
+    <Environment>Series vehicle, US/EU, 2026 launch</Environment>
+    <Functions>
+      <Function>Routing</Function>
+      <Function>Firewall</Function>
+      <Function>OTA update</Function>
+      <Function>Diagnostics</Function>
+    </Functions>
+    <Interfaces>
+      <Interface name="CAN0" />
+      <Interface name="CAN1" />
+      <Interface name="ETH0" />
+      <Interface name="DoIP" />
+      <Interface name="UDS" />
+      <Interface name="Cellular" />
+    </Interfaces>
+    <Assumptions>
+      <Assumption>Root-of-trust present</Assumption>
+      <Assumption>Secure boot enabled</Assumption>
+    </Assumptions>
+  </ItemDefinition>
+  <Assets>
+    <Asset id="ASSET-PII">
+      <Name>Owner PII in Telematics</Name>
+      <SecurityProperties>
+        <SecurityProperty type="confidentiality" />
+      </SecurityProperties>
+    </Asset>
+    <Asset id="ASSET-BRK">
+      <Name>Brake Control Data</Name>
+      <SecurityProperties>
+        <SecurityProperty type="integrity" />
+        <SecurityProperty type="availability" />
+      </SecurityProperties>
+    </Asset>
+  </Assets>
+  <DamageScenarios>
+    <DamageScenario id="DS-PRIV-1">
+      <Name>Privacy harm via data exfiltration</Name>
+      <Description>Customer data disclosure</Description>
+    </DamageScenario>
+    <DamageScenario id="DS-SAF-1">
+      <Name>Safety hazard via brake message spoofing</Name>
+      <Description>Potential loss of braking</Description>
+    </DamageScenario>
+  </DamageScenarios>
+  <ThreatScenarios>
+    <ThreatScenario id="TS-1">
+      <Name>Exploit exposed DoIP service</Name>
+      <Cause>Auth bypass on UDS over DoIP</Cause>
+      <TargetedAssets>
+        <TargetedAsset assetRef="ASSET-BRK" />
+      </TargetedAssets>
+      <CompromisedProperties>
+        <CompromisedProperty type="integrity" />
+      </CompromisedProperties>
+    </ThreatScenario>
+    <ThreatScenario id="TS-2">
+      <Name>Exfiltrate PII via compromised telematics</Name>
+      <Cause>Weak access control on backend API</Cause>
+      <TargetedAssets>
+        <TargetedAsset assetRef="ASSET-PII" />
+      </TargetedAssets>
+      <CompromisedProperties>
+        <CompromisedProperty type="confidentiality" />
+      </CompromisedProperties>
+    </ThreatScenario>
+  </ThreatScenarios>
+  <AttackPaths>
+    <AttackPath id="AP-1">
+      <Name>Compromise service -&gt; send spoofed CAN</Name>
+      <ThreatScenarioRef>TS-1</ThreatScenarioRef>
+      <AttackSteps>
+        <AttackStep order="1">Scan DoIP</AttackStep>
+        <AttackStep order="2">Exploit vuln</AttackStep>
+        <AttackStep order="3">Pivot to CAN</AttackStep>
+        <AttackStep order="4">Inject frames</AttackStep>
+      </AttackSteps>
+    </AttackPath>
+  </AttackPaths>
+  <RiskAssessments>
+    <RiskAssessment id="RV-TS-1">
+      <ThreatScenarioRef>TS-1</ThreatScenarioRef>
+      <Method>iso21434-risk-v1</Method>
+      <RiskScore band="High">H</RiskScore>
+      <Rationale>High impact + medium feasibility</Rationale>
+    </RiskAssessment>
+  </RiskAssessments>
+  <SecurityControls>
+    <SecurityControl id="CTRL-MSG-1">
+      <Name>CAN message authentication</Name>
+      <Catalog>OEM-SEC-CTRL</Catalog>
+      <ControlId>MSG-AUTH-01</ControlId>
+    </SecurityControl>
+  </SecurityControls>
+  <RiskTreatment>
+    <TreatmentDecision id="RTD-TS-1">
+      <RiskValueRef>RV-TS-1</RiskValueRef>
+      <Decision>treat</Decision>
+      <Justification>Reduce spoofing feasibility</Justification>
+      <AppliedControls>
+        <ControlRef>CTRL-MSG-1</ControlRef>
+      </AppliedControls>
+    </TreatmentDecision>
+  </RiskTreatment>
+</OpenXSAM>
