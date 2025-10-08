@@ -1,0 +1,85 @@
+name: Claude Auto-Fix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  issue_comment:
+    types: [created]          # allows "@claude apply" comment trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write             # allow commits / branches
+  pull-requests: write
+  id-token: write
+
+jobs:
+  claude-autofix:
+    runs-on: ubuntu-latest
+
+    # Only allow auto-fix for PRs from the same repo (not forks).
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.repository.full_name == github.repository)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Needed so Claude can create commits that include the full history
+          fetch-depth: 0
+
+      - name: Claude Auto Apply Fixes
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+
+          # Triggers (choose one or both):
+          # 1) Add label "claude-apply" to a PR
+          label_trigger: 'claude-apply'
+          # 2) Or comment "@claude apply" on the PR
+          trigger_phrase: '@claude apply'
+
+          # Where Claude will push changes
+          branch_prefix: 'claude/fixes/'     # creates a new branch and commits there
+          use_sticky_comment: true
+          track_progress: true
+
+          # What to do: implement the review & commit
+          prompt: |
+            You are an automated code reviewer and fixer.
+            Objective:
+            1) Review the PR diff, your prior review comments (if any), and the repo conventions.
+            2) Implement concrete changes that address your own recommendations:
+               - refactors, bug fixes, typing/doc improvements, tests, and CI config tweaks.
+               - keep changes scoped to the PR surface; do not reformat unrelated files.
+            3) Update or add tests as needed to cover changed logic.
+            4) Update docs/changelogs when behavior changes.
+            5) Produce small, logically separated commits with clear messages.
+            6) Push commits to a new branch under the provided branch_prefix and
+               open/update a PR against the original PR base if needed.
+
+            Constraints:
+            - Maintain backward compatibility unless explicitly broken by the PR; if breaking, add migration notes.
+            - Preserve CycloneDX embedding compatibility for RDX data models.
+            - Align with ISO/SAE 21434-style traceability (naming, docs).
+            - Do not touch unrelated files or secrets. Do not introduce new services.
+            - If a change is risky, ask for confirmation in a PR comment instead of committing.
+
+          # Optional: advanced knobs (JSON). Uncomment to tune.
+          # settings: |
+          #   {
+          #     "review_verbosity": "balanced",
+          #     "max_changed_files": 200
+          #   }
+
+      # (Optional) run your tests after Claude's commit and report status
+      - name: Run tests
+        run: |
+          set -e
+          # <insert your test commands>
+          echo "Run your test suite here"
