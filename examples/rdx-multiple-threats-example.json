@@ -78,37 +78,81 @@
         "cause": "Service technician with malicious intent"
       }
     ],
+    "attackSteps": [
+      {
+        "id": "AS-OBD-001",
+        "title": "Break vehicle window",
+        "description": "Physical break-in to gain access to vehicle interior",
+        "attackFeasibilityRatingIds": ["AFR-OBD-001"],
+        "controlIds": ["CTRL-PHYS-SEC"]
+      },
+      {
+        "id": "AS-OBD-002", 
+        "title": "Connect to OBD port",
+        "description": "Physical connection to OBD-II diagnostic port",
+        "attackFeasibilityRatingIds": ["AFR-OBD-002"],
+        "controlIds": ["CTRL-OBD-LOCK"]
+      },
+      {
+        "id": "AS-OBD-003",
+        "title": "Deploy malicious diagnostic tool",
+        "description": "Use compromised or malicious diagnostic equipment",
+        "attackFeasibilityRatingIds": ["AFR-OBD-003"],
+        "controlIds": ["CTRL-AUTH-TOOL"]
+      },
+      {
+        "id": "AS-OBD-004",
+        "title": "Legitimate service access",
+        "description": "Authorized technician access during service appointment",
+        "attackFeasibilityRatingIds": ["AFR-OBD-004"],
+        "controlIds": ["CTRL-ACCESS-LOG"]
+      },
+      {
+        "id": "AS-OBD-005",
+        "title": "Extract ECU data",
+        "description": "Read cryptographic keys and configuration data from ECUs",
+        "attackFeasibilityRatingIds": ["AFR-OBD-005"],
+        "controlIds": ["CTRL-DATA-ENCRYPT"]
+      },
+      {
+        "id": "AS-OBD-006",
+        "title": "Program new key",
+        "description": "Add new authentication key to vehicle systems",
+        "attackFeasibilityRatingIds": ["AFR-OBD-006"],
+        "controlIds": ["CTRL-KEY-PROTECT"]
+      },
+      {
+        "id": "AS-OBD-007",
+        "title": "Start vehicle",
+        "description": "Use newly programmed key to start and operate vehicle",
+        "attackFeasibilityRatingIds": ["AFR-OBD-007"]
+      },
+      {
+        "id": "AS-OBD-008",
+        "title": "Clone keys offline",
+        "description": "Create duplicate keys using extracted data in external environment",
+        "attackFeasibilityRatingIds": ["AFR-OBD-008"],
+        "controlIds": ["CTRL-KEY-DERIVATION"]
+      }
+    ],
     "attackPaths": [
       {
         "id": "AP-PHYSICAL-1",
         "title": "Break-in → OBD access → Key programming",
         "threatScenarioId": "TS-PHYSICAL-1",
-        "steps": [
-          "Break vehicle window",
-          "Connect to OBD port",
-          "Program new key",
-          "Start vehicle"
-        ]
+        "stepIds": ["AS-OBD-001", "AS-OBD-002", "AS-OBD-006", "AS-OBD-007"]
       },
       {
         "id": "AP-TOOL-1",
         "title": "Deploy tool → Extract data → Program key",
         "threatScenarioId": "TS-MALICIOUS-TOOL-1",
-        "steps": [
-          "Deploy malicious tool",
-          "Extract ECU data",
-          "Program unauthorized key"
-        ]
+        "stepIds": ["AS-OBD-003", "AS-OBD-005", "AS-OBD-006"]
       },
       {
         "id": "AP-INSIDER-1",
         "title": "Service access → Data extraction → Key cloning",
         "threatScenarioId": "TS-INSIDER-1",
-        "steps": [
-          "Legitimate service access",
-          "Extract key data",
-          "Clone keys offline"
-        ]
+        "stepIds": ["AS-OBD-004", "AS-OBD-005", "AS-OBD-008"]
       }
     ],
     "methods": [
