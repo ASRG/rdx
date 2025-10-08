@@ -1,85 +1,62 @@
-name: Claude Auto-Fix
+name: Claude Auto-Apply (Prompted Only)
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
+  # 1) Manual comment trigger on a PR
   issue_comment:
-    types: [created]          # allows "@claude apply" comment trigger
+    types: [created]
+  # 2) Manual label trigger on a PR
+  pull_request:
+    types: [labeled]
+  # 3) Manual button in the Actions tab
   workflow_dispatch:
 
 permissions:
-  contents: write             # allow commits / branches
+  contents: write
   pull-requests: write
   id-token: write
 
 jobs:
-  claude-autofix:
+  claude_autofix:
     runs-on: ubuntu-latest
 
-    # Only allow auto-fix for PRs from the same repo (not forks).
+    # Only run if:
+    #  - this is a comment on a PR AND it contains the exact trigger phrase, OR
+    #  - the PR was labeled with our chosen label, OR
+    #  - it was manually run via workflow_dispatch.
     if: >
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' &&
-       github.event.pull_request.head.repo.full_name == github.repository) ||
       (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       github.event.repository.full_name == github.repository)
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@claude apply')) ||
+      (github.event_name == 'pull_request' &&
+       contains(join(github.event.pull_request.labels.*.name, ','), 'claude-apply'))
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Needed so Claude can create commits that include the full history
           fetch-depth: 0
 
-      - name: Claude Auto Apply Fixes
+      - name: Claude apply changes
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
 
-          # Triggers (choose one or both):
-          # 1) Add label "claude-apply" to a PR
-          label_trigger: 'claude-apply'
-          # 2) Or comment "@claude apply" on the PR
-          trigger_phrase: '@claude apply'
+          # Enable *either* (or both) prompts inside the action as well:
+          trigger_phrase: '@claude apply'   # comment-based prompt
+          label_trigger: 'claude-apply'     # label-based prompt
 
-          # Where Claude will push changes
-          branch_prefix: 'claude/fixes/'     # creates a new branch and commits there
+          branch_prefix: 'claude/fixes/'
           use_sticky_comment: true
           track_progress: true
 
-          # What to do: implement the review & commit
           prompt: |
-            You are an automated code reviewer and fixer.
-            Objective:
-            1) Review the PR diff, your prior review comments (if any), and the repo conventions.
-            2) Implement concrete changes that address your own recommendations:
-               - refactors, bug fixes, typing/doc improvements, tests, and CI config tweaks.
-               - keep changes scoped to the PR surface; do not reformat unrelated files.
-            3) Update or add tests as needed to cover changed logic.
-            4) Update docs/changelogs when behavior changes.
-            5) Produce small, logically separated commits with clear messages.
-            6) Push commits to a new branch under the provided branch_prefix and
-               open/update a PR against the original PR base if needed.
-
-            Constraints:
-            - Maintain backward compatibility unless explicitly broken by the PR; if breaking, add migration notes.
-            - Preserve CycloneDX embedding compatibility for RDX data models.
-            - Align with ISO/SAE 21434-style traceability (naming, docs).
-            - Do not touch unrelated files or secrets. Do not introduce new services.
-            - If a change is risky, ask for confirmation in a PR comment instead of committing.
-
-          # Optional: advanced knobs (JSON). Uncomment to tune.
-          # settings: |
-          #   {
-          #     "review_verbosity": "balanced",
-          #     "max_changed_files": 200
-          #   }
-
-      # (Optional) run your tests after Claude's commit and report status
-      - name: Run tests
-        run: |
-          set -e
-          # <insert your test commands>
-          echo "Run your test suite here"
+            You are an automated code fixer for the RDX project.
+            When explicitly prompted, apply targeted changes that address your own review recommendations:
+            - Implement fixes/refactors strictly related to the current PR.
+            - Maintain CycloneDX embedding compatibility.
+            - Preserve backward compatibility unless explicitly intentional; if breaking, add migration notes.
+            - Update/add tests as needed and adjust docs when behavior changes.
+            - Keep commits small and well-titled; avoid touching unrelated files or reformatting the repo.
+            - If a change is risky or ambiguous, post a clarifying PR comment instead of committing.
