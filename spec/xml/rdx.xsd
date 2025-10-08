@@ -18,6 +18,9 @@
       <xs:element name="riskValues" type="rdx:riskValuesType" minOccurs="0"/>
       <xs:element name="controls" type="rdx:controlsType" minOccurs="0"/>
       <xs:element name="riskTreatmentDecisions" type="rdx:rtdsType" minOccurs="0"/>
+      <xs:element name="calAssuranceLevels" type="rdx:calAssuranceLevelsType" minOccurs="0"/>
+      <xs:element name="calAssessments" type="rdx:calAssessmentsType" minOccurs="0"/>
+      <xs:element name="tafAssessments" type="rdx:tafAssessmentsType" minOccurs="0"/>
       <xs:element name="relationships" type="rdx:relationshipsType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
@@ -164,6 +167,8 @@
       <xs:element name="catalog" type="xs:string" minOccurs="0"/>
       <xs:element name="controlId" type="xs:string" minOccurs="0"/>
       <xs:element name="implementationStatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="requiredCalLevel" type="rdx:calLevelType" minOccurs="0"/>
+      <xs:element name="achievedCalLevel" type="rdx:calLevelType" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -200,6 +205,8 @@
             <xs:enumeration value="targets"/>
             <xs:enumeration value="threatens"/>
             <xs:enumeration value="protects"/>
+            <xs:enumeration value="requires_cal"/>
+            <xs:enumeration value="achieves_cal"/>
             <xs:enumeration value="related_to"/>
           </xs:restriction>
         </xs:simpleType>
@@ -217,6 +224,126 @@
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+  <!-- CAL and TAF types -->
+  <xs:complexType name="calAssuranceLevelsType">
+    <xs:sequence>
+      <xs:element name="calAssuranceLevel" type="rdx:calAssuranceLevelType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="calAssuranceLevelType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="level" type="rdx:calLevelType"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="objectives" type="rdx:stringList"/>
+      <xs:element name="assuranceActivities" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="calAssessmentsType">
+    <xs:sequence>
+      <xs:element name="calAssessment" type="rdx:calAssessmentType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="calAssessmentType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="controlId" type="xs:string"/>
+      <xs:element name="targetCalLevel" type="rdx:calLevelType"/>
+      <xs:element name="assessmentResult" type="rdx:calAssessmentResultType"/>
+      <xs:element name="achievedCalLevel" type="rdx:calLevelType" minOccurs="0"/>
+      <xs:element name="evidenceRef" type="xs:string" minOccurs="0"/>
+      <xs:element name="assessmentDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="assessor" type="xs:string" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tafAssessmentsType">
+    <xs:sequence>
+      <xs:element name="tafAssessment" type="rdx:tafAssessmentType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tafAssessmentType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="attackPathId" type="xs:string"/>
+      <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="targetContext" type="rdx:targetContextType" minOccurs="0"/>
+      <xs:element name="tafScore" type="xs:string"/>
+      <xs:element name="tafBand" type="rdx:tafBandType" minOccurs="0"/>
+      <xs:element name="factorRatings" type="rdx:keyValuePairsType" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:element name="assessmentDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="targetContextType">
+    <xs:sequence>
+      <xs:element name="attackerProfile" type="rdx:attackerProfileType" minOccurs="0"/>
+      <xs:element name="attackMotivation" type="rdx:attackMotivationType" minOccurs="0"/>
+      <xs:element name="targetValue" type="rdx:targetValueType" minOccurs="0"/>
+      <xs:element name="accessRequirement" type="rdx:accessRequirementType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Simple types for CAL and TAF -->
+  <xs:simpleType name="calLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CAL1"/>
+      <xs:enumeration value="CAL2"/>
+      <xs:enumeration value="CAL3"/>
+      <xs:enumeration value="CAL4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="calAssessmentResultType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="sufficient"/>
+      <xs:enumeration value="insufficient"/>
+      <xs:enumeration value="pending"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tafBandType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="very-high"/>
+      <xs:enumeration value="high"/>
+      <xs:enumeration value="medium"/>
+      <xs:enumeration value="low"/>
+      <xs:enumeration value="very-low"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="attackerProfileType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="nation-state"/>
+      <xs:enumeration value="organized-crime"/>
+      <xs:enumeration value="hacktivist"/>
+      <xs:enumeration value="insider"/>
+      <xs:enumeration value="opportunist"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="attackMotivationType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="financial"/>
+      <xs:enumeration value="espionage"/>
+      <xs:enumeration value="disruption"/>
+      <xs:enumeration value="reputation"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="targetValueType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="very-high"/>
+      <xs:enumeration value="high"/>
+      <xs:enumeration value="medium"/>
+      <xs:enumeration value="low"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="accessRequirementType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="remote"/>
+      <xs:enumeration value="adjacent"/>
+      <xs:enumeration value="physical"/>
+      <xs:enumeration value="insider"/>
+    </xs:restriction>
+  </xs:simpleType>
   <!-- helpers -->
   <xs:complexType name="ciaList">
     <xs:sequence><xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
@@ -226,5 +353,17 @@
   </xs:complexType>
   <xs:complexType name="anyUriList">
     <xs:sequence><xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="keyValuePairsType">
+    <xs:sequence>
+      <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="key" type="xs:string"/>
+            <xs:element name="value" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

@@ -1,0 +1,62 @@
+name: Claude Auto-Apply (Prompted Only)
+
+on:
+  # 1) Manual comment trigger on a PR
+  issue_comment:
+    types: [created]
+  # 2) Manual label trigger on a PR
+  pull_request:
+    types: [labeled]
+  # 3) Manual button in the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  claude_autofix:
+    runs-on: ubuntu-latest
+
+    # Only run if:
+    #  - this is a comment on a PR AND it contains the exact trigger phrase, OR
+    #  - the PR was labeled with our chosen label, OR
+    #  - it was manually run via workflow_dispatch.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@claude apply')) ||
+      (github.event_name == 'pull_request' &&
+       contains(join(github.event.pull_request.labels.*.name, ','), 'claude-apply'))
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude apply changes
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+
+          # Enable *either* (or both) prompts inside the action as well:
+          trigger_phrase: '@claude apply'   # comment-based prompt
+          label_trigger: 'claude-apply'     # label-based prompt
+
+          branch_prefix: 'claude/fixes/'
+          use_sticky_comment: true
+          track_progress: true
+
+          prompt: |
+            You are an automated code fixer for the RDX project.
+            When explicitly prompted, apply targeted changes that address your own review recommendations:
+            - Implement fixes/refactors strictly related to the current PR.
+            - Maintain CycloneDX embedding compatibility.
+            - Preserve backward compatibility unless explicitly intentional; if breaking, add migration notes.
+            - Update/add tests as needed and adjust docs when behavior changes.
+            - Keep commits small and well-titled; avoid touching unrelated files or reformatting the repo.
+            - If a change is risky or ambiguous, post a clarifying PR comment instead of committing.

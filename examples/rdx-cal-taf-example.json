@@ -1,0 +1,349 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "22222222-2222-4222-8222-222222222222",
+  "created": "2025-09-09T12:50:00.000Z",
+  "createdBy": "RDX CAL/TAF Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:AV-SEDAN-2027",
+    "ISO/SAE PAS 8475:2025"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-AV-001",
+      "title": "Autonomous Vehicle Control Unit (AVCU)",
+      "boundary": "Level 4 autonomous driving ECU with sensor fusion, path planning, and vehicle control",
+      "functions": [
+        "Perception",
+        "Localization", 
+        "Path Planning",
+        "Vehicle Control",
+        "Safety Monitoring"
+      ],
+      "architecture": "High-performance computing platform, AUTOSAR Adaptive, LiDAR/Camera/Radar interfaces, V2X connectivity",
+      "interfaces": [
+        "CAN-FD",
+        "Ethernet",
+        "V2X",
+        "LiDAR",
+        "Camera",
+        "GNSS"
+      ],
+      "environment": "Level 4 autonomous vehicle, global markets, 2027 production",
+      "assumptions": [
+        "Hardware security module (HSM) present",
+        "Secure boot and trusted execution environment enabled",
+        "OTA update capability with signature verification"
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-NAV",
+        "title": "Navigation and Path Planning Data",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-NAV"
+        ]
+      },
+      {
+        "id": "ASSET-SENSOR",
+        "title": "Sensor Fusion Algorithm",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-SENS"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-NAV",
+        "title": "Navigation system compromise leading to unsafe path",
+        "description": "Compromised navigation data causes vehicle to follow unsafe driving path"
+      },
+      {
+        "id": "DS-SAF-SENS", 
+        "title": "Sensor fusion failure causing collision",
+        "description": "Malicious sensor data manipulation causes object detection failure"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-V2X-1",
+        "title": "Malicious V2X message injection",
+        "targetedAssetIds": [
+          "ASSET-NAV"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Unauthenticated V2X communication channel"
+      },
+      {
+        "id": "TS-SENSOR-1",
+        "title": "LiDAR data spoofing attack",
+        "targetedAssetIds": [
+          "ASSET-SENSOR"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Physical laser interference with LiDAR sensor"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-V2X-1",
+        "title": "V2X message injection -> navigation override",
+        "threatScenarioId": "TS-V2X-1",
+        "steps": [
+          "Deploy rogue V2X infrastructure",
+          "Inject false traffic information",
+          "Override navigation recommendations",
+          "Direct vehicle to unsafe path"
+        ]
+      },
+      {
+        "id": "AP-SENSOR-1", 
+        "title": "LiDAR spoofing -> object detection bypass",
+        "threatScenarioId": "TS-SENSOR-1",
+        "steps": [
+          "Position laser projection system",
+          "Analyze LiDAR scan patterns", 
+          "Inject false object signatures",
+          "Mask real obstacles"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise", 
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso-pas-8475-taf-v1",
+        "name": "ISO/SAE PAS 8475 TAF",
+        "version": "1.0",
+        "factors": [
+          "attackerProfile",
+          "attackMotivation",
+          "targetValue",
+          "accessRequirement",
+          "technicalComplexity",
+          "resourceRequirement",
+          "detectionRisk"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0",
+        "factors": ["safety", "financial", "operational", "privacy"]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0",
+        "factors": ["attackFeasibility", "impact"]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-AP-V2X-1",
+        "attackPathId": "AP-V2X-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires V2X infrastructure deployment and protocol expertise"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-DS-NAV",
+        "damageScenarioId": "DS-SAF-NAV",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "very-high"
+        },
+        "score": "5",
+        "rationale": "Could lead to loss of life in autonomous vehicle"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-TS-V2X-1",
+        "threatScenarioId": "TS-V2X-1",
+        "afrRef": "AFR-AP-V2X-1",
+        "impactRef": "IR-DS-NAV",
+        "methodId": "iso21434-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "Very high impact with medium feasibility requires immediate treatment"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-V2X-AUTH",
+        "title": "V2X Message Authentication",
+        "catalog": "ISO-TS-103-097",
+        "controlId": "V2X-AUTH-01",
+        "requiredCalLevel": "CAL3",
+        "achievedCalLevel": "CAL2"
+      },
+      {
+        "id": "CTRL-SENSOR-VAL",
+        "title": "Multi-sensor Cross-validation",
+        "catalog": "OEM-AV-CTRL",
+        "controlId": "SENS-VAL-01", 
+        "requiredCalLevel": "CAL4",
+        "achievedCalLevel": "CAL4"
+      }
+    ],
+    "calAssuranceLevels": [
+      {
+        "id": "CAL-3",
+        "level": "CAL3",
+        "title": "Cybersecurity Assurance Level 3",
+        "description": "High assurance level for safety-critical automotive systems",
+        "objectives": [
+          "Systematic verification of cybersecurity measures",
+          "Independent assessment of implementation",
+          "Vulnerability assessment and penetration testing",
+          "Continuous monitoring capabilities"
+        ],
+        "assuranceActivities": [
+          "Code review by independent team",
+          "Formal verification of critical functions", 
+          "Penetration testing by certified team",
+          "Supply chain security assessment"
+        ]
+      },
+      {
+        "id": "CAL-4",
+        "level": "CAL4", 
+        "title": "Cybersecurity Assurance Level 4",
+        "description": "Very high assurance level for mission-critical autonomous systems",
+        "objectives": [
+          "Mathematical proof of security properties",
+          "Formal verification of complete system",
+          "Independent evaluation facility assessment", 
+          "Real-time threat detection and response"
+        ],
+        "assuranceActivities": [
+          "Formal methods verification",
+          "Independent Common Criteria evaluation",
+          "Hardware security module validation",
+          "Runtime application self-protection (RASP)"
+        ]
+      }
+    ],
+    "calAssessments": [
+      {
+        "id": "CAL-ASSESS-V2X",
+        "controlId": "CTRL-V2X-AUTH", 
+        "targetCalLevel": "CAL3",
+        "assessmentResult": "insufficient",
+        "achievedCalLevel": "CAL2",
+        "assessmentDate": "2025-08-15T10:30:00.000Z",
+        "assessor": "Independent Security Assessment Team",
+        "rationale": "PKI implementation lacks hardware security module integration required for CAL3"
+      },
+      {
+        "id": "CAL-ASSESS-SENSOR",
+        "controlId": "CTRL-SENSOR-VAL",
+        "targetCalLevel": "CAL4",
+        "assessmentResult": "sufficient", 
+        "achievedCalLevel": "CAL4",
+        "assessmentDate": "2025-08-20T14:15:00.000Z", 
+        "assessor": "Certified Evaluation Facility",
+        "rationale": "Formal verification and hardware-based validation meets CAL4 requirements"
+      }
+    ],
+    "tafAssessments": [
+      {
+        "id": "TAF-AP-V2X-1",
+        "attackPathId": "AP-V2X-1",
+        "methodId": "iso-pas-8475-taf-v1",
+        "targetContext": {
+          "attackerProfile": "nation-state",
+          "attackMotivation": "disruption",
+          "targetValue": "very-high",
+          "accessRequirement": "adjacent"
+        },
+        "tafScore": "4.2",
+        "tafBand": "high",
+        "factorRatings": {
+          "technicalComplexity": "medium",
+          "resourceRequirement": "high",
+          "detectionRisk": "low"
+        },
+        "rationale": "Nation-state actor with high resources and motivation targeting critical infrastructure",
+        "assessmentDate": "2025-08-25T09:00:00.000Z"
+      },
+      {
+        "id": "TAF-AP-SENSOR-1", 
+        "attackPathId": "AP-SENSOR-1",
+        "methodId": "iso-pas-8475-taf-v1",
+        "targetContext": {
+          "attackerProfile": "organized-crime",
+          "attackMotivation": "financial",
+          "targetValue": "high",
+          "accessRequirement": "physical"
+        },
+        "tafScore": "3.1",
+        "tafBand": "medium",
+        "factorRatings": {
+          "technicalComplexity": "high",
+          "resourceRequirement": "medium", 
+          "detectionRisk": "high"
+        },
+        "rationale": "Sophisticated criminal organization with financial motivation but higher detection risk",
+        "assessmentDate": "2025-08-25T11:30:00.000Z"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-TS-V2X-1",
+        "riskValueId": "RV-TS-V2X-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-V2X-AUTH"
+        ],
+        "justification": "Implement hardware-backed PKI to achieve CAL3 assurance level for V2X authentication"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-CAL-1",
+        "relationshipType": "requires_cal",
+        "sourceRef": "CTRL-V2X-AUTH", 
+        "targetRef": "CAL-3",
+        "justification": "V2X authentication requires CAL3 assurance level for safety-critical applications"
+      },
+      {
+        "id": "REL-CAL-2",
+        "relationshipType": "achieves_cal",
+        "sourceRef": "CAL-ASSESS-SENSOR",
+        "targetRef": "CAL-4", 
+        "justification": "Sensor validation control achieves CAL4 through formal verification"
+      }
+    ]
+  }
+}
