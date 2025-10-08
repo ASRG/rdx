@@ -34,6 +34,9 @@ jobs:
           # This lets the action proceed even when OIDC isn't available (e.g., forked PRs).
           github_token: ${{ github.token }}
 
+          # Allow the GitHub App actor to trigger this workflow (fixes your error)
+          allowed_bots: 'claude[bot]'
+
           # Optional triggers – pick one or both depending on your desired workflow.
           # Add this label to a PR to kick off a review:
           label_trigger: 'claude'
