@@ -113,6 +113,18 @@
                   "type": "string"
                 }
               },
+              "linkedComponentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedInterfaceIds": {
+                "type": "array", 
+                "items": {
+                  "type": "string"
+                }
+              },
               "externalIds": {
                 "type": "array",
                 "items": {
@@ -198,6 +210,18 @@
               "cause": {
                 "type": "string"
               },
+              "targetedComponentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "targetedInterfaceIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
               "references": {
                 "type": "array",
                 "items": {
@@ -230,7 +254,36 @@
               "steps": {
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "description"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "targetComponentId": {
+                          "type": "string"
+                        },
+                        "targetInterfaceId": {
+                          "type": "string"
+                        },
+                        "technique": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
                 }
               },
               "references": {
@@ -475,6 +528,222 @@
             "additionalProperties": false
           }
         },
+        "systemComponents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "componentType"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "componentType": {
+                "enum": [
+                  "system",
+                  "subsystem", 
+                  "ecu",
+                  "hardware",
+                  "firmware",
+                  "software",
+                  "application",
+                  "service",
+                  "protocol",
+                  "network",
+                  "interface"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "vendor": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "parentComponentId": {
+                "type": "string"
+              },
+              "properties": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "securityProperties": {
+                "type": "object",
+                "properties": {
+                  "trustLevel": {
+                    "enum": [
+                      "trusted",
+                      "semi-trusted",
+                      "untrusted"
+                    ]
+                  },
+                  "criticalityLevel": {
+                    "enum": [
+                      "safety-critical",
+                      "mission-critical", 
+                      "business-critical",
+                      "non-critical"
+                    ]
+                  },
+                  "attackSurface": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "externalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "systemInterfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "interfaceType"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "interfaceType": {
+                "enum": [
+                  "physical",
+                  "logical",
+                  "network",
+                  "api",
+                  "protocol",
+                  "bus",
+                  "wireless"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "protocol": {
+                "type": "string"
+              },
+              "direction": {
+                "enum": [
+                  "input",
+                  "output", 
+                  "bidirectional"
+                ]
+              },
+              "dataTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "securityMechanisms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "componentId": {
+                "type": "string"
+              },
+              "externalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "dataFlows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "sourceInterfaceId",
+              "targetInterfaceId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "sourceInterfaceId": {
+                "type": "string"
+              },
+              "targetInterfaceId": {
+                "type": "string"
+              },
+              "dataType": {
+                "type": "string"
+              },
+              "frequency": {
+                "type": "string"
+              },
+              "dataVolume": {
+                "type": "string"
+              },
+              "securityRequirements": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "confidentiality",
+                    "integrity", 
+                    "availability",
+                    "authenticity",
+                    "authorization",
+                    "non-repudiation"
+                  ]
+                }
+              },
+              "trustBoundary": {
+                "type": "boolean"
+              },
+              "externalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
         "relationships": {
           "type": "array",
           "items": {
@@ -499,7 +768,17 @@
                   "targets",
                   "threatens",
                   "protects",
-                  "related_to"
+                  "related_to",
+                  "parent_of",
+                  "child_of",
+                  "connects_to",
+                  "communicates_with",
+                  "depends_on",
+                  "exposes",
+                  "inherits_from",
+                  "deployed_on",
+                  "runs_on",
+                  "hosts"
                 ]
               },
               "sourceRef": {

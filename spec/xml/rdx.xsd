@@ -18,6 +18,9 @@
       <xs:element name="riskValues" type="rdx:riskValuesType" minOccurs="0"/>
       <xs:element name="controls" type="rdx:controlsType" minOccurs="0"/>
       <xs:element name="riskTreatmentDecisions" type="rdx:rtdsType" minOccurs="0"/>
+      <xs:element name="systemComponents" type="rdx:systemComponentsType" minOccurs="0"/>
+      <xs:element name="systemInterfaces" type="rdx:systemInterfacesType" minOccurs="0"/>
+      <xs:element name="dataFlows" type="rdx:dataFlowsType" minOccurs="0"/>
       <xs:element name="relationships" type="rdx:relationshipsType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
@@ -46,6 +49,8 @@
       <xs:element name="title" type="xs:string"/>
       <xs:element name="properties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="linkedDamageScenarioIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="linkedComponentIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="linkedInterfaceIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -76,6 +81,8 @@
       <xs:element name="targetedAssetIds" type="rdx:stringList"/>
       <xs:element name="compromisedProperties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="cause" type="xs:string" minOccurs="0"/>
+      <xs:element name="targetedComponentIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="targetedInterfaceIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -89,7 +96,7 @@
       <xs:element name="id" type="xs:string"/>
       <xs:element name="title" type="xs:string"/>
       <xs:element name="threatScenarioId" type="xs:string"/>
-      <xs:element name="steps" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="steps" type="rdx:stepsType" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -201,6 +208,16 @@
             <xs:enumeration value="threatens"/>
             <xs:enumeration value="protects"/>
             <xs:enumeration value="related_to"/>
+            <xs:enumeration value="parent_of"/>
+            <xs:enumeration value="child_of"/>
+            <xs:enumeration value="connects_to"/>
+            <xs:enumeration value="communicates_with"/>
+            <xs:enumeration value="depends_on"/>
+            <xs:enumeration value="exposes"/>
+            <xs:enumeration value="inherits_from"/>
+            <xs:enumeration value="deployed_on"/>
+            <xs:enumeration value="runs_on"/>
+            <xs:enumeration value="hosts"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
@@ -217,6 +234,144 @@
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+  <!-- architecture types -->
+  <xs:complexType name="systemComponentsType">
+    <xs:sequence>
+      <xs:element name="systemComponent" type="rdx:systemComponentType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="systemComponentType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="componentType">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="system"/>
+            <xs:enumeration value="subsystem"/>
+            <xs:enumeration value="ecu"/>
+            <xs:enumeration value="hardware"/>
+            <xs:enumeration value="firmware"/>
+            <xs:enumeration value="software"/>
+            <xs:enumeration value="application"/>
+            <xs:enumeration value="service"/>
+            <xs:enumeration value="protocol"/>
+            <xs:enumeration value="network"/>
+            <xs:enumeration value="interface"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="vendor" type="xs:string" minOccurs="0"/>
+      <xs:element name="version" type="xs:string" minOccurs="0"/>
+      <xs:element name="parentComponentId" type="xs:string" minOccurs="0"/>
+      <xs:element name="securityProperties" type="rdx:securityPropertiesType" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="securityPropertiesType">
+    <xs:sequence>
+      <xs:element name="trustLevel" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="trusted"/>
+            <xs:enumeration value="semi-trusted"/>
+            <xs:enumeration value="untrusted"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="criticalityLevel" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="safety-critical"/>
+            <xs:enumeration value="mission-critical"/>
+            <xs:enumeration value="business-critical"/>
+            <xs:enumeration value="non-critical"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="attackSurface" type="rdx:stringList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="systemInterfacesType">
+    <xs:sequence>
+      <xs:element name="systemInterface" type="rdx:systemInterfaceType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="systemInterfaceType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="interfaceType">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="physical"/>
+            <xs:enumeration value="logical"/>
+            <xs:enumeration value="network"/>
+            <xs:enumeration value="api"/>
+            <xs:enumeration value="protocol"/>
+            <xs:enumeration value="bus"/>
+            <xs:enumeration value="wireless"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="protocol" type="xs:string" minOccurs="0"/>
+      <xs:element name="direction" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="input"/>
+            <xs:enumeration value="output"/>
+            <xs:enumeration value="bidirectional"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="dataTypes" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="securityMechanisms" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="componentId" type="xs:string" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dataFlowsType">
+    <xs:sequence>
+      <xs:element name="dataFlow" type="rdx:dataFlowType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dataFlowType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="sourceInterfaceId" type="xs:string"/>
+      <xs:element name="targetInterfaceId" type="xs:string"/>
+      <xs:element name="dataType" type="xs:string" minOccurs="0"/>
+      <xs:element name="frequency" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataVolume" type="xs:string" minOccurs="0"/>
+      <xs:element name="securityRequirements" type="rdx:securityRequirementsList" minOccurs="0"/>
+      <xs:element name="trustBoundary" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stepsType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="value" type="xs:string"/>
+      <xs:element name="attackStep" type="rdx:attackStepType"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="attackStepsType">
+    <xs:sequence>
+      <xs:element name="attackStep" type="rdx:attackStepType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attackStepType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element name="targetComponentId" type="xs:string" minOccurs="0"/>
+      <xs:element name="targetInterfaceId" type="xs:string" minOccurs="0"/>
+      <xs:element name="technique" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
   <!-- helpers -->
   <xs:complexType name="ciaList">
     <xs:sequence><xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
@@ -226,5 +381,21 @@
   </xs:complexType>
   <xs:complexType name="anyUriList">
     <xs:sequence><xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="securityRequirementsList">
+    <xs:sequence>
+      <xs:element name="requirement" minOccurs="0" maxOccurs="unbounded">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="confidentiality"/>
+            <xs:enumeration value="integrity"/>
+            <xs:enumeration value="availability"/>
+            <xs:enumeration value="authenticity"/>
+            <xs:enumeration value="authorization"/>
+            <xs:enumeration value="non-repudiation"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

@@ -1,0 +1,482 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "22222222-2222-4222-8222-222222222222",
+  "created": "2025-10-08T08:30:00.000Z",
+  "createdBy": "RDX Architecture Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:Headlamp-2026"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-HEADLAMP",
+      "title": "Adaptive Headlamp System",
+      "boundary": "Complete headlamp assembly including ECU, optics, and adaptive lighting controls",
+      "functions": [
+        "Adaptive lighting",
+        "DRL control",
+        "Turn signal",
+        "Communication with vehicle network",
+        "Fault detection"
+      ],
+      "architecture": "Matrix LED headlamp with dedicated control ECU connected via CAN",
+      "interfaces": [
+        "CAN-HS",
+        "Power",
+        "Ground",
+        "LED matrix"
+      ],
+      "environment": "Automotive exterior, -40°C to +85°C, IP67",
+      "assumptions": [
+        "CAN authentication available",
+        "Secure firmware update process"
+      ]
+    },
+    "systemComponents": [
+      {
+        "id": "COMP-HEADLAMP-SYS",
+        "title": "Headlamp System",
+        "componentType": "system",
+        "description": "Complete adaptive headlamp system",
+        "securityProperties": {
+          "trustLevel": "semi-trusted",
+          "criticalityLevel": "safety-critical",
+          "attackSurface": ["CAN interface", "Firmware update"]
+        }
+      },
+      {
+        "id": "COMP-HEADLAMP-ECU",
+        "title": "Headlamp Control ECU",
+        "componentType": "ecu",
+        "description": "Main control unit for headlamp operations",
+        "vendor": "Example Semiconductor Corp",
+        "version": "HW-v2.1",
+        "parentComponentId": "COMP-HEADLAMP-SYS",
+        "securityProperties": {
+          "trustLevel": "semi-trusted",
+          "criticalityLevel": "safety-critical",
+          "attackSurface": ["CAN interface", "Debug port"]
+        }
+      },
+      {
+        "id": "COMP-LED-MATRIX",
+        "title": "LED Matrix Assembly",
+        "componentType": "hardware",
+        "description": "Matrix LED array with individual pixel control",
+        "vendor": "LED Optics Inc",
+        "version": "v1.3",
+        "parentComponentId": "COMP-HEADLAMP-SYS",
+        "securityProperties": {
+          "trustLevel": "trusted",
+          "criticalityLevel": "safety-critical",
+          "attackSurface": []
+        }
+      },
+      {
+        "id": "COMP-HEADLAMP-FW",
+        "title": "Headlamp Control Firmware",
+        "componentType": "firmware",
+        "description": "Base firmware for ECU operations",
+        "vendor": "Example Semiconductor Corp",
+        "version": "FW-v3.2.1",
+        "parentComponentId": "COMP-HEADLAMP-ECU",
+        "securityProperties": {
+          "trustLevel": "trusted",
+          "criticalityLevel": "safety-critical",
+          "attackSurface": ["Firmware update interface"]
+        }
+      },
+      {
+        "id": "COMP-LIGHTING-APP",
+        "title": "Adaptive Lighting Application",
+        "componentType": "application",
+        "description": "Main application controlling adaptive lighting algorithms",
+        "vendor": "OEM Software Division",
+        "version": "APP-v1.8.2",
+        "parentComponentId": "COMP-HEADLAMP-FW",
+        "securityProperties": {
+          "trustLevel": "semi-trusted",
+          "criticalityLevel": "safety-critical",
+          "attackSurface": ["Input validation", "Algorithm parameters"]
+        }
+      },
+      {
+        "id": "COMP-DIAG-APP", 
+        "title": "Diagnostic Application",
+        "componentType": "application",
+        "description": "Diagnostic and maintenance functions",
+        "vendor": "OEM Software Division",
+        "version": "DIAG-v2.1.0",
+        "parentComponentId": "COMP-HEADLAMP-FW",
+        "securityProperties": {
+          "trustLevel": "semi-trusted",
+          "criticalityLevel": "business-critical",
+          "attackSurface": ["Diagnostic interface", "Error logging"]
+        }
+      }
+    ],
+    "systemInterfaces": [
+      {
+        "id": "INTF-CAN-HS",
+        "title": "CAN High Speed Interface",
+        "interfaceType": "bus",
+        "description": "Primary communication interface to vehicle network",
+        "protocol": "CAN 2.0B",
+        "direction": "bidirectional",
+        "dataTypes": ["CAN frames", "Diagnostic messages"],
+        "securityMechanisms": ["CAN message authentication"],
+        "componentId": "COMP-HEADLAMP-ECU"
+      },
+      {
+        "id": "INTF-LED-CTRL",
+        "title": "LED Matrix Control Interface",
+        "interfaceType": "physical",
+        "description": "Control interface to LED matrix",
+        "protocol": "PWM + SPI",
+        "direction": "output",
+        "dataTypes": ["PWM signals", "SPI commands"],
+        "securityMechanisms": [],
+        "componentId": "COMP-HEADLAMP-ECU"
+      },
+      {
+        "id": "INTF-POWER",
+        "title": "Power Supply Interface", 
+        "interfaceType": "physical",
+        "description": "12V power input",
+        "protocol": "DC Power",
+        "direction": "input",
+        "dataTypes": ["Power"],
+        "securityMechanisms": ["Overcurrent protection"],
+        "componentId": "COMP-HEADLAMP-ECU"
+      },
+      {
+        "id": "INTF-DEBUG",
+        "title": "Debug Interface",
+        "interfaceType": "physical",
+        "description": "JTAG debug interface",
+        "protocol": "JTAG",
+        "direction": "bidirectional",
+        "dataTypes": ["Debug commands", "Memory access"],
+        "securityMechanisms": ["Debug port locking"],
+        "componentId": "COMP-HEADLAMP-ECU"
+      }
+    ],
+    "dataFlows": [
+      {
+        "id": "FLOW-CAN-LIGHTING",
+        "title": "Lighting Control Commands",
+        "description": "Commands from vehicle to control headlamp operation",
+        "sourceInterfaceId": "INTF-CAN-HS",
+        "targetInterfaceId": "INTF-LED-CTRL",
+        "dataType": "CAN messages",
+        "frequency": "10 Hz",
+        "dataVolume": "Low",
+        "securityRequirements": ["integrity", "authenticity"],
+        "trustBoundary": true
+      },
+      {
+        "id": "FLOW-DIAG-DATA",
+        "title": "Diagnostic Data",
+        "description": "Status and diagnostic information sent to vehicle",
+        "sourceInterfaceId": "INTF-LED-CTRL",
+        "targetInterfaceId": "INTF-CAN-HS", 
+        "dataType": "Diagnostic frames",
+        "frequency": "1 Hz",
+        "dataVolume": "Low",
+        "securityRequirements": ["integrity"],
+        "trustBoundary": true
+      }
+    ],
+    "assets": [
+      {
+        "id": "ASSET-LIGHTING-CTRL",
+        "title": "Lighting Control Logic",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-LIGHTING"
+        ],
+        "linkedComponentIds": [
+          "COMP-LIGHTING-APP"
+        ],
+        "linkedInterfaceIds": [
+          "INTF-LED-CTRL"
+        ]
+      },
+      {
+        "id": "ASSET-VEHICLE-COMM",
+        "title": "Vehicle Communication",
+        "properties": [
+          "integrity",
+          "availability",
+          "authenticity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-COMMUNICATION"
+        ],
+        "linkedComponentIds": [
+          "COMP-HEADLAMP-ECU"
+        ],
+        "linkedInterfaceIds": [
+          "INTF-CAN-HS"
+        ]
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "Firmware Integrity",
+        "properties": [
+          "integrity",
+          "authenticity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SEC-FIRMWARE"
+        ],
+        "linkedComponentIds": [
+          "COMP-HEADLAMP-FW"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-LIGHTING",
+        "title": "Incorrect lighting behavior causes accident",
+        "description": "Malicious or faulty lighting control could blind other drivers or reduce visibility"
+      },
+      {
+        "id": "DS-SAF-COMMUNICATION",
+        "title": "Loss of vehicle communication causes system failure",
+        "description": "Inability to receive commands or send status could cause system malfunction"
+      },
+      {
+        "id": "DS-SEC-FIRMWARE",
+        "title": "Compromised firmware enables further attacks",
+        "description": "Malicious firmware could be used as pivot point for broader vehicle compromise"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CAN-INJECT",
+        "title": "CAN message injection attack",
+        "targetedAssetIds": [
+          "ASSET-LIGHTING-CTRL"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Attacker injects malicious CAN messages to control lighting",
+        "targetedComponentIds": [
+          "COMP-HEADLAMP-ECU"
+        ],
+        "targetedInterfaceIds": [
+          "INTF-CAN-HS"
+        ]
+      },
+      {
+        "id": "TS-FW-TAMPER",
+        "title": "Firmware tampering attack",
+        "targetedAssetIds": [
+          "ASSET-FIRMWARE"
+        ],
+        "compromisedProperties": [
+          "integrity",
+          "authenticity"
+        ],
+        "cause": "Attacker modifies firmware through debug interface or update process",
+        "targetedComponentIds": [
+          "COMP-HEADLAMP-FW"
+        ],
+        "targetedInterfaceIds": [
+          "INTF-DEBUG"
+        ]
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CAN-LIGHTING",
+        "title": "CAN injection to lighting manipulation",
+        "threatScenarioId": "TS-CAN-INJECT",
+        "steps": [
+          {
+            "id": "STEP-1",
+            "description": "Gain access to vehicle CAN network",
+            "targetComponentId": "COMP-HEADLAMP-ECU",
+            "targetInterfaceId": "INTF-CAN-HS",
+            "technique": "CAN bus access"
+          },
+          {
+            "id": "STEP-2", 
+            "description": "Analyze legitimate lighting control messages",
+            "targetComponentId": "COMP-LIGHTING-APP",
+            "technique": "Traffic analysis"
+          },
+          {
+            "id": "STEP-3",
+            "description": "Inject malicious lighting control commands",
+            "targetComponentId": "COMP-LIGHTING-APP",
+            "targetInterfaceId": "INTF-CAN-HS",
+            "technique": "Message injection"
+          },
+          {
+            "id": "STEP-4",
+            "description": "Manipulate LED matrix behavior",
+            "targetComponentId": "COMP-LED-MATRIX",
+            "targetInterfaceId": "INTF-LED-CTRL",
+            "technique": "Hardware control"
+          }
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CAN-LIGHTING",
+        "attackPathId": "AP-CAN-LIGHTING",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "hours",
+          "expertise": "proficient",
+          "knowledge": "public",
+          "window": "moderate",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "CAN access requires vehicle access but lighting messages are not authenticated"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-LIGHTING-SAF",
+        "damageScenarioId": "DS-SAF-LIGHTING",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "severe"
+        },
+        "score": "4",
+        "rationale": "Incorrect lighting could cause accidents affecting multiple road users"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CAN-LIGHTING",
+        "threatScenarioId": "TS-CAN-INJECT",
+        "afrRef": "AFR-CAN-LIGHTING", 
+        "impactRef": "IR-LIGHTING-SAF",
+        "methodId": "iso21434-afr-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility but severe safety impact"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CAN-AUTH",
+        "title": "CAN Message Authentication",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "CAN-AUTH-01",
+        "implementationStatus": "planned"
+      },
+      {
+        "id": "CTRL-DEBUG-LOCK",
+        "title": "Debug Port Locking",
+        "catalog": "OEM-SEC-CTRL", 
+        "controlId": "DEBUG-LOCK-01",
+        "implementationStatus": "implemented"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CAN-LIGHTING",
+        "riskValueId": "RV-CAN-LIGHTING",
+        "decision": "treat",
+        "controls": [
+          "CTRL-CAN-AUTH"
+        ],
+        "justification": "Implement CAN authentication to prevent message injection"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-ECU-PARENT",
+        "relationshipType": "parent_of",
+        "sourceRef": "COMP-HEADLAMP-SYS",
+        "targetRef": "COMP-HEADLAMP-ECU",
+        "justification": "ECU is part of the headlamp system"
+      },
+      {
+        "id": "REL-FW-CHILD",
+        "relationshipType": "child_of",
+        "sourceRef": "COMP-HEADLAMP-FW",
+        "targetRef": "COMP-HEADLAMP-ECU",
+        "justification": "Firmware runs on the ECU"
+      },
+      {
+        "id": "REL-APP-CHILD",
+        "relationshipType": "child_of",
+        "sourceRef": "COMP-LIGHTING-APP",
+        "targetRef": "COMP-HEADLAMP-FW",
+        "justification": "Application runs on the firmware"
+      },
+      {
+        "id": "REL-DIAG-CHILD",
+        "relationshipType": "child_of",
+        "sourceRef": "COMP-DIAG-APP",
+        "targetRef": "COMP-HEADLAMP-FW",
+        "justification": "Diagnostic application runs on the firmware"
+      },
+      {
+        "id": "REL-CAN-CONNECTS",
+        "relationshipType": "connects_to",
+        "sourceRef": "INTF-CAN-HS",
+        "targetRef": "COMP-HEADLAMP-ECU",
+        "justification": "CAN interface connects ECU to vehicle network"
+      },
+      {
+        "id": "REL-LED-CONNECTS",
+        "relationshipType": "connects_to",
+        "sourceRef": "INTF-LED-CTRL",
+        "targetRef": "COMP-LED-MATRIX",
+        "justification": "Control interface connects to LED matrix"
+      },
+      {
+        "id": "REL-THREAT-TARGETS",
+        "relationshipType": "targets",
+        "sourceRef": "TS-CAN-INJECT",
+        "targetRef": "COMP-LIGHTING-APP",
+        "justification": "CAN injection attack targets the lighting application"
+      },
+      {
+        "id": "REL-CTRL-MITIGATES",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "TS-CAN-INJECT",
+        "justification": "CAN authentication mitigates injection attacks"
+      }
+    ]
+  }
+}
