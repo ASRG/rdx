@@ -5,6 +5,10 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   claude-review:
     runs-on: ubuntu-latest
