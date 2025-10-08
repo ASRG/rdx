@@ -624,6 +624,7 @@
                 "enum": ["very-high", "high", "medium", "low", "very-low"]
               },
               "factorRatings": {
+                "description": "Factor-specific ratings used in TAF calculation. Keys should align with or extend the method's factors array for custom assessment criteria.",
                 "type": "object",
                 "additionalProperties": {
                   "type": ["number", "string", "boolean"]

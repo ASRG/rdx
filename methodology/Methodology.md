@@ -22,6 +22,11 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - **controls**: (**id**, title, catalog?, controlId?, implementationStatus?, requiredCalLevel?, achievedCalLevel?, references?)
 - **riskTreatmentDecisions**: (**id**, riskValueId, decision[treat|avoid|accept|share], controls[], justification)
 
+### Relationships
+- **relationships**: (**id**, **relationshipType**, **sourceRef**, **targetRef**, confidence?, justification?)
+  - Standard types: causes, mitigates, implements, assesses, contains, targets, threatens, protects, related_to
+  - CAL-specific types: requires_cal (control requires CAL level), achieves_cal (assessment achieves CAL level)
+
 ### CAL (Cybersecurity Assurance Levels) Framework - ISO/SAE PAS 8475
 - **calAssuranceLevels**: (**id**, **level**[CAL1-4], **objectives**[], title?, description?, assuranceActivities?, references?)
 - **calAssessments**: (**id**, **controlId**, **targetCalLevel**, **assessmentResult**[sufficient|insufficient|pending], achievedCalLevel?, evidenceRef?, assessmentDate?, assessor?, rationale?)

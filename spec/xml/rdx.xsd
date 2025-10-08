@@ -272,6 +272,7 @@
       <xs:element name="targetContext" type="rdx:targetContextType" minOccurs="0"/>
       <xs:element name="tafScore" type="xs:string"/>
       <xs:element name="tafBand" type="rdx:tafBandType" minOccurs="0"/>
+      <xs:element name="factorRatings" type="rdx:keyValuePairsType" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
       <xs:element name="assessmentDate" type="xs:dateTime" minOccurs="0"/>
     </xs:sequence>
@@ -352,5 +353,17 @@
   </xs:complexType>
   <xs:complexType name="anyUriList">
     <xs:sequence><xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="keyValuePairsType">
+    <xs:sequence>
+      <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="key" type="xs:string"/>
+            <xs:element name="value" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

@@ -142,8 +142,21 @@
           "targetValue",
           "accessRequirement",
           "technicalComplexity",
-          "resourceRequirement"
+          "resourceRequirement",
+          "detectionRisk"
         ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0",
+        "factors": ["safety", "financial", "operational", "privacy"]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0",
+        "factors": ["attackFeasibility", "impact"]
       }
     ],
     "attackFeasibilityRatings": [
