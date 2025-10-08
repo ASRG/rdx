@@ -1,0 +1,77 @@
+name: Claude PR Review (Prompted Only)
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    # Prompt-only guards:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@claude review')) ||
+      (github.event_name == 'pull_request' &&
+       contains(join(github.event.pull_request.labels.*.name, ','), 'claude-review'))
+
+    # Optional: block bot-only triggers (if you prefer humans only)
+    # if: ${{ !endsWith(github.actor, '[bot]') && ( ...same condition as above... ) }}
+
+    steps:
+      - name: Checkout (shallow to keep context small)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # enough to diff against base; keeps context small
+
+      - name: Claude Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+
+          # Allow GitHub App actor to avoid "non-human actor" error
+          allowed_bots: 'claude[bot]'
+
+          # Accept both prompt types:
+          trigger_phrase: '@claude review'
+          label_trigger: 'claude-review'
+
+          use_sticky_comment: true
+          branch_prefix: 'claude/review/'
+          track_progress: false  # quieter logs → fewer tokens
+
+          # Keep it scoped and cheap:
+          settings: |
+            {
+              "review_verbosity": "concise",
+              "max_changed_files": 50,
+              "max_diff_bytes": 400000,
+              "fail_if_no_diff": true
+            }
+
+          # Strong instruction to ONLY look at changed files in this PR
+          prompt: |
+            Review ONLY the files changed in this pull request (no repo-wide exploration).
+            Provide a concise, actionable review focused on:
+            - ISO/SAE 21434-aligned clarity/traceability where applicable.
+            - Data model/schema correctness and CycloneDX embedding compatibility.
+            - Backward compatibility and migration notes if needed.
+            - Specific diffs or code suggestions when beneficial.
+            Constraints:
+            - Ignore unrelated files; do not expand scope.
+            - Prefer short summaries and bullet points over long prose.
+            - Avoid repeating unchanged context to conserve tokens.
