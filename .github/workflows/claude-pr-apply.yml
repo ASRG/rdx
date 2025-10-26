@@ -8,7 +8,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read          # 👈 Required for Claude Code MCP server
   contents: write
+  issues: write
   pull-requests: write
   id-token: write
 
