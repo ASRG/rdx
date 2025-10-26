@@ -1,53 +1,47 @@
-name: Claude – PR Apply (Manual)
+name: Claude – PR Review (Auto)
 
 on:
-  issue_comment:
-    types: [created]
   pull_request:
-    types: [labeled]
-  workflow_dispatch:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
-  actions: read          # 👈 Required for Claude Code MCP server
-  contents: write
-  issues: write
+  actions: read          # required for Claude Code MCP server
+  contents: read
   pull-requests: write
   id-token: write
 
+env:
+  # Route Claude Code through LiteLLM proxy
+  ANTHROPIC_BASE_URL: ${{ secrets.LITELLM_PROXY_URL }}
+  ANTHROPIC_API_KEY: ${{ secrets.LITELLM_PROXY_KEY }}
+
 concurrency:
-  group: claude-pr-apply-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  group: claude-pr-review-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  apply:
+  review:
     if: >
       github.actor != 'claude[bot]' &&
       github.actor != 'github-actions[bot]' &&
-      (
-        github.event_name == 'workflow_dispatch' ||
-        (github.event_name == 'issue_comment' &&
-         github.event.issue.pull_request != null &&
-         contains(github.event.comment.body, '@claude apply')) ||
-        (github.event_name == 'pull_request' &&
-         contains(join(github.event.pull_request.labels.*.name, ','), 'claude-apply'))
-      )
+      !github.event.pull_request.draft
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (full history for safe commits/reverts)
+      - name: Checkout (shallow)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Claude Apply Changes
+      - name: Claude Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_RDX }}
+          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
-          track_progress: true
-          branch_prefix: 'claude/fixes/'
+          branch_prefix: 'claude/review/'
+          track_progress: false
           settings: |
             {
               "review_verbosity": "concise",
@@ -56,11 +50,12 @@ jobs:
               "fail_if_no_diff": true
             }
           prompt: |
-            Apply targeted changes that address acknowledged review feedback in THIS PR.
-            Scope:
-            - Modify only files in this PR unless a tiny adjacent edit is strictly required.
-            - Keep commits small and well-titled; avoid refactors.
-            - Update/add tests/docs if behavior changes.
-            Safeguards:
-            - If instructions are ambiguous or risky, ask for clarification with a PR comment instead of committing.
-            - Preserve security properties; never introduce secrets or weaken checks.
+            Review ONLY the files changed in this pull request.
+            Provide a succinct review that covers:
+            - Correctness, security & risk (call out any risky patterns, secrets, dependency hazards).
+            - Backward compatibility & migration notes.
+            - Tests/docs impact (recommend minimal additions when needed).
+            - ISO/SAE 21434-style traceability hints only if relevant.
+            Output format:
+            - Summary (one short paragraph), then bullet list of specific suggestions with file/line refs.
+            If everything is fine, acknowledge explicitly and note any low-risk nits.
