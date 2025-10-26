@@ -42,12 +42,17 @@ jobs:
       - name: Claude Code – Analyze & Update Issue
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
           track_progress: false
           branch_prefix: 'claude/issue-updates/'
+          claude_env: |
+            ANTHROPIC_BASE_URL=${{ secrets.LITELLM_PROXY_URL }}
+            ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+            # (Optional) extra debug:
+            # ANTHROPIC_LOG=debug
           settings: |
             {
               "review_verbosity": "concise",
