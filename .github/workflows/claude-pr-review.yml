@@ -36,12 +36,15 @@ jobs:
       - name: Claude Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
           branch_prefix: 'claude/review/'
           track_progress: false
+          claude_env: |
+            ANTHROPIC_BASE_URL=${{ secrets.LITELLM_PROXY_URL }}
+            ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
           settings: |
             {
               "review_verbosity": "concise",
