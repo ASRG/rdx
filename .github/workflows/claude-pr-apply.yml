@@ -40,7 +40,7 @@ jobs:
       - name: Claude Apply Changes
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_RDX }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
