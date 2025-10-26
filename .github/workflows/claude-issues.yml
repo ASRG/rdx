@@ -7,9 +7,10 @@ on:
     types: [created, edited]
 
 permissions:
+  actions: read          # 👈 Required for Claude Code MCP server
   contents: write
   issues: write
-  pull-requests: read
+  pull-requests: write
   id-token: write
 
 concurrency:
