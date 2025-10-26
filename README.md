@@ -15,14 +15,21 @@ It is **based on CycloneDX** for packaging and transport and provides **JSON** a
 
 See `methodology/Methodology.md` for design, ISO mapping, versioning, and governance.
 
-Claude GitHub Workflows
+##Claude GitHub Workflows
 
 This repository uses three Anthropic Claude-powered GitHub Actions to automate reviews and issue handling.
 Each workflow runs independently to avoid overlap and race conditions.
 
-File	Purpose	Trigger
-.github/workflows/claude-issues.yml	Handles issue management. When a new issue (task) is created or updated, Claude reviews the content, refines titles/descriptions, adds labels, and suggests next steps — ensuring consistent structure and clarity across all tasks.	issues (opened / edited / reopened / assigned) and issue_comment
-.github/workflows/claude-pr-review.yml	Performs automatic PR reviews. Claude reviews every pull request when opened or updated, providing concise feedback on code quality, potential risks, and alignment with project standards.	pull_request (opened / synchronize / reopened / ready_for_review)
-.github/workflows/claude-pr-apply.yml	Supports manual application of AI-suggested fixes. When a maintainer comments @claude apply or adds the claude-apply label, Claude safely implements targeted code updates based on review feedback.	issue_comment, pull_request (labeled), or workflow_dispatch
+###.github/workflows/claude-issues.yml	
+Handles issue management. When a new issue (task) is created or updated, Claude reviews the content, refines titles/descriptions, adds labels, and suggests next steps — ensuring consistent structure and clarity across all tasks.	
+Trigger: issues (opened / edited / reopened / assigned) and issue_comment
+
+###.github/workflows/claude-pr-review.yml	
+Performs automatic PR reviews. Claude reviews every pull request when opened or updated, providing concise feedback on code quality, potential risks, and alignment with project standards.	
+Trigger: pull_request (opened / synchronize / reopened / ready_for_review)
+
+###.github/workflows/claude-pr-apply.yml	
+Supports manual application of AI-suggested fixes. When a maintainer comments @claude apply or adds the claude-apply label, Claude safely implements targeted code updates based on review feedback.	
+Trigger: issue_comment, pull_request (labeled), or workflow_dispatch
 
 Each workflow automatically skips actions triggered by bots (e.g., claude[bot]) to prevent feedback loops and runs under isolated concurrency groups to ensure predictable, conflict-free automation.
