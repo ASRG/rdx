@@ -5,11 +5,15 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
-  actions: read          # 👈 Required for Claude Code MCP server
-  contents: write
-  issues: write
+  actions: read          # required for Claude Code MCP server
+  contents: read
   pull-requests: write
   id-token: write
+
+env:
+  # Route Claude Code through LiteLLM proxy
+  ANTHROPIC_BASE_URL: ${{ secrets.LITELLM_PROXY_URL }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
 concurrency:
   group: claude-pr-review-${{ github.event.pull_request.number }}
@@ -32,7 +36,7 @@ jobs:
       - name: Claude Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_RDX }}
+          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
