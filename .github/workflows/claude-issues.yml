@@ -7,11 +7,16 @@ on:
     types: [created, edited]
 
 permissions:
-  actions: read          # 👈 Required for Claude Code MCP server
+  actions: read          # required for Claude Code MCP server
   contents: write
   issues: write
   pull-requests: write
   id-token: write
+
+env:
+  # Route Claude Code through LiteLLM proxy
+  ANTHROPIC_BASE_URL: ${{ secrets.LITELLM_PROXY_URL }}   # e.g. https://litellm.example.com
+  ANTHROPIC_API_KEY: ${{ secrets.LITELLM_PROXY_KEY }}    # proxy auth token
 
 concurrency:
   group: claude-issues-${{ github.event.issue.number || github.ref }}
@@ -37,7 +42,7 @@ jobs:
       - name: Claude Code – Analyze & Update Issue
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_RDX }}
+          anthropic_api_key: ${{ env.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           allowed_bots: 'claude[bot]'
           use_sticky_comment: true
