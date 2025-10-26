@@ -78,6 +78,11 @@
               "items": {
                 "type": "string"
               }
+            },
+            "countryOfOrigin": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
             }
           },
           "additionalProperties": false
