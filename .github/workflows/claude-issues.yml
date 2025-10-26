@@ -16,7 +16,7 @@ permissions:
 env:
   # Route Claude Code through LiteLLM proxy
   ANTHROPIC_BASE_URL: ${{ secrets.LITELLM_PROXY_URL }}   # e.g. https://litellm.example.com
-  ANTHROPIC_API_KEY: ${{ secrets.LITELLM_PROXY_KEY }}    # proxy auth token
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}    # proxy auth token
 
 concurrency:
   group: claude-issues-${{ github.event.issue.number || github.ref }}
