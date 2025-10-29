@@ -35,6 +35,11 @@ jobs:
          contains(join(github.event.pull_request.labels.*.name, ','), 'claude-apply'))
       )
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+      id-token: write
 
     steps:
       - name: Checkout (full history for safe commits/reverts)

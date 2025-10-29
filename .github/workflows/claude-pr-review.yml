@@ -24,6 +24,11 @@ jobs:
       github.actor != 'github-actions[bot]' &&
       !github.event.pull_request.draft
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+      id-token: write
 
     steps:
       - name: Checkout (shallow)
