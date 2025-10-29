@@ -4,48 +4,95 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RDX (Risk Data Exchange) is an open format for exchanging automotive cybersecurity risk data (TARA) that is based on CycloneDX and aligned with ISO/SAE 21434. The project provides both JSON and XML schemas for structured risk data that can be embedded within CycloneDX BOMs or used standalone.
+RDX (Risk Data Exchange) is an open, vendor-neutral format for exchanging automotive cybersecurity risk data (TARA) that is aligned with ISO/SAE 21434 and based on CycloneDX. The project provides both JSON and XML schemas for structured risk data that can be embedded within CycloneDX BOMs or used standalone.
 
 ## Common Development Tasks
 
-### Validation
-- **JSON validation**: Requires `ajv-cli` (install with `npm i -g ajv-cli`)
-  ```bash
-  ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
-  ```
-- **XML validation**: Requires `xmllint`
-  ```bash
-  xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
-  ```
-- **Run all validations**: `./tools/validate.sh` (currently has commands commented out)
+### Prerequisites
+- **JSON validation**: Requires `ajv-cli` (`npm i -g ajv-cli`)
+- **XML validation**: Requires `xmllint` (typically pre-installed on macOS/Linux)
+
+### Validation Commands
+Run all validations:
+```bash
+./tools/validate.sh
+```
+
+Validate individual JSON examples:
+```bash
+ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-relationships-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-multiple-threats-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-mitigation-relationships-example.json --strict=false
+```
+
+Validate XML (currently commented out in validate.sh):
+```bash
+xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
+```
+
+### Development Workflow
+1. Create/update schema in `spec/json/rdx.schema.json` or `spec/xml/rdx.xsd`
+2. Add/update corresponding examples in `examples/`
+3. Run `./tools/validate.sh` to ensure all examples validate
+4. Update `REQUIREMENTS.md` if adding new capabilities
+5. For all changes, create a GitHub issue first and reference it in commits/PRs
 
 ## Architecture
 
-### Core Components
-- **Schema definitions**: `spec/json/rdx.schema.json` (JSON Schema) and `spec/xml/rdx.xsd` (XSD)
-- **Examples**: `examples/` contains sample RDX documents and CycloneDX-embedded examples
-- **Templates**: `templates/` provides starting points for RDX documents
+### Schema Files
+- **JSON Schema**: `spec/json/rdx.schema.json` — JSON Schema Draft 2020-12 with strict validation
+- **XSD**: `spec/xml/rdx.xsd` — XML Schema Definition for XML-based RDX documents
 
 ### RDX Object Model
-The schema defines these core risk assessment objects:
-- **itemDefinition**: The system/component being assessed (required)
-- **assets**: Things to protect with CIA properties
-- **damageScenarios**: Potential harm scenarios
-- **threatScenarios**: Security threats targeting assets
-- **attackPaths**: How threats could be realized
-- **attackFeasibilityRatings**: Likelihood assessments
-- **impactRatings**: Consequence assessments  
-- **riskValues**: Combined risk scores
-- **controls**: Security measures
-- **riskTreatmentDecisions**: How risks are handled (treat/avoid/accept/share)
+Core risk assessment objects (minimum required fields in **bold**):
+- **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions)
+- **assets** (**id**, **title**, properties[C|I|A], linkedDamageScenarioIds, externalIds)
+- **damageScenarios** (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
+- **threatScenarios** (**id**, **title**, targetedAssetIds[], compromisedProperties[], cause, references)
+- **attackPaths** (**id**, **title**, threatScenarioId, steps[], references)
+- **attackFeasibilityRatings** (**id**, attackPathId, methodId, inputFactors, score, band, rationale)
+- **impactRatings** (**id**, damageScenarioId, methodId, categories, score, rationale)
+- **riskValues** (**id**, threatScenarioId, afrRef, impactRef, methodId, score, band, rationale)
+- **controls** (**id**, title, catalog, controlId, implementationStatus, references)
+- **riskTreatmentDecisions** (**id**, riskValueId, decision[treat|avoid|accept|share], controls[], justification)
+
+### Document Structure
+Every RDX document requires:
+- `schemaVersion`: Currently "0.1.0" (must match exactly)
+- `documentId`: UUID format
+- `riskSet`: Container with required `itemDefinition` and optional risk objects
 
 ### Embedding Patterns
-- **CycloneDX JSON**: RDX data goes in `metadata.properties` as minified JSON
-- **CycloneDX XML**: RDX elements use `rdx:` namespace under `<bom>`
-- **Standalone**: Direct RDX JSON/XML documents
+- **CycloneDX JSON**: Embed minified RDX JSON in `metadata.properties` array
+- **CycloneDX XML**: Embed `<rdx:...>` elements under `<bom>` using rdx namespace
+- **Standalone**: Direct RDX JSON or XML documents (see `examples/rdx-*.json`)
 
-## Key Design Principles
-- Strict schema validation with required minimums for data quality
-- Versioning follows SemVer (currently v0.1.0)
-- All objects require unique IDs for traceability
-- Non-invasive to existing CycloneDX tooling
+### Examples Structure
+- `rdx-example.json`: Basic standalone RDX document
+- `rdx-relationships-example.json`: Demonstrates explicit relationship support between risk objects
+- `rdx-multiple-threats-example.json`: Shows multiple threat scenarios
+- `rdx-mitigation-relationships-example.json`: Shows controls mitigating threats
+- `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs
+
+### Key Documentation
+- `methodology/Methodology.md`: Design principles, object model, encoding patterns
+- `methodology/ISO21434-Mapping.md`: ISO/SAE 21434 clause mappings
+- `methodology/UseCases.md`: Usage scenarios and examples
+- `REQUIREMENTS.md`: Formal requirements tracking with RDX-XXX identifiers
+- `VERSIONING.md`: Semantic versioning policy and compatibility rules
+- `CONTRIBUTING.md`: Contribution process including GitHub issue requirements and automated AI review
+
+## Design Principles
+- **Strict validation**: Required minimums for data quality; `additionalProperties: false` on objects
+- **Versioning**: Semantic versioning (MAJOR.MINOR.PATCH); currently v0.1.0
+- **Traceability**: All objects require unique IDs; support for external references and issue tracking
+- **CycloneDX compatibility**: Non-invasive to existing tooling; uses standard extension mechanisms
+- **Open governance**: Public repo, CI validation, deprecation announcements
+
+## Requirements Process
+All new features/changes MUST:
+1. Be tracked via GitHub issue with appropriate labels
+2. Reference the issue number in commits and PRs
+3. Update `REQUIREMENTS.md` with new requirement IDs (RDX-XXX format)
+4. Include validation tests (examples that validate against schemas)
