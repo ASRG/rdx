@@ -24,7 +24,11 @@ ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-relationships-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-multiple-threats-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-mitigation-relationships-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-cal-taf-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/headlight-tara-iso21434.json --strict=false
 ```
+
+**Note**: The schema uses JSON Schema Draft 2020-12. If `ajv-cli` reports issues with the schema version, the examples are still valid JSON and conform to required fields.
 
 Validate XML (currently commented out in validate.sh):
 ```bash
@@ -45,17 +49,30 @@ xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
 - **XSD**: `spec/xml/rdx.xsd` — XML Schema Definition for XML-based RDX documents
 
 ### RDX Object Model
-Core risk assessment objects (minimum required fields in **bold**):
-- **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions)
+
+#### Core Risk Assessment Objects
+Minimum required fields in **bold**:
+- **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions, countryOfOrigin)
 - **assets** (**id**, **title**, properties[C|I|A], linkedDamageScenarioIds, externalIds)
 - **damageScenarios** (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
-- **threatScenarios** (**id**, **title**, targetedAssetIds[], compromisedProperties[], cause, references)
-- **attackPaths** (**id**, **title**, threatScenarioId, steps[], references)
-- **attackFeasibilityRatings** (**id**, attackPathId, methodId, inputFactors, score, band, rationale)
-- **impactRatings** (**id**, damageScenarioId, methodId, categories, score, rationale)
-- **riskValues** (**id**, threatScenarioId, afrRef, impactRef, methodId, score, band, rationale)
-- **controls** (**id**, title, catalog, controlId, implementationStatus, references)
-- **riskTreatmentDecisions** (**id**, riskValueId, decision[treat|avoid|accept|share], controls[], justification)
+- **threatScenarios** (**id**, **title**, **targetedAssetIds[]**, compromisedProperties[], cause, references)
+- **attackPaths** (**id**, **title**, **threatScenarioId**, steps[], references)
+- **methods** (**id**, **name**, **version**, factors[]) — rating methodologies used
+- **attackFeasibilityRatings** (**id**, **attackPathId**, **methodId**, **score**, inputFactors, band, rationale)
+- **impactRatings** (**id**, **damageScenarioId**, **methodId**, **score**, categories, rationale)
+- **riskValues** (**id**, **threatScenarioId**, **afrRef**, **impactRef**, **methodId**, **score**, band, rationale)
+- **controls** (**id**, **title**, catalog, controlId, implementationStatus, requiredCalLevel, achievedCalLevel, references)
+- **riskTreatmentDecisions** (**id**, **riskValueId**, **decision**[treat|avoid|accept|share], controls[], justification)
+
+#### ISO/SAE PAS 8475 CAL & TAF Framework (v0.1.0+)
+- **calAssuranceLevels** (**id**, **level**[CAL1-4], **objectives[]**, title, description, assuranceActivities[], references)
+- **calAssessments** (**id**, **controlId**, **targetCalLevel**, **assessmentResult**[sufficient|insufficient|pending], achievedCalLevel, evidenceRef, assessmentDate, assessor, rationale)
+- **tafAssessments** (**id**, **attackPathId**, **methodId**, **tafScore**, targetContext, tafBand, factorRatings, rationale, assessmentDate)
+
+#### Relationships
+- **relationships** (**id**, **relationshipType**, **sourceRef**, **targetRef**, confidence, justification)
+  - Standard types: causes, mitigates, implements, assesses, contains, targets, threatens, protects, related_to
+  - CAL-specific types: requires_cal, achieves_cal
 
 ### Document Structure
 Every RDX document requires:
@@ -73,11 +90,15 @@ Every RDX document requires:
 - `rdx-relationships-example.json`: Demonstrates explicit relationship support between risk objects
 - `rdx-multiple-threats-example.json`: Shows multiple threat scenarios
 - `rdx-mitigation-relationships-example.json`: Shows controls mitigating threats
+- `rdx-cal-taf-example.json`: Demonstrates CAL (Cybersecurity Assurance Levels) and TAF (Targeted Attack Feasibility) framework integration
+- `headlight-tara-iso21434.json`: Complete ISO 21434 TARA example for Adaptive Front-lighting System
+- `headlight-tara-analysis.md`: Human-readable analysis document for the headlight TARA
 - `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs
 
 ### Key Documentation
 - `methodology/Methodology.md`: Design principles, object model, encoding patterns
 - `methodology/ISO21434-Mapping.md`: ISO/SAE 21434 clause mappings
+- `methodology/CAL-TAF-Integration.md`: ISO/SAE PAS 8475 CAL and TAF framework integration
 - `methodology/UseCases.md`: Usage scenarios and examples
 - `REQUIREMENTS.md`: Formal requirements tracking with RDX-XXX identifiers
 - `VERSIONING.md`: Semantic versioning policy and compatibility rules
