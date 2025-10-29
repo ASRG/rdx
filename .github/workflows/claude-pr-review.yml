@@ -11,8 +11,6 @@ permissions:
   id-token: write
 
 env:
-  # Route Claude Code through LiteLLM proxy
-  ANTHROPIC_BASE_URL: ${{ secrets.LITELLM_PROXY_URL }}
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
 concurrency:
@@ -43,7 +41,6 @@ jobs:
           branch_prefix: 'claude/review/'
           track_progress: false
           claude_env: |
-            ANTHROPIC_BASE_URL=${{ secrets.LITELLM_PROXY_URL }}
             ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
           settings: |
             {
