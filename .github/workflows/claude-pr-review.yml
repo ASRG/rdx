@@ -1,0 +1,61 @@
+name: Claude – PR Review (Auto)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  actions: read          # required for Claude Code MCP server
+  contents: read
+  pull-requests: write
+  id-token: write
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+concurrency:
+  group: claude-pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: >
+      github.actor != 'claude[bot]' &&
+      github.actor != 'github-actions[bot]' &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (shallow)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Claude Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          allowed_bots: 'claude[bot]'
+          use_sticky_comment: true
+          branch_prefix: 'claude/review/'
+          track_progress: false
+          claude_env: |
+            ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          settings: |
+            {
+              "review_verbosity": "concise",
+              "max_changed_files": 100,
+              "max_diff_bytes": 600000,
+              "fail_if_no_diff": true
+            }
+          prompt: |
+            Review ONLY the files changed in this pull request.
+            Provide a succinct review that covers:
+            - Correctness, security & risk (call out any risky patterns, secrets, dependency hazards).
+            - Backward compatibility & migration notes.
+            - Tests/docs impact (recommend minimal additions when needed).
+            - ISO/SAE 21434-style traceability hints only if relevant.
+            Output format:
+            - Summary (one short paragraph), then bullet list of specific suggestions with file/line refs.
+            If everything is fine, acknowledge explicitly and note any low-risk nits.

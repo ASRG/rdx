@@ -10,6 +10,7 @@
       <rdx:id>ITEM-001</rdx:id>
       <rdx:title>Connected Gateway ECU</rdx:title>
       <rdx:boundary>Gateway ECU responsible for in-vehicle networks, OTA, and diagnostics</rdx:boundary>
+      <rdx:countryOfOrigin>DE</rdx:countryOfOrigin>
     </rdx:itemDefinition>
   </rdx:riskSet>
 </bom>

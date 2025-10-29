@@ -1,0 +1,77 @@
+name: Claude – Issues (Create & Update)
+
+on:
+  issues:
+    types: [opened, edited, reopened, assigned]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  actions: read          # required for Claude Code MCP server
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+env:
+  # Route Claude Code through LiteLLM proxy
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}    # proxy auth token
+
+concurrency:
+  group: claude-issues-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  handle_issue_events:
+    if: >
+      github.actor != 'claude[bot]' &&
+      github.actor != 'github-actions[bot]' &&
+      (
+        github.event_name == 'issues' ||
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request == null)
+      )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (shallow)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Claude Code – Analyze & Update Issue
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          allowed_bots: 'claude[bot]'
+          use_sticky_comment: true
+          track_progress: false
+          branch_prefix: 'claude/issue-updates/'
+          claude_env: |
+            ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+            # (Optional) extra debug:
+            # ANTHROPIC_LOG=debug
+          settings: |
+            {
+              "review_verbosity": "concise",
+              "max_changed_files": 20,
+              "max_diff_bytes": 250000,
+              "fail_if_no_diff": false
+            }
+          prompt: |
+            You are assisting with ISSUES (tasks). Event type: "${{ github.event_name }}", action: "${{ github.event.action }}".
+            Goal:
+            - For NEWLY CREATED issues: classify (bug/feature/question/other), propose next steps, suggest labels, and optionally update title/body for clarity.
+            - For UPDATED issues or NEW COMMENTS: read feedback and apply precise updates (labels, checklists, refined acceptance criteria). If the request implies code or docs changes, open a small branch/PR with minimal diffs.
+
+            Constraints:
+            - DO NOT run if the event was from a bot (handled by workflow).
+            - Keep edits safe and incremental; avoid broad refactors.
+            - If requirements are unclear or risky, add a clarifying comment instead of making changes.
+            - Prefer adding checklists with actionable steps and acceptance criteria.
+            - Follow repository conventions for issue labels and templates if present.
+
+            Output:
+            - If content edits are needed, edit the issue title/body accordingly.
+            - If labels or assignees are helpful, add them.
+            - If code changes are needed, create a small PR (branch prefix "claude/issue-") and link it back to the issue.
