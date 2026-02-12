@@ -14,14 +14,13 @@
 #   - Anonymous users: ❌ Must have GitHub account with repo access
 #
 # How to Use:
-#   1. Create a new issue or comment on an existing issue
-#   2. Mention @claude in your message
-#   3. Claude will respond with context-aware assistance
+#   NEW ISSUES: Claude automatically responds to all new issues
+#   COMMENTS: Mention @claude in comments to invoke assistance
 #
 # Example Usage:
-#   - "@claude Can you explain the RDX schema structure?"
-#   - "@claude Review this proposed change for ISO 21434 compliance"
-#   - "@claude What are the requirements for CAL/TAF integration?"
+#   - Create issue: "Can you explain the RDX schema structure?" (auto-responds)
+#   - Comment: "@claude Review this proposed change for ISO 21434 compliance"
+#   - Comment: "@claude What are the requirements for CAL/TAF integration?"
 #
 # Capabilities:
 #   - Answer questions about the RDX codebase
@@ -93,9 +92,14 @@ jobs:
           # Optional: Use OAuth token instead of API key
           # claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           
-          # Trigger phrase - default is @claude
-          # Users can mention @claude in issue descriptions or comments to invoke Claude
+          # Trigger phrase - only used for comments on existing issues
+          # New issues always trigger automatically (via prompt below)
           trigger_phrase: "@claude"
+          
+          # Automatic prompt for new issues
+          # For new issues: respond automatically
+          # For comments: only respond if @claude is mentioned (handled by trigger_phrase)
+          prompt: ${{ github.event_name == 'issues' && 'Assist with this RDX repository issue. Analyze the request, provide helpful context about the codebase, answer questions about ISO/SAE 21434, CAL/TAF, or RDX schemas. Reference relevant documentation and examples. If code changes are requested, create a branch, implement the changes, and create a PR with a clear description.' || '' }}
           
           # Advanced Claude CLI arguments
           claude_args: |
