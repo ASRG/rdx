@@ -57,9 +57,12 @@ jobs:
     if: github.actor != 'claude[bot]' && github.actor != 'github-actions[bot]'
     
     permissions:
-      # Required for Claude to read issue content and context
-      issues: write
-      contents: read
+      # Required for Claude Code action to function properly
+      actions: read          # Required for Claude Code MCP server
+      contents: write        # Required to create branches and commits
+      issues: write          # Required to read/write issue content
+      pull-requests: write   # Required to create PRs if needed
+      id-token: write        # Required for OIDC token authentication
       
     steps:
       - name: Log event details
@@ -83,6 +86,9 @@ jobs:
         with:
           # Authentication - using Anthropic API key from repository secrets
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          
+          # GitHub token for API access
+          github_token: ${{ github.token }}
           
           # Optional: Use OAuth token instead of API key
           # claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
