@@ -77,27 +77,6 @@ ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
 - **[Contributing](CONTRIBUTING.md)**: Contribution process and requirements
 - **[Versioning](VERSIONING.md)**: Semantic versioning policy
 
-## Claude GitHub Workflows
-
-This repository uses three Anthropic Claude-powered GitHub Actions to automate reviews and issue handling. Each workflow runs independently to avoid overlap and race conditions.
-
-### `.github/workflows/claude-issues.yml`
-Handles issue management. When a new issue is created or updated, Claude reviews the content, refines titles/descriptions, adds labels, and suggests next steps — ensuring consistent structure and clarity across all tasks.
-
-**Triggers**: `issues` (opened/edited/reopened/assigned), `issue_comment`
-
-### `.github/workflows/claude-pr-review.yml`
-Performs automatic PR reviews. Claude reviews every pull request when opened or updated, providing concise feedback on code quality, potential risks, and alignment with project standards including ISO/SAE 21434 compliance.
-
-**Triggers**: `pull_request` (opened/synchronize/reopened/ready_for_review)
-
-### `.github/workflows/claude-pr-apply.yml`
-Supports manual application of AI-suggested fixes. When a maintainer comments `@claude apply` or adds the `claude-apply` label, Claude safely implements targeted code updates based on review feedback.
-
-**Triggers**: `issue_comment`, `pull_request` (labeled), `workflow_dispatch`
-
-Each workflow automatically skips actions triggered by bots (e.g., `claude[bot]`) to prevent feedback loops and runs under isolated concurrency groups to ensure predictable, conflict-free automation.
-
 ## Project Status
 
 **Current Version**: v0.1.0
