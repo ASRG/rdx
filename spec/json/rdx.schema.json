@@ -62,7 +62,43 @@
               }
             },
             "architecture": {
-              "type": "string"
+              "description": "System architecture description. Supports both a simple text description (legacy) or a structured representation with components and data flows.",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Simple text description of the system architecture (legacy format)"
+                },
+                {
+                  "type": "object",
+                  "description": "Structured system architecture representation",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "High-level description of the system architecture"
+                    },
+                    "components": {
+                      "type": "array",
+                      "description": "List of system components",
+                      "items": {
+                        "$ref": "#/$defs/ArchitectureComponent"
+                      }
+                    },
+                    "dataFlows": {
+                      "type": "array",
+                      "description": "List of data flows between components",
+                      "items": {
+                        "$ref": "#/$defs/DataFlow"
+                      }
+                    },
+                    "diagramUrl": {
+                      "type": "string",
+                      "description": "URL to an architecture diagram",
+                      "format": "uri"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
             },
             "interfaces": {
               "type": "array",
@@ -136,6 +172,13 @@
                 "description": "Cryptographic hashes for the asset (e.g., firmware binary, software component)",
                 "items": {
                   "$ref": "#/$defs/Hash"
+                }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components this asset is associated with",
+                "items": {
+                  "type": "string"
                 }
               }
             },
@@ -219,6 +262,13 @@
               },
               "references": {
                 "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components relevant to this threat scenario",
                 "items": {
                   "type": "string"
                 }
@@ -875,6 +925,106 @@
           "type": "string",
           "description": "The hash value as a hexadecimal string",
           "pattern": "^[0-9a-fA-F]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ArchitectureComponent": {
+      "type": "object",
+      "description": "A component in the system architecture",
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this component"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the component"
+        },
+        "type": {
+          "type": "string",
+          "description": "Component type classification",
+          "enum": [
+            "ecu",
+            "sensor",
+            "actuator",
+            "gateway",
+            "network",
+            "external-system",
+            "cloud-service",
+            "mobile-app",
+            "ota-server",
+            "diagnostic-tool",
+            "other"
+          ]
+        },
+        "parentId": {
+          "type": "string",
+          "description": "ID of the parent component (for hierarchical architectures)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the component and its role"
+        },
+        "trustBoundary": {
+          "type": "string",
+          "description": "The trust boundary or security zone this component belongs to"
+        },
+        "externalIds": {
+          "type": "array",
+          "description": "External identifiers (e.g., from other tools or standards)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "DataFlow": {
+      "type": "object",
+      "description": "A data flow between architecture components",
+      "required": [
+        "id",
+        "fromComponentId",
+        "toComponentId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this data flow"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the data flow"
+        },
+        "fromComponentId": {
+          "type": "string",
+          "description": "ID of the source component"
+        },
+        "toComponentId": {
+          "type": "string",
+          "description": "ID of the destination component"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Communication protocol used (e.g., CAN, Ethernet, SOME/IP, HTTPS)"
+        },
+        "dataDescription": {
+          "type": "string",
+          "description": "Description of what data is exchanged"
+        },
+        "encrypted": {
+          "type": "boolean",
+          "description": "Whether the data flow is encrypted"
+        },
+        "authenticated": {
+          "type": "boolean",
+          "description": "Whether the data flow is authenticated"
         }
       },
       "additionalProperties": false
