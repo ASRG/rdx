@@ -187,6 +187,7 @@ Each object must include minimum required fields (marked in **bold**):
 
 ### 12.1 CycloneDX Integration
 - **RDX-099**: Ensure non-invasive integration with existing CycloneDX tooling
+- **RDX-100**: Support embedding within CycloneDX BOMs without breaking compatibility
 
 ## 13. Requirements from Technical Committee Meetings
 
@@ -215,5 +216,3 @@ The following requirements were identified through ASRG TC: Risk Data Exchange m
 - **RDX-110**: The RDX format MUST support SHA-512 hash values and digital signature capabilities for document integrity verification and non-repudiation of risk assessment data (see GitHub issue #8)
 - **RDX-111**: The RDX JSON schema MUST set `additionalProperties: true` to allow tool-specific and organization-specific extensions without breaking schema validation, enabling ecosystem-wide extensibility (see GitHub issue #27)
 - **RDX-112**: The RDX format MUST support Cybersecurity Management work products as defined in ISO/SAE 21434 Clause 9, including governance structures, organizational interfaces, and cybersecurity policy references within the TARA document context (see GitHub issue #28)
-
-- **RDX-100**: Support embedding within CycloneDX BOMs without breaking compatibility
