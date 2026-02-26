@@ -83,6 +83,13 @@
               "type": "string",
               "pattern": "^[A-Z]{2}$",
               "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
+            },
+            "hashes": {
+              "type": "array",
+              "description": "Cryptographic hashes for the item definition document or binary",
+              "items": {
+                "$ref": "#/$defs/Hash"
+              }
             }
           },
           "additionalProperties": false
@@ -122,6 +129,13 @@
                 "type": "array",
                 "items": {
                   "type": "string"
+                }
+              },
+              "hashes": {
+                "type": "array",
+                "description": "Cryptographic hashes for the asset (e.g., firmware binary, software component)",
+                "items": {
+                  "$ref": "#/$defs/Hash"
                 }
               }
             },
@@ -335,10 +349,14 @@
             ],
             "anyOf": [
               {
-                "required": ["attackPathId"]
+                "required": [
+                  "attackPathId"
+                ]
               },
               {
-                "required": ["attackStepId"]
+                "required": [
+                  "attackStepId"
+                ]
               }
             ],
             "properties": {
@@ -492,16 +510,33 @@
               },
               "requiredCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "achievedCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "references": {
                 "type": "array",
                 "items": {
                   "type": "string"
+                }
+              },
+              "hashes": {
+                "type": "array",
+                "description": "Cryptographic hashes for the control document or specification",
+                "items": {
+                  "$ref": "#/$defs/Hash"
                 }
               }
             },
@@ -560,7 +595,12 @@
               },
               "level": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "title": {
                 "type": "string"
@@ -609,15 +649,29 @@
               },
               "targetCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "assessmentResult": {
                 "type": "string",
-                "enum": ["sufficient", "insufficient", "pending"]
+                "enum": [
+                  "sufficient",
+                  "insufficient",
+                  "pending"
+                ]
               },
               "achievedCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "evidenceRef": {
                 "type": "string"
@@ -661,35 +715,70 @@
                 "properties": {
                   "attackerProfile": {
                     "type": "string",
-                    "enum": ["nation-state", "organized-crime", "hacktivist", "insider", "opportunist"]
+                    "enum": [
+                      "nation-state",
+                      "organized-crime",
+                      "hacktivist",
+                      "insider",
+                      "opportunist"
+                    ]
                   },
                   "attackMotivation": {
                     "type": "string",
-                    "enum": ["financial", "espionage", "disruption", "reputation", "other"]
+                    "enum": [
+                      "financial",
+                      "espionage",
+                      "disruption",
+                      "reputation",
+                      "other"
+                    ]
                   },
                   "targetValue": {
                     "type": "string",
-                    "enum": ["very-high", "high", "medium", "low"]
+                    "enum": [
+                      "very-high",
+                      "high",
+                      "medium",
+                      "low"
+                    ]
                   },
                   "accessRequirement": {
                     "type": "string",
-                    "enum": ["remote", "adjacent", "physical", "insider"]
+                    "enum": [
+                      "remote",
+                      "adjacent",
+                      "physical",
+                      "insider"
+                    ]
                   }
                 },
                 "additionalProperties": false
               },
               "tafScore": {
-                "type": ["number", "string"]
+                "type": [
+                  "number",
+                  "string"
+                ]
               },
               "tafBand": {
                 "type": "string",
-                "enum": ["very-high", "high", "medium", "low", "very-low"]
+                "enum": [
+                  "very-high",
+                  "high",
+                  "medium",
+                  "low",
+                  "very-low"
+                ]
               },
               "factorRatings": {
                 "description": "Factor-specific ratings used in TAF calculation. Keys should align with or extend the method's factors array for custom assessment criteria.",
                 "type": "object",
                 "additionalProperties": {
-                  "type": ["number", "string", "boolean"]
+                  "type": [
+                    "number",
+                    "string",
+                    "boolean"
+                  ]
                 }
               },
               "rationale": {
@@ -754,5 +843,41 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "Hash": {
+      "type": "object",
+      "description": "A cryptographic hash value for integrity verification",
+      "required": [
+        "alg",
+        "content"
+      ],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "description": "The hash algorithm",
+          "enum": [
+            "MD5",
+            "SHA-1",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512",
+            "BLAKE2b-256",
+            "BLAKE2b-384",
+            "BLAKE2b-512",
+            "BLAKE3"
+          ]
+        },
+        "content": {
+          "type": "string",
+          "description": "The hash value as a hexadecimal string",
+          "pattern": "^[0-9a-fA-F]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
