@@ -1,0 +1,1664 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "44444444-4444-4444-8444-444444444444",
+  "created": "2025-08-29T12:58:00.000000Z",
+  "createdBy": "Claude Code - RDX Comprehensive Infotainment TARA Example v1.0",
+  "sources": [
+    "urn:oem:example:project:LUXURY-SUV-2027-INFOTAINMENT",
+    "ISO/SAE 21434:2021 Automotive Cybersecurity",
+    "UNECE WP.29 Vehicle Regulations"
+  ],
+  "bomRefRef": "pkg:cyclonedx/infotainment-ecu@2027-model",
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-INFOTAINMENT-ECU",
+      "title": "Advanced Infotainment System ECU",
+      "boundary": "Complete infotainment ecosystem including head unit, displays, connectivity modules, and integration with vehicle systems for entertainment, navigation, communication, and vehicle control interfaces",
+      "functions": [
+        "Media playback and streaming",
+        "Navigation and mapping services", 
+        "Bluetooth and WiFi connectivity",
+        "Smartphone integration (Android Auto/CarPlay)",
+        "Voice recognition and control",
+        "Vehicle status display and control",
+        "Climate control interface",
+        "Driver assistance system HMI",
+        "Emergency services (eCall)",
+        "Over-the-air software updates",
+        "App marketplace and third-party apps",
+        "Rear seat entertainment control"
+      ],
+      "architecture": "ARM Cortex-A78 octa-core SoC, Android Automotive OS 14, 8GB RAM, 256GB storage, dedicated GPU, 4G/5G cellular modem, WiFi 6E, Bluetooth 5.3, multiple CAN interfaces, Ethernet backbone, hardware security module (HSM)",
+      "interfaces": [
+        "CAN0-Powertrain",
+        "CAN1-Chassis", 
+        "CAN2-Body",
+        "CAN-FD-ADAS",
+        "Automotive Ethernet",
+        "USB-C (multiple)",
+        "HDMI output",
+        "Audio I/O (multichannel)",
+        "4G/5G cellular",
+        "WiFi 6E",
+        "Bluetooth 5.3",
+        "GPS/GNSS",
+        "Camera inputs",
+        "Microphone array",
+        "Touch display interface"
+      ],
+      "environment": "Production luxury SUV, global markets including US, EU, China, 2027 model year launch, ambient temperature -40°C to +85°C, automotive EMC requirements, IP54 ingress protection",
+      "assumptions": [
+        "Hardware security module (HSM) provides secure key storage",
+        "Verified boot process ensures system integrity",
+        "Android Automotive security framework is properly configured",
+        "Network firewalls isolate critical vehicle systems",
+        "Regular security updates will be deployed via OTA",
+        "Users will connect personal devices and install third-party apps",
+        "Physical access to vehicle interior is possible for legitimate users",
+        "Service technicians require diagnostic access",
+        "Emergency services integration requires always-on connectivity"
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-USER-DATA",
+        "title": "Personal User Data and Privacy Information",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIVACY-VIOLATION",
+          "DS-IDENTITY-THEFT"
+        ],
+        "externalIds": [
+          "GDPR-DATA-CATEGORY-1",
+          "CCPA-PERSONAL-INFO"
+        ]
+      },
+      {
+        "id": "ASSET-VEHICLE-CONTROL",
+        "title": "Vehicle Control Commands and Status",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAFETY-HAZARD",
+          "DS-VEHICLE-IMMOBILIZATION"
+        ],
+        "externalIds": [
+          "ISO26262-SAFETY-FUNCTION-1"
+        ]
+      },
+      {
+        "id": "ASSET-PAYMENT-INFO",
+        "title": "Payment and Financial Information",
+        "properties": [
+          "confidentiality",
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-FINANCIAL-FRAUD",
+          "DS-IDENTITY-THEFT"
+        ],
+        "externalIds": [
+          "PCI-DSS-CARDHOLDER-DATA"
+        ]
+      },
+      {
+        "id": "ASSET-LOCATION-DATA", 
+        "title": "Real-time and Historical Location Data",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIVACY-VIOLATION",
+          "DS-STALKING-HARASSMENT"
+        ]
+      },
+      {
+        "id": "ASSET-CRYPTO-KEYS",
+        "title": "Cryptographic Keys and Certificates",
+        "properties": [
+          "confidentiality",
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SECURITY-BREACH",
+          "DS-VEHICLE-IMMOBILIZATION"
+        ]
+      },
+      {
+        "id": "ASSET-MEDIA-CONTENT",
+        "title": "Personal Media and Entertainment Content",
+        "properties": [
+          "confidentiality",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-COPYRIGHT-VIOLATION",
+          "DS-PRIVACY-VIOLATION"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-PRIVACY-VIOLATION",
+        "title": "Severe privacy violation through unauthorized data access",
+        "description": "Comprehensive breach of user privacy including location tracking, personal communications, media consumption patterns, and behavioral data leading to surveillance, discrimination, and personal safety risks",
+        "impactedFunctions": [
+          "Navigation and mapping services",
+          "Smartphone integration (Android Auto/CarPlay)",
+          "Voice recognition and control"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle occupants",
+          "Vehicle owner",
+          "Emergency contacts"
+        ],
+        "references": [
+          "GDPR Article 82 - Right to compensation",
+          "NIST Privacy Framework Core Functions"
+        ]
+      },
+      {
+        "id": "DS-SAFETY-HAZARD",
+        "title": "Critical safety hazard via vehicle control manipulation",
+        "description": "Unauthorized manipulation of safety-critical vehicle functions including braking, steering, acceleration, or warning systems leading to potential accidents, injuries, or fatalities",
+        "impactedFunctions": [
+          "Vehicle status display and control",
+          "Driver assistance system HMI",
+          "Climate control interface"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle occupants",
+          "Other road users",
+          "Pedestrians",
+          "Emergency responders"
+        ],
+        "references": [
+          "ISO 26262 Functional Safety Standard",
+          "NHTSA Federal Motor Vehicle Safety Standards"
+        ]
+      },
+      {
+        "id": "DS-FINANCIAL-FRAUD",
+        "title": "Financial fraud through compromised payment systems",
+        "description": "Unauthorized access to payment information, subscription services, or in-vehicle commerce leading to fraudulent transactions, identity theft, and financial losses",
+        "impactedFunctions": [
+          "App marketplace and third-party apps",
+          "Over-the-air software updates"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle owner",
+          "Account holders"
+        ],
+        "references": [
+          "PCI DSS Payment Card Industry Standards",
+          "FTC Identity Theft Guidelines"
+        ]
+      },
+      {
+        "id": "DS-IDENTITY-THEFT",
+        "title": "Identity theft through comprehensive data aggregation",
+        "description": "Systematic collection of personal identifiers, behavioral patterns, financial information, and biometric data enabling sophisticated identity theft and impersonation attacks",
+        "impactedFunctions": [
+          "Voice recognition and control",
+          "Smartphone integration (Android Auto/CarPlay)",
+          "Navigation and mapping services"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle owner",
+          "Vehicle occupants",
+          "Emergency contacts"
+        ],
+        "references": [
+          "FTC Identity Theft Red Flags Rule",
+          "State Identity Protection Laws"
+        ]
+      },
+      {
+        "id": "DS-VEHICLE-IMMOBILIZATION",
+        "title": "Vehicle immobilization or operational disruption",
+        "description": "Complete or partial loss of vehicle functionality through system compromise, rendering the vehicle inoperable or unsafe to drive, potentially stranding occupants in dangerous situations",
+        "impactedFunctions": [
+          "Vehicle status display and control",
+          "Emergency services (eCall)",
+          "Over-the-air software updates"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle occupants",
+          "Emergency responders"
+        ],
+        "references": [
+          "SAE J3061 Cybersecurity Guidebook",
+          "Emergency Response Protocols"
+        ]
+      },
+      {
+        "id": "DS-STALKING-HARASSMENT",
+        "title": "Stalking and harassment enabled by location tracking", 
+        "description": "Malicious use of location data and personal information to facilitate stalking, harassment, domestic violence, or other targeted harmful activities against vehicle users",
+        "impactedFunctions": [
+          "Navigation and mapping services",
+          "Emergency services (eCall)"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle occupants",
+          "Vehicle owner"
+        ],
+        "references": [
+          "Domestic Violence Prevention Laws",
+          "Stalking Prevention Guidelines"
+        ]
+      },
+      {
+        "id": "DS-COPYRIGHT-VIOLATION",
+        "title": "Copyright infringement through unauthorized content access",
+        "description": "Unauthorized access, copying, or distribution of copyrighted media content, leading to legal liabilities and intellectual property violations",
+        "impactedFunctions": [
+          "Media playback and streaming",
+          "Rear seat entertainment control"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle owner",
+          "Content rights holders"
+        ],
+        "references": [
+          "Digital Millennium Copyright Act (DMCA)",
+          "International Copyright Treaties"
+        ]
+      },
+      {
+        "id": "DS-SECURITY-BREACH",
+        "title": "Comprehensive security breach with system-wide compromise",
+        "description": "Large-scale compromise of cryptographic systems enabling persistent unauthorized access, data manipulation, and control over multiple vehicle functions and user accounts",
+        "impactedFunctions": [
+          "Over-the-air software updates",
+          "Vehicle status display and control",
+          "App marketplace and third-party apps"
+        ],
+        "affectedRoadUsers": [
+          "Vehicle occupants",
+          "Vehicle owner",
+          "Fleet operators",
+          "Service providers"
+        ],
+        "references": [
+          "NIST Cybersecurity Framework",
+          "ISO 27001 Information Security Standard"
+        ]
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-MALICIOUS-APP",
+        "title": "Malicious application exploitation",
+        "targetedAssetIds": [
+          "ASSET-USER-DATA",
+          "ASSET-LOCATION-DATA",
+          "ASSET-PAYMENT-INFO"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Installation of malicious third-party application with excessive permissions or exploitation of legitimate app vulnerabilities to access sensitive user data",
+        "references": [
+          "OWASP Mobile Top 10",
+          "Android Security Best Practices"
+        ]
+      },
+      {
+        "id": "TS-NETWORK-INTERCEPTION",
+        "title": "Network traffic interception and manipulation", 
+        "targetedAssetIds": [
+          "ASSET-USER-DATA",
+          "ASSET-PAYMENT-INFO",
+          "ASSET-VEHICLE-CONTROL"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Man-in-the-middle attacks on cellular, WiFi, or Bluetooth communications to intercept, modify, or inject malicious data and commands",
+        "references": [
+          "NIST Special Publication 800-121 Bluetooth Security",
+          "3GPP Security Specifications"
+        ]
+      },
+      {
+        "id": "TS-PHYSICAL-ACCESS",
+        "title": "Unauthorized physical access exploitation",
+        "targetedAssetIds": [
+          "ASSET-CRYPTO-KEYS",
+          "ASSET-VEHICLE-CONTROL",
+          "ASSET-USER-DATA"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity",
+          "availability"
+        ],
+        "cause": "Physical access to vehicle interior or service interfaces to extract cryptographic keys, install malicious hardware, or gain unauthorized system access",
+        "references": [
+          "Hardware Security Best Practices",
+          "Physical Tamper Resistance Standards"
+        ]
+      },
+      {
+        "id": "TS-SUPPLY-CHAIN",
+        "title": "Supply chain compromise",
+        "targetedAssetIds": [
+          "ASSET-CRYPTO-KEYS",
+          "ASSET-VEHICLE-CONTROL",
+          "ASSET-USER-DATA"
+        ],
+        "compromisedProperties": [
+          "integrity",
+          "availability"
+        ],
+        "cause": "Compromise of hardware or software components during manufacturing, distribution, or update processes introducing backdoors or malicious functionality",
+        "references": [
+          "NIST Supply Chain Risk Management",
+          "ISO 28001 Supply Chain Security"
+        ]
+      },
+      {
+        "id": "TS-INSIDER-THREAT",
+        "title": "Malicious insider threat",
+        "targetedAssetIds": [
+          "ASSET-USER-DATA",
+          "ASSET-CRYPTO-KEYS",
+          "ASSET-PAYMENT-INFO"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Authorized personnel (developers, service technicians, or cloud service employees) abusing legitimate access to steal data or insert malicious code",
+        "references": [
+          "NIST Insider Threat Mitigation",
+          "Trusted Insider Program Guidelines"
+        ]
+      },
+      {
+        "id": "TS-CLOUD-COMPROMISE",
+        "title": "Cloud service infrastructure compromise",
+        "targetedAssetIds": [
+          "ASSET-USER-DATA",
+          "ASSET-LOCATION-DATA",
+          "ASSET-PAYMENT-INFO"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity",
+          "availability"
+        ],
+        "cause": "Compromise of cloud infrastructure hosting user data, navigation services, or update servers enabling large-scale data theft or service disruption",
+        "references": [
+          "NIST Cloud Security Guidelines",
+          "CSA Cloud Controls Matrix"
+        ]
+      },
+      {
+        "id": "TS-EMERGENCY-EXPLOIT",
+        "title": "Emergency services system exploitation",
+        "targetedAssetIds": [
+          "ASSET-LOCATION-DATA",
+          "ASSET-VEHICLE-CONTROL"
+        ],
+        "compromisedProperties": [
+          "integrity",
+          "availability"
+        ],
+        "cause": "Exploitation of emergency call (eCall) system to track vehicles, disrupt emergency response, or gain unauthorized access to vehicle systems",
+        "references": [
+          "EU eCall Regulation EC 2015/758",
+          "Emergency Communications Security Standards"
+        ]
+      },
+      {
+        "id": "TS-UPDATE-HIJACKING",
+        "title": "Software update hijacking",
+        "targetedAssetIds": [
+          "ASSET-CRYPTO-KEYS",
+          "ASSET-VEHICLE-CONTROL",
+          "ASSET-USER-DATA"
+        ],
+        "compromisedProperties": [
+          "integrity",
+          "availability"
+        ],
+        "cause": "Interception or substitution of legitimate software updates with malicious versions to gain persistent system access or install backdoors",
+        "references": [
+          "NIST Software Supply Chain Security",
+          "Secure Software Update Best Practices"
+        ]
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-MALICIOUS-APP-INSTALL",
+        "title": "Malicious app installation → Data exfiltration",
+        "threatScenarioId": "TS-MALICIOUS-APP",
+        "steps": [
+          "Develop malicious app mimicking legitimate functionality",
+          "Upload to official or sideloaded app store",
+          "Social engineer user to install app",
+          "Request excessive permissions during installation",
+          "Access sensitive user data and location information",
+          "Exfiltrate data to attacker-controlled servers"
+        ],
+        "references": [
+          "Android Malware Analysis Reports",
+          "Mobile App Security Testing Guide"
+        ]
+      },
+      {
+        "id": "AP-WIFI-MITM",
+        "title": "WiFi man-in-the-middle → Payment interception",
+        "threatScenarioId": "TS-NETWORK-INTERCEPTION", 
+        "steps": [
+          "Set up malicious WiFi hotspot with legitimate-sounding name",
+          "Wait for vehicle to connect to hotspot",
+          "Intercept all network traffic including HTTPS",
+          "Use SSL/TLS downgrade attacks or certificate spoofing",
+          "Capture payment credentials during in-vehicle purchases",
+          "Clone payment information for fraudulent use"
+        ],
+        "references": [
+          "WiFi Security Assessment Methodologies",
+          "SSL/TLS Attack Vectors"
+        ]
+      },
+      {
+        "id": "AP-PHYSICAL-USB",
+        "title": "Physical USB access → Key extraction",
+        "threatScenarioId": "TS-PHYSICAL-ACCESS",
+        "steps": [
+          "Gain physical access to vehicle interior",
+          "Connect malicious USB device to infotainment system",
+          "Exploit USB autorun or driver vulnerabilities",
+          "Escalate privileges to root/system level",
+          "Extract cryptographic keys from hardware security module",
+          "Use keys to decrypt user data or forge authentication"
+        ],
+        "references": [
+          "USB Attack Methodologies",
+          "Hardware Security Module Attack Vectors"
+        ]
+      },
+      {
+        "id": "AP-SUPPLY-CHAIN-FIRMWARE",
+        "title": "Supply chain firmware compromise → Backdoor installation",
+        "threatScenarioId": "TS-SUPPLY-CHAIN",
+        "steps": [
+          "Compromise software development environment",
+          "Insert malicious code into firmware update",
+          "Sign malicious firmware with legitimate certificates",
+          "Distribute through official update channels",
+          "Activate backdoor after installation",
+          "Maintain persistent access for data theft"
+        ],
+        "references": [
+          "Software Supply Chain Attack Case Studies",
+          "Code Signing Security Best Practices"
+        ]
+      },
+      {
+        "id": "AP-INSIDER-SERVICE",
+        "title": "Service technician data theft",
+        "threatScenarioId": "TS-INSIDER-THREAT",
+        "steps": [
+          "Malicious service technician gains authorized access",
+          "Connect diagnostic equipment during routine service",
+          "Use legitimate credentials to access customer data",
+          "Extract personal information and usage patterns",
+          "Copy cryptographic keys and authentication tokens",
+          "Sell data on black market or use for identity theft"
+        ],
+        "references": [
+          "Insider Threat Case Studies",
+          "Service Access Control Best Practices"
+        ]
+      },
+      {
+        "id": "AP-CLOUD-DATABASE",
+        "title": "Cloud database breach → Mass data theft",
+        "threatScenarioId": "TS-CLOUD-COMPROMISE",
+        "steps": [
+          "Identify vulnerable cloud service hosting user data",
+          "Exploit unpatched vulnerabilities or misconfigurations",
+          "Gain unauthorized access to customer database",
+          "Extract personal data from multiple vehicle owners",
+          "Access location history and behavioral patterns",
+          "Monetize data through sale or targeted attacks"
+        ],
+        "references": [
+          "Cloud Security Breach Analysis",
+          "Database Security Best Practices"
+        ]
+      },
+      {
+        "id": "AP-ECALL-SPOOF",
+        "title": "Emergency call system spoofing → Vehicle tracking",
+        "threatScenarioId": "TS-EMERGENCY-EXPLOIT",
+        "steps": [
+          "Intercept or spoof emergency service communications",
+          "Trigger false emergency calls to track vehicle locations",
+          "Exploit emergency system privileges for system access",
+          "Monitor real-time location and occupancy data",
+          "Disrupt legitimate emergency response capabilities",
+          "Use tracking data for stalking or criminal activities"
+        ],
+        "references": [
+          "eCall Security Analysis",
+          "Emergency Services Communication Standards"
+        ]
+      },
+      {
+        "id": "AP-UPDATE-REDIRECT",
+        "title": "Update server redirection → Malicious firmware",
+        "threatScenarioId": "TS-UPDATE-HIJACKING",
+        "steps": [
+          "Compromise DNS or network infrastructure",
+          "Redirect update requests to attacker-controlled server",
+          "Serve malicious firmware disguised as legitimate update",
+          "Bypass signature verification through vulnerability",
+          "Install backdoor with system-level privileges",
+          "Maintain persistent access across system reboots"
+        ],
+        "references": [
+          "Software Update Attack Vectors",
+          "PKI Security Best Practices"
+        ]
+      },
+      {
+        "id": "AP-BLUETOOTH-EXPLOIT",
+        "title": "Bluetooth vulnerability exploitation",
+        "threatScenarioId": "TS-NETWORK-INTERCEPTION",
+        "steps": [
+          "Discover vehicle Bluetooth services through scanning",
+          "Exploit known Bluetooth stack vulnerabilities",
+          "Gain unauthorized access to infotainment system",
+          "Escalate privileges through local exploits",
+          "Access stored user data and system functions",
+          "Install persistent malware for ongoing access"
+        ],
+        "references": [
+          "Bluetooth Security Vulnerability Database",
+          "Automotive Bluetooth Attack Methodologies"
+        ]
+      },
+      {
+        "id": "AP-VOICE-INJECTION",
+        "title": "Voice command injection → Vehicle control",
+        "threatScenarioId": "TS-MALICIOUS-APP",
+        "steps": [
+          "Analyze voice recognition system vulnerabilities",
+          "Craft malicious audio commands disguised as media",
+          "Trigger voice commands through media playback",
+          "Bypass voice authentication through spoofing",
+          "Execute unauthorized vehicle control commands",
+          "Cause safety hazards through unexpected behaviors"
+        ],
+        "references": [
+          "Voice Interface Security Research",
+          "Audio Injection Attack Methodologies"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 Attack Feasibility Rating",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1", 
+        "name": "ISO/SAE 21434 Impact Assessment",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy",
+          "legal"
+        ]
+      },
+      {
+        "id": "nist-csf-risk-v1",
+        "name": "NIST Cybersecurity Framework Risk Assessment",
+        "version": "1.1",
+        "factors": [
+          "likelihood",
+          "impact",
+          "risk_tolerance"
+        ]
+      },
+      {
+        "id": "cvss-v3",
+        "name": "Common Vulnerability Scoring System",
+        "version": "3.1",
+        "factors": [
+          "attack_vector",
+          "attack_complexity", 
+          "privileges_required",
+          "user_interaction",
+          "scope",
+          "confidentiality",
+          "integrity", 
+          "availability"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-MALICIOUS-APP",
+        "attackPathId": "AP-MALICIOUS-APP-INSTALL",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "medium",
+          "knowledge": "low",
+          "window": "unlimited",
+          "equipment": "standard"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "App development requires moderate technical skills but deployment through app stores is straightforward with unlimited time window for social engineering"
+      },
+      {
+        "id": "AFR-WIFI-MITM",
+        "attackPathId": "AP-WIFI-MITM", 
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "medium",
+          "knowledge": "low",
+          "window": "limited",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Low-Medium",
+        "rationale": "WiFi attacks are well-documented with available tools, but require physical proximity and limited attack window"
+      },
+      {
+        "id": "AFR-PHYSICAL-USB",
+        "attackPathId": "AP-PHYSICAL-USB",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "high",
+          "knowledge": "medium",
+          "window": "limited",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Physical access required with specialized hardware knowledge, but attack execution is relatively quick once access is obtained"
+      },
+      {
+        "id": "AFR-SUPPLY-CHAIN",
+        "attackPathId": "AP-SUPPLY-CHAIN-FIRMWARE",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high", 
+          "expertise": "very_high",
+          "knowledge": "high",
+          "window": "unlimited",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Requires sophisticated adversary with extensive resources, deep technical knowledge, and long-term planning but potentially affects many vehicles"
+      },
+      {
+        "id": "AFR-INSIDER-SERVICE", 
+        "attackPathId": "AP-INSIDER-SERVICE",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "low",
+          "knowledge": "medium",
+          "window": "limited",
+          "equipment": "standard"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Insider threats are highly feasible due to legitimate access and authorization, requiring minimal additional expertise"
+      },
+      {
+        "id": "AFR-CLOUD-DATABASE",
+        "attackPathId": "AP-CLOUD-DATABASE", 
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "knowledge": "medium",
+          "window": "unlimited",
+          "equipment": "standard"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Cloud attacks require significant technical expertise but can be conducted remotely with standard tools over extended periods"
+      },
+      {
+        "id": "AFR-ECALL-SPOOF",
+        "attackPathId": "AP-ECALL-SPOOF",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high",
+          "expertise": "very_high", 
+          "knowledge": "high",
+          "window": "limited",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Emergency system attacks require deep protocol knowledge and specialized equipment, but potential for significant impact"
+      },
+      {
+        "id": "AFR-UPDATE-REDIRECT",
+        "attackPathId": "AP-UPDATE-REDIRECT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high",
+          "expertise": "very_high",
+          "knowledge": "high", 
+          "window": "limited",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Update hijacking requires sophisticated infrastructure compromise and cryptographic bypass capabilities"
+      },
+      {
+        "id": "AFR-BLUETOOTH-EXPLOIT",
+        "attackPathId": "AP-BLUETOOTH-EXPLOIT",
+        "methodId": "iso21434-afr-v1", 
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "medium",
+          "knowledge": "low",
+          "window": "limited",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Low-Medium",
+        "rationale": "Bluetooth exploits are well-researched with available tools, but require physical proximity and specific vulnerability conditions"
+      },
+      {
+        "id": "AFR-VOICE-INJECTION",
+        "attackPathId": "AP-VOICE-INJECTION",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "knowledge": "medium",
+          "window": "unlimited",
+          "equipment": "standard"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Voice injection attacks require specialized knowledge of audio processing and machine learning systems but can be prepared offline"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-PRIVACY-VIOLATION",
+        "damageScenarioId": "DS-PRIVACY-VIOLATION",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "very_high",
+          "legal": "high",
+          "financial": "medium"
+        },
+        "score": "4",
+        "rationale": "Severe privacy violations can result in significant legal penalties under GDPR/CCPA, long-term reputational damage, and loss of customer trust"
+      },
+      {
+        "id": "IR-SAFETY-HAZARD",
+        "damageScenarioId": "DS-SAFETY-HAZARD", 
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "very_high",
+          "legal": "very_high", 
+          "financial": "very_high"
+        },
+        "score": "5", 
+        "rationale": "Safety hazards pose extreme risk to human life, massive legal liability, and catastrophic financial losses including recalls and litigation"
+      },
+      {
+        "id": "IR-FINANCIAL-FRAUD",
+        "damageScenarioId": "DS-FINANCIAL-FRAUD",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "financial": "high",
+          "legal": "medium",
+          "operational": "medium"
+        },
+        "score": "3",
+        "rationale": "Financial fraud directly impacts customers and company reputation, with moderate legal and operational consequences"
+      },
+      {
+        "id": "IR-IDENTITY-THEFT", 
+        "damageScenarioId": "DS-IDENTITY-THEFT",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "very_high",
+          "legal": "high",
+          "financial": "high"
+        },
+        "score": "4",
+        "rationale": "Identity theft has severe long-term consequences for victims and significant legal and financial liability for the organization"
+      },
+      {
+        "id": "IR-VEHICLE-IMMOBILIZATION",
+        "damageScenarioId": "DS-VEHICLE-IMMOBILIZATION", 
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "high",
+          "operational": "very_high",
+          "financial": "high"
+        },
+        "score": "4",
+        "rationale": "Vehicle immobilization can create safety hazards and has severe operational impact with significant repair and customer service costs"
+      },
+      {
+        "id": "IR-STALKING-HARASSMENT",
+        "damageScenarioId": "DS-STALKING-HARASSMENT",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "very_high",
+          "safety": "high",
+          "legal": "high"
+        },
+        "score": "4",
+        "rationale": "Location-enabled stalking poses serious personal safety risks with significant legal liability and privacy violations"
+      },
+      {
+        "id": "IR-COPYRIGHT-VIOLATION",
+        "damageScenarioId": "DS-COPYRIGHT-VIOLATION",
+        "methodId": "iso21434-impact-v1", 
+        "categories": {
+          "legal": "medium",
+          "financial": "low",
+          "operational": "low"
+        },
+        "score": "2",
+        "rationale": "Copyright violations have moderate legal consequences but limited operational and financial impact compared to other damage scenarios"
+      },
+      {
+        "id": "IR-SECURITY-BREACH",
+        "damageScenarioId": "DS-SECURITY-BREACH",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "operational": "very_high",
+          "financial": "very_high", 
+          "legal": "high",
+          "privacy": "very_high"
+        },
+        "score": "5",
+        "rationale": "Comprehensive security breaches have maximum impact across all categories requiring extensive incident response and system rebuilding"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-MALICIOUS-APP-PRIVACY",
+        "threatScenarioId": "TS-MALICIOUS-APP",
+        "afrRef": "AFR-MALICIOUS-APP",
+        "impactRef": "IR-PRIVACY-VIOLATION",
+        "methodId": "nist-csf-risk-v1",
+        "score": "H",
+        "band": "High", 
+        "rationale": "Medium feasibility combined with very high privacy impact results in high overall risk requiring immediate attention"
+      },
+      {
+        "id": "RV-NETWORK-INTERCEPTION-PAYMENT",
+        "threatScenarioId": "TS-NETWORK-INTERCEPTION",
+        "afrRef": "AFR-WIFI-MITM",
+        "impactRef": "IR-FINANCIAL-FRAUD",
+        "methodId": "nist-csf-risk-v1", 
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Low-medium feasibility with high financial impact results in medium risk requiring mitigation controls"
+      },
+      {
+        "id": "RV-PHYSICAL-ACCESS-KEYS",
+        "threatScenarioId": "TS-PHYSICAL-ACCESS", 
+        "afrRef": "AFR-PHYSICAL-USB",
+        "impactRef": "IR-SECURITY-BREACH",
+        "methodId": "nist-csf-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "Medium feasibility with maximum security breach impact results in very high risk requiring comprehensive controls"
+      },
+      {
+        "id": "RV-SUPPLY-CHAIN-COMPROMISE",
+        "threatScenarioId": "TS-SUPPLY-CHAIN",
+        "afrRef": "AFR-SUPPLY-CHAIN",
+        "impactRef": "IR-SECURITY-BREACH",
+        "methodId": "nist-csf-risk-v1",
+        "score": "VH", 
+        "band": "Very High",
+        "rationale": "High feasibility for sophisticated attackers with maximum impact results in very high risk requiring supply chain security program"
+      },
+      {
+        "id": "RV-INSIDER-DATA-THEFT",
+        "threatScenarioId": "TS-INSIDER-THREAT",
+        "afrRef": "AFR-INSIDER-SERVICE",
+        "impactRef": "IR-IDENTITY-THEFT",
+        "methodId": "nist-csf-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "High feasibility insider threat with severe identity theft impact requires comprehensive insider threat program"
+      },
+      {
+        "id": "RV-CLOUD-DATA-BREACH",
+        "threatScenarioId": "TS-CLOUD-COMPROMISE",
+        "afrRef": "AFR-CLOUD-DATABASE", 
+        "impactRef": "IR-PRIVACY-VIOLATION",
+        "methodId": "nist-csf-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility cloud attack with very high privacy impact requires robust cloud security controls"
+      },
+      {
+        "id": "RV-EMERGENCY-EXPLOIT-SAFETY",
+        "threatScenarioId": "TS-EMERGENCY-EXPLOIT",
+        "afrRef": "AFR-ECALL-SPOOF",
+        "impactRef": "IR-SAFETY-HAZARD",
+        "methodId": "nist-csf-risk-v1",
+        "score": "VH",
+        "band": "Very High", 
+        "rationale": "High feasibility emergency system exploit with maximum safety impact requires specialized emergency system security"
+      },
+      {
+        "id": "RV-UPDATE-HIJACKING-SECURITY",
+        "threatScenarioId": "TS-UPDATE-HIJACKING",
+        "afrRef": "AFR-UPDATE-REDIRECT", 
+        "impactRef": "IR-SECURITY-BREACH",
+        "methodId": "nist-csf-risk-v1",
+        "score": "VH",
+        "band": "Very High",
+        "rationale": "High feasibility update attacks with maximum security impact requires secure software delivery infrastructure"
+      },
+      {
+        "id": "RV-BLUETOOTH-VEHICLE-CONTROL",
+        "threatScenarioId": "TS-NETWORK-INTERCEPTION",
+        "afrRef": "AFR-BLUETOOTH-EXPLOIT", 
+        "impactRef": "IR-VEHICLE-IMMOBILIZATION",
+        "methodId": "nist-csf-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Low-medium feasibility with high operational impact results in medium risk requiring Bluetooth security hardening"
+      },
+      {
+        "id": "RV-VOICE-INJECTION-SAFETY",
+        "threatScenarioId": "TS-MALICIOUS-APP",
+        "afrRef": "AFR-VOICE-INJECTION", 
+        "impactRef": "IR-SAFETY-HAZARD",
+        "methodId": "nist-csf-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility voice attacks with maximum safety impact requires voice interface security controls"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-APP-SANDBOXING",
+        "title": "Application Sandboxing and Permission Model",
+        "catalog": "NIST-800-53",
+        "controlId": "SC-39",
+        "implementationStatus": "implemented",
+        "references": [
+          "Android Security Framework",
+          "SELinux Mandatory Access Control"
+        ]
+      },
+      {
+        "id": "CTRL-NETWORK-ENCRYPTION",
+        "title": "End-to-End Network Encryption",
+        "catalog": "ISO-27001",
+        "controlId": "A.13.1.1", 
+        "implementationStatus": "implemented",
+        "references": [
+          "TLS 1.3 Implementation",
+          "Certificate Pinning"
+        ]
+      },
+      {
+        "id": "CTRL-PHYSICAL-TAMPER",
+        "title": "Physical Tamper Detection and Response",
+        "catalog": "NIST-800-53",
+        "controlId": "PE-3",
+        "implementationStatus": "implemented", 
+        "references": [
+          "Hardware Security Module",
+          "Secure Element Integration"
+        ]
+      },
+      {
+        "id": "CTRL-SUPPLY-CHAIN-INTEGRITY",
+        "title": "Supply Chain Integrity Verification",
+        "catalog": "NIST-800-161",
+        "controlId": "SR-3",
+        "implementationStatus": "planned",
+        "references": [
+          "Code Signing Infrastructure",
+          "Supplier Security Assessment"
+        ]
+      },
+      {
+        "id": "CTRL-INSIDER-MONITORING",
+        "title": "Insider Threat Detection and Prevention",
+        "catalog": "NIST-800-53", 
+        "controlId": "PS-4",
+        "implementationStatus": "partially_implemented",
+        "references": [
+          "User Activity Monitoring",
+          "Privileged Access Management"
+        ]
+      },
+      {
+        "id": "CTRL-CLOUD-SECURITY",
+        "title": "Cloud Infrastructure Security Controls",
+        "catalog": "CSA-CCM",
+        "controlId": "IVS-02",
+        "implementationStatus": "implemented",
+        "references": [
+          "Multi-factor Authentication",
+          "Data Encryption at Rest and in Transit"
+        ]
+      },
+      {
+        "id": "CTRL-EMERGENCY-AUTHENTICATION",
+        "title": "Emergency Services Authentication and Authorization", 
+        "catalog": "Custom-Emergency",
+        "controlId": "ES-AUTH-01",
+        "implementationStatus": "implemented",
+        "references": [
+          "eCall Security Standards",
+          "Public Safety Network Authentication"
+        ]
+      },
+      {
+        "id": "CTRL-UPDATE-VERIFICATION",
+        "title": "Secure Software Update Verification",
+        "catalog": "NIST-800-53",
+        "controlId": "SI-7",
+        "implementationStatus": "implemented",
+        "references": [
+          "Digital Signature Verification", 
+          "Update Channel Encryption"
+        ]
+      },
+      {
+        "id": "CTRL-BLUETOOTH-SECURITY",
+        "title": "Bluetooth Security Hardening",
+        "catalog": "NIST-800-121",
+        "controlId": "BT-SEC-01",
+        "implementationStatus": "implemented",
+        "references": [
+          "Bluetooth LE Security",
+          "Device Authentication and Bonding"
+        ]
+      },
+      {
+        "id": "CTRL-VOICE-AUTHENTICATION",
+        "title": "Voice Command Authentication and Validation",
+        "catalog": "Custom-Voice",
+        "controlId": "VC-AUTH-01",
+        "implementationStatus": "planned", 
+        "references": [
+          "Speaker Verification",
+          "Command Context Validation"
+        ]
+      },
+      {
+        "id": "CTRL-DATA-MINIMIZATION",
+        "title": "Privacy by Design and Data Minimization",
+        "catalog": "GDPR",
+        "controlId": "ART-25",
+        "implementationStatus": "implemented",
+        "references": [
+          "Privacy Impact Assessment",
+          "Data Retention Policies"
+        ]
+      },
+      {
+        "id": "CTRL-INCIDENT-RESPONSE",
+        "title": "Cybersecurity Incident Response Program",
+        "catalog": "NIST-800-61",
+        "controlId": "IR-1",
+        "implementationStatus": "implemented",
+        "references": [
+          "Security Operations Center",
+          "Incident Response Playbooks"
+        ]
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-MALICIOUS-APP-TREAT",
+        "riskValueId": "RV-MALICIOUS-APP-PRIVACY",
+        "decision": "treat",
+        "controls": [
+          "CTRL-APP-SANDBOXING",
+          "CTRL-DATA-MINIMIZATION"
+        ],
+        "justification": "High privacy risk requires strong application isolation and privacy controls to protect user data from malicious applications"
+      },
+      {
+        "id": "RTD-NETWORK-INTERCEPTION-TREAT",
+        "riskValueId": "RV-NETWORK-INTERCEPTION-PAYMENT",
+        "decision": "treat", 
+        "controls": [
+          "CTRL-NETWORK-ENCRYPTION",
+          "CTRL-CLOUD-SECURITY"
+        ],
+        "justification": "Medium financial fraud risk requires comprehensive network security to protect payment information during transmission and storage"
+      },
+      {
+        "id": "RTD-PHYSICAL-ACCESS-TREAT",
+        "riskValueId": "RV-PHYSICAL-ACCESS-KEYS",
+        "decision": "treat",
+        "controls": [
+          "CTRL-PHYSICAL-TAMPER",
+          "CTRL-UPDATE-VERIFICATION"
+        ],
+        "justification": "Very high security breach risk requires physical security measures and integrity verification to protect against unauthorized access"
+      },
+      {
+        "id": "RTD-SUPPLY-CHAIN-TREAT", 
+        "riskValueId": "RV-SUPPLY-CHAIN-COMPROMISE",
+        "decision": "treat",
+        "controls": [
+          "CTRL-SUPPLY-CHAIN-INTEGRITY",
+          "CTRL-UPDATE-VERIFICATION"
+        ],
+        "justification": "Very high supply chain risk requires comprehensive verification processes and secure update mechanisms to prevent compromise"
+      },
+      {
+        "id": "RTD-INSIDER-TREAT",
+        "riskValueId": "RV-INSIDER-DATA-THEFT", 
+        "decision": "treat",
+        "controls": [
+          "CTRL-INSIDER-MONITORING",
+          "CTRL-DATA-MINIMIZATION"
+        ],
+        "justification": "Very high insider threat risk requires monitoring systems and data minimization to limit potential damage from malicious insiders"
+      },
+      {
+        "id": "RTD-CLOUD-TREAT",
+        "riskValueId": "RV-CLOUD-DATA-BREACH",
+        "decision": "treat",
+        "controls": [
+          "CTRL-CLOUD-SECURITY", 
+          "CTRL-INCIDENT-RESPONSE"
+        ],
+        "justification": "High cloud security risk requires robust cloud controls and incident response capabilities to protect user data"
+      },
+      {
+        "id": "RTD-EMERGENCY-TREAT",
+        "riskValueId": "RV-EMERGENCY-EXPLOIT-SAFETY",
+        "decision": "treat",
+        "controls": [
+          "CTRL-EMERGENCY-AUTHENTICATION"
+        ],
+        "justification": "Very high safety risk from emergency system exploits requires specialized authentication and authorization controls"
+      },
+      {
+        "id": "RTD-UPDATE-TREAT",
+        "riskValueId": "RV-UPDATE-HIJACKING-SECURITY",
+        "decision": "treat",
+        "controls": [
+          "CTRL-UPDATE-VERIFICATION",
+          "CTRL-SUPPLY-CHAIN-INTEGRITY" 
+        ],
+        "justification": "Very high update hijacking risk requires multiple layers of verification and supply chain security controls"
+      },
+      {
+        "id": "RTD-BLUETOOTH-TREAT",
+        "riskValueId": "RV-BLUETOOTH-VEHICLE-CONTROL", 
+        "decision": "treat",
+        "controls": [
+          "CTRL-BLUETOOTH-SECURITY"
+        ],
+        "justification": "Medium Bluetooth risk requires security hardening to prevent unauthorized access through wireless interfaces"
+      },
+      {
+        "id": "RTD-VOICE-TREAT",
+        "riskValueId": "RV-VOICE-INJECTION-SAFETY",
+        "decision": "treat",
+        "controls": [
+          "CTRL-VOICE-AUTHENTICATION"
+        ],
+        "justification": "High voice injection safety risk requires authentication and validation controls to prevent unauthorized voice commands"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-ITEM-CONTAINS-USER-DATA",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-INFOTAINMENT-ECU",
+        "targetRef": "ASSET-USER-DATA",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU directly stores and processes personal user data including contacts, messages, and preferences"
+      },
+      {
+        "id": "REL-ITEM-CONTAINS-VEHICLE-CONTROL",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-INFOTAINMENT-ECU",
+        "targetRef": "ASSET-VEHICLE-CONTROL", 
+        "confidence": 1.0,
+        "justification": "Infotainment ECU has interfaces to vehicle control systems through CAN bus connections"
+      },
+      {
+        "id": "REL-ITEM-CONTAINS-PAYMENT",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-INFOTAINMENT-ECU",
+        "targetRef": "ASSET-PAYMENT-INFO",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU processes payment information for in-vehicle purchases and services"
+      },
+      {
+        "id": "REL-ITEM-CONTAINS-LOCATION",
+        "relationshipType": "contains", 
+        "sourceRef": "ITEM-INFOTAINMENT-ECU",
+        "targetRef": "ASSET-LOCATION-DATA",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU contains GPS/GNSS receivers and stores location history for navigation services"
+      },
+      {
+        "id": "REL-ITEM-CONTAINS-CRYPTO",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-INFOTAINMENT-ECU", 
+        "targetRef": "ASSET-CRYPTO-KEYS",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU contains hardware security module storing cryptographic keys and certificates"
+      },
+      {
+        "id": "REL-ITEM-CONTAINS-MEDIA",
+        "relationshipType": "contains",
+        "sourceRef": "ITEM-INFOTAINMENT-ECU",
+        "targetRef": "ASSET-MEDIA-CONTENT",
+        "confidence": 1.0,
+        "justification": "Infotainment ECU stores and processes personal media content including music, videos, and photos"
+      },
+      {
+        "id": "REL-MALICIOUS-APP-THREATENS-USER-DATA",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-MALICIOUS-APP",
+        "targetRef": "ASSET-USER-DATA",
+        "confidence": 0.95,
+        "justification": "Malicious applications directly threaten user data confidentiality through unauthorized access and exfiltration"
+      },
+      {
+        "id": "REL-MALICIOUS-APP-THREATENS-LOCATION",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-MALICIOUS-APP", 
+        "targetRef": "ASSET-LOCATION-DATA",
+        "confidence": 0.9,
+        "justification": "Malicious apps can access location services and historical location data through Android permissions"
+      },
+      {
+        "id": "REL-NETWORK-INTERCEPTION-THREATENS-PAYMENT",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-NETWORK-INTERCEPTION",
+        "targetRef": "ASSET-PAYMENT-INFO",
+        "confidence": 0.85,
+        "justification": "Network interception attacks directly threaten payment information during online transactions"
+      },
+      {
+        "id": "REL-PHYSICAL-ACCESS-THREATENS-CRYPTO",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-PHYSICAL-ACCESS",
+        "targetRef": "ASSET-CRYPTO-KEYS", 
+        "confidence": 0.8,
+        "justification": "Physical access enables hardware attacks against cryptographic key storage in HSM"
+      },
+      {
+        "id": "REL-SUPPLY-CHAIN-THREATENS-ALL",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-SUPPLY-CHAIN",
+        "targetRef": "ASSET-VEHICLE-CONTROL",
+        "confidence": 0.9,
+        "justification": "Supply chain compromise can affect all system assets through backdoors in firmware or hardware components"
+      },
+      {
+        "id": "REL-INSIDER-THREATENS-USER-DATA",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-INSIDER-THREAT",
+        "targetRef": "ASSET-USER-DATA",
+        "confidence": 0.95,
+        "justification": "Insider threats have direct authorized access to user data through legitimate service interfaces"
+      },
+      {
+        "id": "REL-CLOUD-THREATENS-USER-DATA",
+        "relationshipType": "threatens", 
+        "sourceRef": "TS-CLOUD-COMPROMISE",
+        "targetRef": "ASSET-USER-DATA",
+        "confidence": 0.9,
+        "justification": "Cloud service compromise directly threatens user data stored in backend systems"
+      },
+      {
+        "id": "REL-EMERGENCY-THREATENS-LOCATION",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-EMERGENCY-EXPLOIT",
+        "targetRef": "ASSET-LOCATION-DATA",
+        "confidence": 0.85,
+        "justification": "Emergency system exploitation enables unauthorized access to real-time location data"
+      },
+      {
+        "id": "REL-UPDATE-THREATENS-CRYPTO",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-UPDATE-HIJACKING",
+        "targetRef": "ASSET-CRYPTO-KEYS",
+        "confidence": 0.8,
+        "justification": "Update hijacking can compromise cryptographic systems through malicious firmware installation"
+      },
+      {
+        "id": "REL-MALICIOUS-APP-CAUSES-PRIVACY",
+        "relationshipType": "causes",
+        "sourceRef": "TS-MALICIOUS-APP", 
+        "targetRef": "DS-PRIVACY-VIOLATION",
+        "confidence": 0.9,
+        "justification": "Malicious application data access directly causes privacy violations through unauthorized data collection"
+      },
+      {
+        "id": "REL-NETWORK-INTERCEPTION-CAUSES-FRAUD",
+        "relationshipType": "causes",
+        "sourceRef": "TS-NETWORK-INTERCEPTION",
+        "targetRef": "DS-FINANCIAL-FRAUD",
+        "confidence": 0.85,
+        "justification": "Network interception of payment data directly enables financial fraud through credential theft"
+      },
+      {
+        "id": "REL-PHYSICAL-ACCESS-CAUSES-SECURITY-BREACH",
+        "relationshipType": "causes",
+        "sourceRef": "TS-PHYSICAL-ACCESS",
+        "targetRef": "DS-SECURITY-BREACH",
+        "confidence": 0.8,
+        "justification": "Physical access to cryptographic keys enables comprehensive security breach of all system functions"
+      },
+      {
+        "id": "REL-SUPPLY-CHAIN-CAUSES-SECURITY-BREACH",
+        "relationshipType": "causes", 
+        "sourceRef": "TS-SUPPLY-CHAIN",
+        "targetRef": "DS-SECURITY-BREACH",
+        "confidence": 0.9,
+        "justification": "Supply chain compromise introduces systemic vulnerabilities leading to comprehensive security breaches"
+      },
+      {
+        "id": "REL-INSIDER-CAUSES-IDENTITY-THEFT",
+        "relationshipType": "causes",
+        "sourceRef": "TS-INSIDER-THREAT",
+        "targetRef": "DS-IDENTITY-THEFT",
+        "confidence": 0.85,
+        "justification": "Insider access to comprehensive user data enables sophisticated identity theft attacks"
+      },
+      {
+        "id": "REL-CLOUD-CAUSES-PRIVACY",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CLOUD-COMPROMISE",
+        "targetRef": "DS-PRIVACY-VIOLATION",
+        "confidence": 0.9,
+        "justification": "Cloud data breach directly causes large-scale privacy violations affecting multiple users"
+      },
+      {
+        "id": "REL-EMERGENCY-CAUSES-STALKING",
+        "relationshipType": "causes", 
+        "sourceRef": "TS-EMERGENCY-EXPLOIT",
+        "targetRef": "DS-STALKING-HARASSMENT",
+        "confidence": 0.8,
+        "justification": "Emergency system exploitation enables location tracking for stalking and harassment activities"
+      },
+      {
+        "id": "REL-UPDATE-CAUSES-VEHICLE-IMMOBILIZATION",
+        "relationshipType": "causes",
+        "sourceRef": "TS-UPDATE-HIJACKING",
+        "targetRef": "DS-VEHICLE-IMMOBILIZATION",
+        "confidence": 0.7,
+        "justification": "Malicious updates can disable vehicle systems leading to immobilization or operational failures"
+      },
+      {
+        "id": "REL-APP-PATH-IMPLEMENTS-MALICIOUS-APP",
+        "relationshipType": "implements",
+        "sourceRef": "AP-MALICIOUS-APP-INSTALL",
+        "targetRef": "TS-MALICIOUS-APP", 
+        "confidence": 1.0,
+        "justification": "Attack path directly implements the malicious application threat scenario"
+      },
+      {
+        "id": "REL-WIFI-PATH-IMPLEMENTS-NETWORK-INTERCEPT",
+        "relationshipType": "implements",
+        "sourceRef": "AP-WIFI-MITM",
+        "targetRef": "TS-NETWORK-INTERCEPTION",
+        "confidence": 1.0,
+        "justification": "WiFi man-in-the-middle attack path implements the network interception threat scenario"
+      },
+      {
+        "id": "REL-USB-PATH-IMPLEMENTS-PHYSICAL-ACCESS",
+        "relationshipType": "implements",
+        "sourceRef": "AP-PHYSICAL-USB",
+        "targetRef": "TS-PHYSICAL-ACCESS",
+        "confidence": 1.0,
+        "justification": "USB-based attack path implements the physical access threat scenario"
+      },
+      {
+        "id": "REL-FIRMWARE-PATH-IMPLEMENTS-SUPPLY-CHAIN",
+        "relationshipType": "implements",
+        "sourceRef": "AP-SUPPLY-CHAIN-FIRMWARE",
+        "targetRef": "TS-SUPPLY-CHAIN",
+        "confidence": 1.0,
+        "justification": "Firmware compromise attack path implements the supply chain threat scenario"
+      },
+      {
+        "id": "REL-SERVICE-PATH-IMPLEMENTS-INSIDER",
+        "relationshipType": "implements", 
+        "sourceRef": "AP-INSIDER-SERVICE",
+        "targetRef": "TS-INSIDER-THREAT",
+        "confidence": 1.0,
+        "justification": "Service technician attack path implements the insider threat scenario"
+      },
+      {
+        "id": "REL-DATABASE-PATH-IMPLEMENTS-CLOUD",
+        "relationshipType": "implements",
+        "sourceRef": "AP-CLOUD-DATABASE",
+        "targetRef": "TS-CLOUD-COMPROMISE",
+        "confidence": 1.0,
+        "justification": "Cloud database attack path implements the cloud infrastructure compromise threat scenario"
+      },
+      {
+        "id": "REL-ECALL-PATH-IMPLEMENTS-EMERGENCY",
+        "relationshipType": "implements",
+        "sourceRef": "AP-ECALL-SPOOF",
+        "targetRef": "TS-EMERGENCY-EXPLOIT",
+        "confidence": 1.0,
+        "justification": "Emergency call spoofing attack path implements the emergency services exploitation threat scenario"
+      },
+      {
+        "id": "REL-UPDATE-PATH-IMPLEMENTS-HIJACKING",
+        "relationshipType": "implements",
+        "sourceRef": "AP-UPDATE-REDIRECT",
+        "targetRef": "TS-UPDATE-HIJACKING", 
+        "confidence": 1.0,
+        "justification": "Update redirection attack path implements the software update hijacking threat scenario"
+      },
+      {
+        "id": "REL-BLUETOOTH-PATH-IMPLEMENTS-NETWORK-INTERCEPT",
+        "relationshipType": "implements",
+        "sourceRef": "AP-BLUETOOTH-EXPLOIT",
+        "targetRef": "TS-NETWORK-INTERCEPTION",
+        "confidence": 1.0,
+        "justification": "Bluetooth exploitation attack path implements the network interception threat scenario"
+      },
+      {
+        "id": "REL-VOICE-PATH-IMPLEMENTS-MALICIOUS-APP",
+        "relationshipType": "implements",
+        "sourceRef": "AP-VOICE-INJECTION",
+        "targetRef": "TS-MALICIOUS-APP",
+        "confidence": 1.0,
+        "justification": "Voice injection attack path implements the malicious application threat scenario through audio-based exploitation"
+      },
+      {
+        "id": "REL-AFR-ASSESSES-ATTACK-PATH",
+        "relationshipType": "assesses",
+        "sourceRef": "AFR-MALICIOUS-APP",
+        "targetRef": "AP-MALICIOUS-APP-INSTALL", 
+        "confidence": 1.0,
+        "justification": "Attack feasibility rating directly assesses the feasibility of the malicious app installation attack path"
+      },
+      {
+        "id": "REL-IMPACT-ASSESSES-DAMAGE",
+        "relationshipType": "assesses",
+        "sourceRef": "IR-PRIVACY-VIOLATION",
+        "targetRef": "DS-PRIVACY-VIOLATION",
+        "confidence": 1.0,
+        "justification": "Impact rating directly assesses the severity and consequences of the privacy violation damage scenario"
+      },
+      {
+        "id": "REL-SANDBOXING-MITIGATES-MALICIOUS-APP",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-APP-SANDBOXING",
+        "targetRef": "TS-MALICIOUS-APP",
+        "confidence": 0.8,
+        "justification": "Application sandboxing significantly reduces the impact of malicious applications by restricting access to system resources"
+      },
+      {
+        "id": "REL-ENCRYPTION-MITIGATES-NETWORK-INTERCEPT",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-NETWORK-ENCRYPTION",
+        "targetRef": "TS-NETWORK-INTERCEPTION",
+        "confidence": 0.9,
+        "justification": "End-to-end encryption prevents unauthorized access to data during network transmission"
+      },
+      {
+        "id": "REL-TAMPER-MITIGATES-PHYSICAL-ACCESS",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-PHYSICAL-TAMPER",
+        "targetRef": "TS-PHYSICAL-ACCESS",
+        "confidence": 0.85,
+        "justification": "Physical tamper detection and response mechanisms prevent unauthorized hardware access and manipulation"
+      },
+      {
+        "id": "REL-SUPPLY-CHAIN-CTRL-MITIGATES-SUPPLY-THREAT",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-SUPPLY-CHAIN-INTEGRITY",
+        "targetRef": "TS-SUPPLY-CHAIN", 
+        "confidence": 0.8,
+        "justification": "Supply chain integrity verification reduces the risk of compromised components and software"
+      },
+      {
+        "id": "REL-INSIDER-MONITORING-MITIGATES-INSIDER",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-INSIDER-MONITORING",
+        "targetRef": "TS-INSIDER-THREAT",
+        "confidence": 0.7,
+        "justification": "Insider threat detection and monitoring reduces but cannot eliminate risks from authorized malicious actors"
+      },
+      {
+        "id": "REL-CLOUD-SECURITY-MITIGATES-CLOUD-THREAT",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CLOUD-SECURITY",
+        "targetRef": "TS-CLOUD-COMPROMISE",
+        "confidence": 0.85,
+        "justification": "Comprehensive cloud security controls significantly reduce the risk of cloud infrastructure compromise"
+      },
+      {
+        "id": "REL-EMERGENCY-AUTH-MITIGATES-EMERGENCY",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-EMERGENCY-AUTHENTICATION", 
+        "targetRef": "TS-EMERGENCY-EXPLOIT",
+        "confidence": 0.9,
+        "justification": "Strong authentication and authorization for emergency services prevents unauthorized system access"
+      },
+      {
+        "id": "REL-UPDATE-VERIFICATION-MITIGATES-HIJACKING",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-UPDATE-VERIFICATION",
+        "targetRef": "TS-UPDATE-HIJACKING",
+        "confidence": 0.9,
+        "justification": "Secure update verification prevents installation of unauthorized or malicious software updates"
+      },
+      {
+        "id": "REL-BLUETOOTH-SECURITY-MITIGATES-BLUETOOTH",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-BLUETOOTH-SECURITY",
+        "targetRef": "TS-NETWORK-INTERCEPTION",
+        "confidence": 0.8,
+        "justification": "Bluetooth security hardening reduces the risk of wireless interface exploitation"
+      },
+      {
+        "id": "REL-VOICE-AUTH-MITIGATES-VOICE-INJECTION",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-VOICE-AUTHENTICATION",
+        "targetRef": "TS-MALICIOUS-APP", 
+        "confidence": 0.75,
+        "justification": "Voice authentication and validation prevents unauthorized voice command injection attacks"
+      },
+      {
+        "id": "REL-DATA-MINIMIZATION-PROTECTS-USER-DATA",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-DATA-MINIMIZATION",
+        "targetRef": "ASSET-USER-DATA",
+        "confidence": 0.8,
+        "justification": "Privacy by design and data minimization practices reduce the exposure and impact of user data breaches"
+      },
+      {
+        "id": "REL-INCIDENT-RESPONSE-PROTECTS-ALL-ASSETS",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-INCIDENT-RESPONSE",
+        "targetRef": "ASSET-VEHICLE-CONTROL",
+        "confidence": 0.7,
+        "justification": "Cybersecurity incident response program provides protection for all assets through rapid threat detection and response"
+      },
+      {
+        "id": "REL-MALICIOUS-APP-RELATED-NETWORK-INTERCEPT",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-MALICIOUS-APP",
+        "targetRef": "TS-NETWORK-INTERCEPTION",
+        "confidence": 0.6,
+        "justification": "Malicious applications often work in conjunction with network attacks to exfiltrate stolen data"
+      },
+      {
+        "id": "REL-PHYSICAL-ACCESS-RELATED-INSIDER-THREAT",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-PHYSICAL-ACCESS",
+        "targetRef": "TS-INSIDER-THREAT",
+        "confidence": 0.7,
+        "justification": "Physical access attacks are often facilitated by insider knowledge of system architecture and security measures"
+      },
+      {
+        "id": "REL-SUPPLY-CHAIN-RELATED-UPDATE-HIJACKING", 
+        "relationshipType": "related_to",
+        "sourceRef": "TS-SUPPLY-CHAIN",
+        "targetRef": "TS-UPDATE-HIJACKING",
+        "confidence": 0.8,
+        "justification": "Supply chain compromises often involve hijacking software update mechanisms to distribute malicious code"
+      },
+      {
+        "id": "REL-EMERGENCY-RELATED-LOCATION-TRACKING",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-EMERGENCY-EXPLOIT",
+        "targetRef": "TS-MALICIOUS-APP",
+        "confidence": 0.5,
+        "justification": "Emergency system exploits and malicious apps both enable unauthorized location tracking capabilities"
+      }
+    ]
+  }
+}

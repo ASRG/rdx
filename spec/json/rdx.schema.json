@@ -78,6 +78,11 @@
               "items": {
                 "type": "string"
               }
+            },
+            "countryOfOrigin": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
             }
           },
           "additionalProperties": false
@@ -485,6 +490,14 @@
               "implementationStatus": {
                 "type": "string"
               },
+              "requiredCalLevel": {
+                "type": "string",
+                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+              },
+              "achievedCalLevel": {
+                "type": "string",
+                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+              },
               "references": {
                 "type": "array",
                 "items": {
@@ -532,6 +545,164 @@
             "additionalProperties": false
           }
         },
+        "calAssuranceLevels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "level",
+              "objectives"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string",
+                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "objectives": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "assuranceActivities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "calAssessments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "controlId",
+              "targetCalLevel",
+              "assessmentResult"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "controlId": {
+                "type": "string"
+              },
+              "targetCalLevel": {
+                "type": "string",
+                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+              },
+              "assessmentResult": {
+                "type": "string",
+                "enum": ["sufficient", "insufficient", "pending"]
+              },
+              "achievedCalLevel": {
+                "type": "string",
+                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+              },
+              "evidenceRef": {
+                "type": "string"
+              },
+              "assessmentDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "assessor": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "tafAssessments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "attackPathId",
+              "methodId",
+              "tafScore"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "attackPathId": {
+                "type": "string"
+              },
+              "methodId": {
+                "type": "string"
+              },
+              "targetContext": {
+                "type": "object",
+                "properties": {
+                  "attackerProfile": {
+                    "type": "string",
+                    "enum": ["nation-state", "organized-crime", "hacktivist", "insider", "opportunist"]
+                  },
+                  "attackMotivation": {
+                    "type": "string",
+                    "enum": ["financial", "espionage", "disruption", "reputation", "other"]
+                  },
+                  "targetValue": {
+                    "type": "string",
+                    "enum": ["very-high", "high", "medium", "low"]
+                  },
+                  "accessRequirement": {
+                    "type": "string",
+                    "enum": ["remote", "adjacent", "physical", "insider"]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "tafScore": {
+                "type": ["number", "string"]
+              },
+              "tafBand": {
+                "type": "string",
+                "enum": ["very-high", "high", "medium", "low", "very-low"]
+              },
+              "factorRatings": {
+                "description": "Factor-specific ratings used in TAF calculation. Keys should align with or extend the method's factors array for custom assessment criteria.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": ["number", "string", "boolean"]
+                }
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "assessmentDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
         "relationships": {
           "type": "array",
           "items": {
@@ -556,6 +727,8 @@
                   "targets",
                   "threatens",
                   "protects",
+                  "requires_cal",
+                  "achieves_cal",
                   "related_to"
                 ]
               },
