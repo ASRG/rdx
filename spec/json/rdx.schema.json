@@ -213,6 +213,46 @@
             "additionalProperties": false
           }
         },
+        "attackSteps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "attackFeasibilityRatingIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "controlIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
         "attackPaths": {
           "type": "array",
           "items": {
@@ -232,11 +272,18 @@
               "threatScenarioId": {
                 "type": "string"
               },
-              "steps": {
+              "stepIds": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 }
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "deprecated": true
               },
               "references": {
                 "type": "array",
@@ -283,15 +330,25 @@
             "type": "object",
             "required": [
               "id",
-              "attackPathId",
               "methodId",
               "score"
+            ],
+            "anyOf": [
+              {
+                "required": ["attackPathId"]
+              },
+              {
+                "required": ["attackStepId"]
+              }
             ],
             "properties": {
               "id": {
                 "type": "string"
               },
               "attackPathId": {
+                "type": "string"
+              },
+              "attackStepId": {
                 "type": "string"
               },
               "methodId": {

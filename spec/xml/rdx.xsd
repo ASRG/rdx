@@ -11,6 +11,7 @@
       <xs:element name="assets" type="rdx:assetsType" minOccurs="0"/>
       <xs:element name="damageScenarios" type="rdx:damageScenariosType" minOccurs="0"/>
       <xs:element name="threatScenarios" type="rdx:threatScenariosType" minOccurs="0"/>
+      <xs:element name="attackSteps" type="rdx:attackStepsType" minOccurs="0"/>
       <xs:element name="attackPaths" type="rdx:attackPathsType" minOccurs="0"/>
       <xs:element name="methods" type="rdx:methodsType" minOccurs="0"/>
       <xs:element name="attackFeasibilityRatings" type="rdx:afrsType" minOccurs="0"/>
@@ -89,6 +90,21 @@
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="attackStepsType">
+    <xs:sequence>
+      <xs:element name="attackStep" type="rdx:attackStepType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attackStepType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="attackFeasibilityRatingIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="controlIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="attackPathsType">
     <xs:sequence>
       <xs:element name="attackPath" type="rdx:attackPathType" minOccurs="0" maxOccurs="unbounded"/>
@@ -99,6 +115,7 @@
       <xs:element name="id" type="xs:string"/>
       <xs:element name="title" type="xs:string"/>
       <xs:element name="threatScenarioId" type="xs:string"/>
+      <xs:element name="stepIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="steps" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
     </xs:sequence>
@@ -124,7 +141,8 @@
   <xs:complexType name="afrType">
     <xs:sequence>
       <xs:element name="id" type="xs:string"/>
-      <xs:element name="attackPathId" type="xs:string"/>
+      <xs:element name="attackPathId" type="xs:string" minOccurs="0"/>
+      <xs:element name="attackStepId" type="xs:string" minOccurs="0"/>
       <xs:element name="methodId" type="xs:string"/>
       <xs:element name="score" type="xs:string"/>
       <xs:element name="band" type="xs:string" minOccurs="0"/>
