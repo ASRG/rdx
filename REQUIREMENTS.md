@@ -187,4 +187,33 @@ Each object must include minimum required fields (marked in **bold**):
 
 ### 12.1 CycloneDX Integration
 - **RDX-099**: Ensure non-invasive integration with existing CycloneDX tooling
+
+## 13. Requirements from Technical Committee Meetings
+
+The following requirements were identified through ASRG TC: Risk Data Exchange meeting transcripts (2025-2026).
+
+### 13.1 Tooling & Accessibility
+
+- **RDX-101**: The RDX ecosystem MUST provide a freely accessible web-based viewer/reader application for RDX documents that allows stakeholders to inspect TARA data without requiring editing capabilities or tool licenses
+- **RDX-102**: The RDX format MUST support linkage to SBOM (Software Bill of Materials) and HBOM (Hardware Bill of Materials) data to enable full supply chain traceability from component to risk assessment
+
+### 13.2 Interoperability & Migration
+
+- **RDX-103**: The RDX toolchain MUST provide bidirectional conversion support between RDX and legacy formats including OpenXSAM and Open Exam XML to enable migration of existing TARA data
+- **RDX-104**: The RDX toolchain SHOULD support conversion from third-party TARA tool formats (e.g., ThreatGuard, Itemis) to RDX to reduce adoption friction for organizations with existing tooling
+- **RDX-105**: The RDX format SHOULD support country of origin tracking for hardware and software components to enable compliance with regulatory requirements such as US Executive Orders on supply chain security
+
+### 13.3 Regulatory & Standards Alignment
+
+- **RDX-106**: The RDX format MUST define a future compatibility pathway for alignment with ISO 21482 and UNECE WP.29 R155/R156 cybersecurity regulations, to be addressed in a post-v1.0 release
+
+### 13.4 Schema & Data Model Enhancements
+
+- **RDX-107**: The RDX format MUST support a risk threshold matrix with configurable risk tolerance levels and threshold bands, enabling organizations to define acceptable vs. unacceptable risk levels per project or regulatory context (see GitHub issue #29)
+- **RDX-108**: Attack path steps in RDX MUST be modelled as structured schema elements with dedicated fields (id, type, description, prerequisites) rather than plain strings, to enable machine-readable attack chain analysis (see GitHub issue #16)
+- **RDX-109**: The RDX item definition MUST support system architecture information including hierarchical component structures, interfaces, communication channels, and trust boundaries to provide full item context within TARA documents (see GitHub issue #17)
+- **RDX-110**: The RDX format MUST support SHA-512 hash values and digital signature capabilities for document integrity verification and non-repudiation of risk assessment data (see GitHub issue #8)
+- **RDX-111**: The RDX JSON schema MUST set `additionalProperties: true` to allow tool-specific and organization-specific extensions without breaking schema validation, enabling ecosystem-wide extensibility (see GitHub issue #27)
+- **RDX-112**: The RDX format MUST support Cybersecurity Management work products as defined in ISO/SAE 21434 Clause 9, including governance structures, organizational interfaces, and cybersecurity policy references within the TARA document context (see GitHub issue #28)
+
 - **RDX-100**: Support embedding within CycloneDX BOMs without breaking compatibility
