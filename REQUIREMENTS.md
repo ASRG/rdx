@@ -210,7 +210,7 @@ The following requirements were identified through ASRG TC: Risk Data Exchange m
 
 ### 13.4 Schema & Data Model Enhancements
 
-- **RDX-107**: The RDX format MUST support a risk threshold matrix with configurable risk tolerance levels and threshold bands, enabling organizations to define acceptable vs. unacceptable risk levels per project or regulatory context (see GitHub issue #29)
+- **RDX-107**: The RDX format MUST support a risk threshold matrix with configurable risk tolerance levels and threshold bands, enabling organizations to define acceptable vs. unacceptable risk levels per project or regulatory context (see GitHub issue #29) — implemented in `spec/json/rdx.schema.json` as `riskSet.riskThresholdMatrix`; see `examples/rdx-risk-threshold-example.json`
 - **RDX-108**: Attack path steps in RDX MUST be modelled as structured schema elements with dedicated fields (id, type, description, prerequisites) rather than plain strings, to enable machine-readable attack chain analysis (see GitHub issue #16)
 - **RDX-109**: The RDX item definition MUST support system architecture information including hierarchical component structures, interfaces, communication channels, and trust boundaries to provide full item context within TARA documents (see GitHub issue #17)
 - **RDX-110**: The RDX format MUST support SHA-512 hash values and digital signature capabilities for document integrity verification and non-repudiation of risk assessment data (see GitHub issue #8)

@@ -703,6 +703,88 @@
             "additionalProperties": false
           }
         },
+        "riskThresholdMatrix": {
+          "type": "array",
+          "description": "Defines risk tolerance thresholds that codify required treatment actions based on risk score or band. Enables organizations to formally specify acceptable vs. unacceptable risk levels per project or regulatory context.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "thresholds"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "methodId": {
+                "type": "string",
+                "description": "Reference to the risk scoring method this matrix applies to"
+              },
+              "thresholds": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "band",
+                    "requiredTreatment"
+                  ],
+                  "properties": {
+                    "band": {
+                      "type": "string",
+                      "description": "Risk band label (e.g., High, Medium, Low)"
+                    },
+                    "scoreRange": {
+                      "type": "object",
+                      "description": "Optional numeric or string score range for this band",
+                      "properties": {
+                        "min": {
+                          "type": ["number", "string"]
+                        },
+                        "max": {
+                          "type": ["number", "string"]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "requiredTreatment": {
+                      "enum": ["treat", "avoid", "accept", "share"],
+                      "description": "Required treatment action for risks falling in this band"
+                    },
+                    "escalationRequired": {
+                      "type": "boolean",
+                      "description": "Whether risks in this band require management escalation"
+                    },
+                    "rationale": {
+                      "type": "string"
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
         "relationships": {
           "type": "array",
           "items": {

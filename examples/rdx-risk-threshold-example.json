@@ -1,0 +1,445 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "33333333-3333-4333-8333-333333333333",
+  "created": "2026-02-26T00:00:00.000Z",
+  "createdBy": "RDX Risk Threshold Matrix Example",
+  "sources": [
+    "urn:oem:example:project:EV-SUV-2026"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-GW-001",
+      "title": "Connected Gateway ECU",
+      "boundary": "Gateway ECU responsible for in-vehicle networks, OTA, and diagnostics",
+      "functions": [
+        "Routing",
+        "Firewall",
+        "OTA update",
+        "Diagnostics"
+      ],
+      "architecture": "Tri-core MCU, AutoSAR, 2x CAN, 1x LIN, 1x Ethernet, WiFi/Cellular external link",
+      "interfaces": [
+        "CAN0",
+        "CAN1",
+        "ETH0",
+        "DoIP",
+        "UDS",
+        "Cellular"
+      ],
+      "environment": "Series vehicle, US/EU, 2026 launch",
+      "assumptions": [
+        "Root-of-trust present",
+        "Secure boot enabled"
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-BRK",
+        "title": "Brake Control Data",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-1"
+        ]
+      },
+      {
+        "id": "ASSET-PII",
+        "title": "Owner PII in Telematics",
+        "properties": [
+          "confidentiality"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIV-1"
+        ]
+      },
+      {
+        "id": "ASSET-OTA",
+        "title": "OTA Update Firmware",
+        "properties": [
+          "integrity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-INT-1"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-1",
+        "title": "Safety hazard via brake message spoofing",
+        "description": "Potential loss of braking due to spoofed CAN messages"
+      },
+      {
+        "id": "DS-PRIV-1",
+        "title": "Privacy harm via data exfiltration",
+        "description": "Customer PII disclosed through compromised telematics backend"
+      },
+      {
+        "id": "DS-INT-1",
+        "title": "Unauthorized firmware modification",
+        "description": "Malicious firmware installed via compromised OTA update"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-1",
+        "title": "Exploit exposed DoIP service to spoof brake messages",
+        "targetedAssetIds": [
+          "ASSET-BRK"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Auth bypass on UDS over DoIP"
+      },
+      {
+        "id": "TS-2",
+        "title": "Exfiltrate PII via compromised telematics",
+        "targetedAssetIds": [
+          "ASSET-PII"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Weak access control on backend API"
+      },
+      {
+        "id": "TS-3",
+        "title": "Inject malicious firmware via OTA channel",
+        "targetedAssetIds": [
+          "ASSET-OTA"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Compromised update server or missing signature verification"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-1",
+        "title": "Compromise DoIP service -> spoof CAN frames",
+        "threatScenarioId": "TS-1",
+        "steps": [
+          "Scan DoIP endpoints",
+          "Exploit UDS auth bypass",
+          "Pivot to CAN",
+          "Inject spoofed brake messages"
+        ]
+      },
+      {
+        "id": "AP-2",
+        "title": "Exploit backend API -> exfiltrate PII",
+        "threatScenarioId": "TS-2",
+        "steps": [
+          "Enumerate backend API endpoints",
+          "Bypass access control",
+          "Extract customer PII records"
+        ]
+      },
+      {
+        "id": "AP-3",
+        "title": "Compromise OTA server -> push malicious firmware",
+        "threatScenarioId": "TS-3",
+        "steps": [
+          "Compromise OTA update infrastructure",
+          "Sign malicious firmware package",
+          "Push update to target vehicles"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": [
+          "time",
+          "expertise",
+          "knowledge",
+          "window",
+          "equipment"
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0",
+        "factors": [
+          "attackFeasibility",
+          "impact"
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-AP-1",
+        "attackPathId": "AP-1",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires specialized ECU access and UDS protocol expertise"
+      },
+      {
+        "id": "AFR-AP-2",
+        "attackPathId": "AP-2",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "low",
+          "expertise": "medium",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Low",
+        "rationale": "API exploitation is accessible to moderately skilled attackers"
+      },
+      {
+        "id": "AFR-AP-3",
+        "attackPathId": "AP-3",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high",
+          "expertise": "high",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Compromising OTA infrastructure requires significant resources and nation-state level capability"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-DS-1",
+        "damageScenarioId": "DS-SAF-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "high"
+        },
+        "score": "4",
+        "rationale": "Brake spoofing can directly cause loss of vehicle control and injury to occupants"
+      },
+      {
+        "id": "IR-DS-2",
+        "damageScenarioId": "DS-PRIV-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "privacy": "medium",
+          "financial": "medium"
+        },
+        "score": "2",
+        "rationale": "PII exposure causes regulatory and financial harm but limited safety impact"
+      },
+      {
+        "id": "IR-DS-3",
+        "damageScenarioId": "DS-INT-1",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "very-high",
+          "operational": "high"
+        },
+        "score": "5",
+        "rationale": "Malicious firmware can disable safety functions across entire vehicle fleet"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-TS-1",
+        "threatScenarioId": "TS-1",
+        "afrRef": "AFR-AP-1",
+        "impactRef": "IR-DS-1",
+        "methodId": "iso21434-risk-v1",
+        "score": 12,
+        "band": "High",
+        "rationale": "High impact combined with medium feasibility yields High risk"
+      },
+      {
+        "id": "RV-TS-2",
+        "threatScenarioId": "TS-2",
+        "afrRef": "AFR-AP-2",
+        "impactRef": "IR-DS-2",
+        "methodId": "iso21434-risk-v1",
+        "score": 4,
+        "band": "Low",
+        "rationale": "Low feasibility and moderate impact yields Low risk"
+      },
+      {
+        "id": "RV-TS-3",
+        "threatScenarioId": "TS-3",
+        "afrRef": "AFR-AP-3",
+        "impactRef": "IR-DS-3",
+        "methodId": "iso21434-risk-v1",
+        "score": 20,
+        "band": "Very High",
+        "rationale": "Very high impact combined with high feasibility yields Very High risk"
+      }
+    ],
+    "riskThresholdMatrix": [
+      {
+        "id": "RTM-OEM-001",
+        "title": "OEM Cybersecurity Risk Acceptance Policy",
+        "description": "Defines the required treatment action for each risk band in accordance with OEM cybersecurity policy and ISO/SAE 21434 Clause 15.9. Risks above the acceptance threshold must be treated or avoided before product release.",
+        "methodId": "iso21434-risk-v1",
+        "thresholds": [
+          {
+            "band": "Very High",
+            "scoreRange": {
+              "min": 16,
+              "max": 25
+            },
+            "requiredTreatment": "avoid",
+            "escalationRequired": true,
+            "rationale": "Very High risks exceed acceptable OEM risk tolerance. Risk avoidance or fundamental redesign is required. Escalation to chief cybersecurity officer mandatory.",
+            "references": [
+              "OEM-CSMS-POL-001",
+              "ISO/SAE 21434:2021 Clause 15.9"
+            ]
+          },
+          {
+            "band": "High",
+            "scoreRange": {
+              "min": 10,
+              "max": 15
+            },
+            "requiredTreatment": "treat",
+            "escalationRequired": true,
+            "rationale": "High risks must be treated with security controls before product release. Escalation to security program manager required. Residual risk must be re-evaluated after treatment.",
+            "references": [
+              "OEM-CSMS-POL-001",
+              "ISO/SAE 21434:2021 Clause 15.9"
+            ]
+          },
+          {
+            "band": "Medium",
+            "scoreRange": {
+              "min": 5,
+              "max": 9
+            },
+            "requiredTreatment": "treat",
+            "escalationRequired": false,
+            "rationale": "Medium risks must be treated with appropriate controls. Treatment plans should be documented and tracked through the product development lifecycle.",
+            "references": [
+              "OEM-CSMS-POL-001"
+            ]
+          },
+          {
+            "band": "Low",
+            "scoreRange": {
+              "min": 1,
+              "max": 4
+            },
+            "requiredTreatment": "accept",
+            "escalationRequired": false,
+            "rationale": "Low risks may be accepted with documented justification. Acceptance must be reviewed at each release milestone.",
+            "references": [
+              "OEM-CSMS-POL-001"
+            ]
+          }
+        ],
+        "references": [
+          "OEM-CSMS-POL-001",
+          "ISO/SAE 21434:2021",
+          "UNECE WP.29 R155"
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-MSG-AUTH",
+        "title": "CAN message authentication (MAC)",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "MSG-AUTH-01",
+        "implementationStatus": "planned"
+      },
+      {
+        "id": "CTRL-API-AUTHZ",
+        "title": "Backend API authorization and rate limiting",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "API-AUTHZ-01",
+        "implementationStatus": "implemented"
+      },
+      {
+        "id": "CTRL-OTA-SIG",
+        "title": "Firmware signature verification for OTA updates",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-SIG-01",
+        "implementationStatus": "planned"
+      },
+      {
+        "id": "CTRL-OTA-INFRA",
+        "title": "Hardened OTA update server infrastructure",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-INFRA-01",
+        "implementationStatus": "planned"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-TS-1",
+        "riskValueId": "RV-TS-1",
+        "decision": "treat",
+        "controls": [
+          "CTRL-MSG-AUTH"
+        ],
+        "justification": "Risk band High maps to required treatment 'treat' per RTM-OEM-001. Implementing CAN MAC reduces spoofing feasibility."
+      },
+      {
+        "id": "RTD-TS-2",
+        "riskValueId": "RV-TS-2",
+        "decision": "accept",
+        "controls": [],
+        "justification": "Risk band Low maps to required treatment 'accept' per RTM-OEM-001. Backend authorization controls already in place as compensating measure."
+      },
+      {
+        "id": "RTD-TS-3",
+        "riskValueId": "RV-TS-3",
+        "decision": "avoid",
+        "controls": [
+          "CTRL-OTA-SIG",
+          "CTRL-OTA-INFRA"
+        ],
+        "justification": "Risk band Very High maps to required treatment 'avoid' per RTM-OEM-001. Architecture redesign to enforce code signing and harden OTA infrastructure is required. Escalation submitted to CISO."
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-RTM-1",
+        "relationshipType": "related_to",
+        "sourceRef": "RTD-TS-1",
+        "targetRef": "RTM-OEM-001",
+        "justification": "Treatment decision for TS-1 is governed by the OEM risk acceptance policy threshold matrix"
+      },
+      {
+        "id": "REL-RTM-2",
+        "relationshipType": "related_to",
+        "sourceRef": "RTD-TS-2",
+        "targetRef": "RTM-OEM-001",
+        "justification": "Treatment decision for TS-2 is governed by the OEM risk acceptance policy threshold matrix"
+      },
+      {
+        "id": "REL-RTM-3",
+        "relationshipType": "related_to",
+        "sourceRef": "RTD-TS-3",
+        "targetRef": "RTM-OEM-001",
+        "justification": "Treatment decision for TS-3 is governed by the OEM risk acceptance policy threshold matrix"
+      }
+    ]
+  }
+}
