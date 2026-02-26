@@ -85,7 +85,7 @@
               "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
             }
           },
-          "additionalProperties": false
+          "additionalProperties": true
         },
         "assets": {
           "type": "array",
@@ -125,7 +125,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "damageScenarios": {
@@ -165,7 +165,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "threatScenarios": {
@@ -210,7 +210,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackSteps": {
@@ -250,7 +250,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackPaths": {
@@ -292,7 +292,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "methods": {
@@ -321,7 +321,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackFeasibilityRatings": {
@@ -377,7 +377,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "impactRatings": {
@@ -419,7 +419,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "riskValues": {
@@ -463,7 +463,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "controls": {
@@ -505,7 +505,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "riskTreatmentDecisions": {
@@ -542,7 +542,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "calAssuranceLevels": {
@@ -587,7 +587,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "calAssessments": {
@@ -633,7 +633,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "tafAssessments": {
@@ -676,7 +676,7 @@
                     "enum": ["remote", "adjacent", "physical", "insider"]
                   }
                 },
-                "additionalProperties": false
+                "additionalProperties": true
               },
               "tafScore": {
                 "type": ["number", "string"]
@@ -700,7 +700,7 @@
                 "format": "date-time"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "relationships": {
@@ -747,12 +747,12 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }
