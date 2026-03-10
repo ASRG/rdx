@@ -143,6 +143,32 @@
           "knowledge",
           "window",
           "equipment"
+        ],
+        "riskLevels": [
+          {
+            "id": "AFR-LEVEL-LOW",
+            "label": "Low",
+            "rank": 1,
+            "description": "Attack is difficult to execute; requires exceptional resources or expertise",
+            "color": "#00AA00",
+            "scoreRange": { "min": 1, "max": 2 }
+          },
+          {
+            "id": "AFR-LEVEL-MEDIUM",
+            "label": "Medium",
+            "rank": 2,
+            "description": "Attack is moderately feasible; requires significant skill or specialized tools",
+            "color": "#FFAA00",
+            "scoreRange": { "min": 3, "max": 3 }
+          },
+          {
+            "id": "AFR-LEVEL-HIGH",
+            "label": "High",
+            "rank": 3,
+            "description": "Attack is readily feasible; can be executed with common tools and moderate expertise",
+            "color": "#FF0000",
+            "scoreRange": { "min": 4, "max": 5 }
+          }
         ]
       },
       {
@@ -155,6 +181,92 @@
           "operational",
           "privacy",
           "legal"
+        ],
+        "riskLevels": [
+          {
+            "id": "IMP-LEVEL-NEGLIGIBLE",
+            "label": "Negligible",
+            "rank": 1,
+            "description": "No significant harm or inconvenience to road users",
+            "color": "#00AA00",
+            "scoreRange": { "min": 1, "max": 1 }
+          },
+          {
+            "id": "IMP-LEVEL-MODERATE",
+            "label": "Moderate",
+            "rank": 2,
+            "description": "Light injuries or significant financial/operational impact",
+            "color": "#FFAA00",
+            "scoreRange": { "min": 2, "max": 3 }
+          },
+          {
+            "id": "IMP-LEVEL-SEVERE",
+            "label": "Severe",
+            "rank": 3,
+            "description": "Severe or life-threatening injuries or major financial/societal harm",
+            "color": "#FF6600",
+            "scoreRange": { "min": 4, "max": 4 }
+          },
+          {
+            "id": "IMP-LEVEL-CRITICAL",
+            "label": "Critical",
+            "rank": 4,
+            "description": "Life-threatening or fatal injuries; catastrophic societal or regulatory impact",
+            "color": "#FF0000",
+            "scoreRange": { "min": 5, "max": 5 },
+            "treatmentGuidance": "Risk must be treated or avoided; acceptance is not permitted"
+          }
+        ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk",
+        "version": "1.0",
+        "factors": [
+          "feasibility",
+          "impact"
+        ],
+        "riskLevels": [
+          {
+            "id": "RISK-LEVEL-VL",
+            "label": "Very Low",
+            "rank": 1,
+            "description": "Negligible risk; no treatment required",
+            "color": "#00AA00",
+            "treatmentGuidance": "Accept: risk is within tolerance; periodic review recommended"
+          },
+          {
+            "id": "RISK-LEVEL-L",
+            "label": "Low",
+            "rank": 2,
+            "description": "Low risk; monitor and review",
+            "color": "#88CC00",
+            "treatmentGuidance": "Accept or monitor: document justification for acceptance"
+          },
+          {
+            "id": "RISK-LEVEL-M",
+            "label": "Medium",
+            "rank": 3,
+            "description": "Moderate risk; treatment recommended",
+            "color": "#FFAA00",
+            "treatmentGuidance": "Treat: implement controls to reduce risk to acceptable level"
+          },
+          {
+            "id": "RISK-LEVEL-H",
+            "label": "High",
+            "rank": 4,
+            "description": "High risk; treatment required",
+            "color": "#FF6600",
+            "treatmentGuidance": "Treat or avoid: mandatory control implementation with verification"
+          },
+          {
+            "id": "RISK-LEVEL-VH",
+            "label": "Very High",
+            "rank": 5,
+            "description": "Critical risk; immediate action required",
+            "color": "#FF0000",
+            "treatmentGuidance": "Avoid or treat: design-level changes required; acceptance not permitted"
+          }
         ]
       }
     ],

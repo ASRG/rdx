@@ -131,6 +131,35 @@
       <xs:element name="name" type="xs:string"/>
       <xs:element name="version" type="xs:string"/>
       <xs:element name="factors" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="riskLevels" type="rdx:riskLevelsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskLevelsType">
+    <xs:sequence>
+      <xs:element name="riskLevel" type="rdx:riskLevelType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskLevelType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="label" type="xs:string"/>
+      <xs:element name="rank" type="xs:positiveInteger"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="color" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="#[0-9a-fA-F]{6}"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="scoreRange" type="rdx:scoreRangeType" minOccurs="0"/>
+      <xs:element name="treatmentGuidance" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="scoreRangeType">
+    <xs:sequence>
+      <xs:element name="min" type="xs:decimal"/>
+      <xs:element name="max" type="xs:decimal"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="afrsType">
