@@ -23,9 +23,11 @@
       <xs:element name="calAssessments" type="rdx:calAssessmentsType" minOccurs="0"/>
       <xs:element name="tafAssessments" type="rdx:tafAssessmentsType" minOccurs="0"/>
       <xs:element name="relationships" type="rdx:relationshipsType" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
     <xs:attribute name="documentId" type="xs:string" use="optional"/>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="itemDefinitionType">
     <xs:sequence>
@@ -44,7 +46,9 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="assetsType">
     <xs:sequence>
@@ -58,7 +62,9 @@
       <xs:element name="properties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="linkedDamageScenarioIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="damageScenariosType">
     <xs:sequence>
@@ -73,7 +79,9 @@
       <xs:element name="impactedFunctions" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="affectedRoadUsers" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="threatScenariosType">
     <xs:sequence>
@@ -88,7 +96,9 @@
       <xs:element name="compromisedProperties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="cause" type="xs:string" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="attackStepsType">
     <xs:sequence>
@@ -103,7 +113,9 @@
       <xs:element name="attackFeasibilityRatingIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="controlIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="attackPathsType">
     <xs:sequence>
@@ -118,7 +130,9 @@
       <xs:element name="stepIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="steps" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="methodsType">
     <xs:sequence>
@@ -131,7 +145,9 @@
       <xs:element name="name" type="xs:string"/>
       <xs:element name="version" type="xs:string"/>
       <xs:element name="factors" type="rdx:stringList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="afrsType">
     <xs:sequence>
@@ -147,7 +163,9 @@
       <xs:element name="score" type="xs:string"/>
       <xs:element name="band" type="xs:string" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="irsType">
     <xs:sequence>
@@ -161,7 +179,9 @@
       <xs:element name="methodId" type="xs:string"/>
       <xs:element name="score" type="xs:string"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="riskValuesType">
     <xs:sequence>
@@ -178,7 +198,9 @@
       <xs:element name="score" type="xs:string"/>
       <xs:element name="band" type="xs:string" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="controlsType">
     <xs:sequence>
@@ -195,7 +217,9 @@
       <xs:element name="requiredCalLevel" type="rdx:calLevelType" minOccurs="0"/>
       <xs:element name="achievedCalLevel" type="rdx:calLevelType" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="rtdsType">
     <xs:sequence>
@@ -209,7 +233,9 @@
       <xs:element name="decision" type="xs:string"/>
       <xs:element name="controls" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="relationshipsType">
     <xs:sequence>
@@ -247,7 +273,9 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <!-- CAL and TAF types -->
   <xs:complexType name="calAssuranceLevelsType">
@@ -264,7 +292,9 @@
       <xs:element name="objectives" type="rdx:stringList"/>
       <xs:element name="assuranceActivities" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="calAssessmentsType">
     <xs:sequence>
@@ -282,7 +312,9 @@
       <xs:element name="assessmentDate" type="xs:dateTime" minOccurs="0"/>
       <xs:element name="assessor" type="xs:string" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="tafAssessmentsType">
     <xs:sequence>
@@ -300,7 +332,9 @@
       <xs:element name="factorRatings" type="rdx:keyValuePairsType" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
       <xs:element name="assessmentDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="targetContextType">
     <xs:sequence>
@@ -308,7 +342,9 @@
       <xs:element name="attackMotivation" type="rdx:attackMotivationType" minOccurs="0"/>
       <xs:element name="targetValue" type="rdx:targetValueType" minOccurs="0"/>
       <xs:element name="accessRequirement" type="rdx:accessRequirementType" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <!-- Simple types for CAL and TAF -->
   <xs:simpleType name="calLevelType">
@@ -386,7 +422,9 @@
           <xs:sequence>
             <xs:element name="key" type="xs:string"/>
             <xs:element name="value" type="xs:string"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
+          <xs:anyAttribute namespace="##other" processContents="lax"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
