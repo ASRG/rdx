@@ -128,7 +128,7 @@
               }
             }
           },
-          "additionalProperties": false
+          "additionalProperties": true
         },
         "assets": {
           "type": "array",
@@ -182,7 +182,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "damageScenarios": {
@@ -222,7 +222,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "threatScenarios": {
@@ -274,7 +274,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackSteps": {
@@ -314,7 +314,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackPaths": {
@@ -356,7 +356,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "methods": {
@@ -384,15 +384,67 @@
                   "type": "string"
                 }
               },
-              "riskLevels": {
+              "riskThresholdMatrix": {
                 "type": "array",
-                "description": "Ordered list of risk level definitions for this methodology. Each entry defines a named band/tier (e.g., Low, Medium, High) with an ordinal rank, optional score range, and optional treatment guidance. Organizations may define 3-level (Low/Medium/High), 5-level (Very Low … Very High), or any custom scale.",
+                "description": "Defines allowed risk treatment strategies per risk band for this methodology. Used to codify organizational risk acceptance policy that can be overlaid on risk data during interpretation.",
                 "items": {
-                  "$ref": "#/$defs/RiskLevel"
+                  "type": "object",
+                  "required": [
+                    "band",
+                    "allowedTreatments"
+                  ],
+                  "properties": {
+                    "band": {
+                      "type": "string",
+                      "description": "The risk band label for this threshold entry (e.g., 'Very High', 'High', 'Medium', 'Low')"
+                    },
+                    "allowedTreatments": {
+                      "type": "array",
+                      "description": "The set of risk treatment strategies permitted for this risk band. Restricting to a subset enforces policy (e.g., High risk may only allow 'reduce' or 'avoid').",
+                      "minItems": 1,
+                      "items": {
+                        "enum": [
+                          "reduce",
+                          "avoid",
+                          "accept",
+                          "share"
+                        ]
+                      }
+                    },
+                    "scoreRange": {
+                      "type": "object",
+                      "description": "Optional numeric score range that maps to this band",
+                      "properties": {
+                        "min": {
+                          "type": ["number", "string"]
+                        },
+                        "max": {
+                          "type": ["number", "string"]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "escalationRequired": {
+                      "type": "boolean",
+                      "description": "If true, risks in this band require management escalation before treatment"
+                    },
+                    "rationale": {
+                      "type": "string",
+                      "description": "Justification for the allowed treatments at this risk band"
+                    },
+                    "references": {
+                      "type": "array",
+                      "description": "References to policies, standards, or regulations that define this threshold",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "attackFeasibilityRatings": {
@@ -452,7 +504,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "impactRatings": {
@@ -494,7 +546,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "riskValues": {
@@ -538,7 +590,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "controls": {
@@ -597,7 +649,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "riskTreatmentDecisions": {
@@ -618,7 +670,7 @@
               },
               "decision": {
                 "enum": [
-                  "treat",
+                  "reduce",
                   "avoid",
                   "accept",
                   "share"
@@ -634,7 +686,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "calAssuranceLevels": {
@@ -684,7 +736,7 @@
                 }
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "calAssessments": {
@@ -744,7 +796,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "tafAssessments": {
@@ -809,7 +861,7 @@
                     ]
                   }
                 },
-                "additionalProperties": false
+                "additionalProperties": true
               },
               "tafScore": {
                 "type": [
@@ -846,7 +898,7 @@
                 "format": "date-time"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         },
         "relationships": {
@@ -893,13 +945,15 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "additionalProperties": true
           }
         }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     }
-  },
+  },d
+  "additionalProperties": true
+}
   "additionalProperties": false,
   "$defs": {
     "RiskLevel": {
