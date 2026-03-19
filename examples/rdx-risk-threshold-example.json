@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "a4f82c3d-9b17-4e2a-81c6-5f0d3e7b94a1",
+  "created": "2026-03-10T00:00:00Z",
+  "createdBy": "OEM Cybersecurity Team",
+  "riskSet": {
+    "itemDefinition": {
+      "id": "item-001",
+      "title": "Adaptive Front-lighting System (AFS)",
+      "boundary": "AFS ECU including CAN interface, actuator control logic, and OTA update module",
+      "functions": ["headlight beam control", "adaptive steering adjustment", "OTA update reception"],
+      "environment": "On-vehicle, exposed to external network via telematics gateway"
+    },
+    "assets": [
+      {
+        "id": "asset-001",
+        "title": "AFS Firmware",
+        "properties": ["integrity", "availability"],
+        "linkedDamageScenarioIds": ["ds-001"]
+      },
+      {
+        "id": "asset-002",
+        "title": "CAN Bus Communication Channel",
+        "properties": ["integrity", "availability"],
+        "linkedDamageScenarioIds": ["ds-002"]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "ds-001",
+        "title": "Malicious firmware update causes headlight failure",
+        "description": "An attacker injects a malicious firmware update causing AFS ECU to fail, resulting in loss of forward lighting.",
+        "affectedRoadUsers": ["driver", "pedestrians", "other vehicles"]
+      },
+      {
+        "id": "ds-002",
+        "title": "CAN bus spoofing causes incorrect beam adjustment",
+        "description": "An attacker spoofs CAN messages causing the headlight beam to point in dangerous directions.",
+        "affectedRoadUsers": ["driver", "oncoming traffic"]
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "ts-001",
+        "title": "Remote firmware injection via OTA",
+        "targetedAssetIds": ["asset-001"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Lack of firmware signature verification on OTA update path"
+      },
+      {
+        "id": "ts-002",
+        "title": "CAN bus message spoofing via OBD-II port",
+        "targetedAssetIds": ["asset-002"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Unauthenticated CAN messages accepted by AFS ECU"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "ap-001",
+        "title": "OTA server compromise leading to firmware injection",
+        "threatScenarioId": "ts-001",
+        "steps": [
+          "Attacker compromises OTA backend server",
+          "Attacker signs malicious firmware with stolen key",
+          "Vehicle downloads and installs malicious firmware"
+        ]
+      },
+      {
+        "id": "ap-002",
+        "title": "Physical OBD-II access for CAN injection",
+        "threatScenarioId": "ts-002",
+        "steps": [
+          "Attacker gains physical access to vehicle",
+          "Attacker connects to OBD-II port",
+          "Attacker replays or crafts malicious CAN frames targeting AFS"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "method-001",
+        "name": "OEM Risk Acceptance Policy v2",
+        "version": "2.0",
+        "factors": ["impact", "attackFeasibility"],
+        "riskThresholdMatrix": [
+          {
+            "band": "Very High",
+            "allowedTreatments": ["reduce", "avoid"],
+            "scoreRange": { "min": 9, "max": 10 },
+            "escalationRequired": true,
+            "rationale": "Very High risks pose unacceptable safety or business exposure; only reduction or avoidance is permitted. Escalation to CISO is mandatory.",
+            "references": ["OEM-CSMS-Policy-2024", "ISO/SAE 21434 Clause 15.8"]
+          },
+          {
+            "band": "High",
+            "allowedTreatments": ["reduce", "avoid"],
+            "scoreRange": { "min": 7, "max": 8 },
+            "escalationRequired": true,
+            "rationale": "High risks require active risk reduction or elimination. Risk acceptance or transfer is not permitted without executive sign-off.",
+            "references": ["OEM-CSMS-Policy-2024"]
+          },
+          {
+            "band": "Medium",
+            "allowedTreatments": ["reduce", "avoid", "share"],
+            "scoreRange": { "min": 4, "max": 6 },
+            "escalationRequired": false,
+            "rationale": "Medium risks may be reduced, avoided, or transferred to a third party with appropriate contractual controls. Acceptance requires documented justification.",
+            "references": ["OEM-CSMS-Policy-2024"]
+          },
+          {
+            "band": "Low",
+            "allowedTreatments": ["reduce", "avoid", "accept", "share"],
+            "scoreRange": { "min": 1, "max": 3 },
+            "escalationRequired": false,
+            "rationale": "Low risks may be treated with any strategy. Acceptance is permitted with documented rationale reviewed annually.",
+            "references": ["OEM-CSMS-Policy-2024"]
+          }
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "afr-001",
+        "attackPathId": "ap-001",
+        "methodId": "method-001",
+        "score": 8,
+        "band": "High",
+        "inputFactors": {
+          "elapsed_time": "weeks",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "unlimited",
+          "equipment": "standard"
+        },
+        "rationale": "OTA compromise requires significant expertise but is feasible for a motivated nation-state or organized criminal group."
+      },
+      {
+        "id": "afr-002",
+        "attackPathId": "ap-002",
+        "methodId": "method-001",
+        "score": 5,
+        "band": "Medium",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "easy",
+          "equipment": "standard"
+        },
+        "rationale": "Physical OBD-II access is straightforward for a mechanic-level attacker with basic CAN tools."
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "ir-001",
+        "damageScenarioId": "ds-001",
+        "methodId": "method-001",
+        "score": 10,
+        "categories": {
+          "safety": "life-threatening",
+          "operational": "severe",
+          "financial": "major"
+        },
+        "rationale": "Loss of headlights at night poses immediate safety risk to driver and pedestrians."
+      },
+      {
+        "id": "ir-002",
+        "damageScenarioId": "ds-002",
+        "methodId": "method-001",
+        "score": 7,
+        "categories": {
+          "safety": "serious",
+          "operational": "moderate",
+          "financial": "minor"
+        },
+        "rationale": "Incorrect beam direction poses hazard to oncoming traffic."
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "rv-001",
+        "threatScenarioId": "ts-001",
+        "afrRef": "afr-001",
+        "impactRef": "ir-001",
+        "methodId": "method-001",
+        "score": 9,
+        "band": "Very High",
+        "rationale": "High feasibility combined with critical safety impact yields Very High risk."
+      },
+      {
+        "id": "rv-002",
+        "threatScenarioId": "ts-002",
+        "afrRef": "afr-002",
+        "impactRef": "ir-002",
+        "methodId": "method-001",
+        "score": 6,
+        "band": "Medium",
+        "rationale": "Medium feasibility with serious but non-critical impact yields Medium risk."
+      }
+    ],
+    "controls": [
+      {
+        "id": "ctrl-001",
+        "title": "Secure OTA firmware signature verification",
+        "catalog": "ISO/SAE 21434",
+        "controlId": "RQ-11-08",
+        "implementationStatus": "planned"
+      },
+      {
+        "id": "ctrl-002",
+        "title": "CAN message authentication (MAC)",
+        "catalog": "ISO/SAE 21434",
+        "controlId": "RQ-09-07",
+        "implementationStatus": "implemented"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "rtd-001",
+        "riskValueId": "rv-001",
+        "decision": "reduce",
+        "controls": ["ctrl-001"],
+        "justification": "Very High risk band per OEM Risk Acceptance Policy v2 only allows 'reduce' or 'avoid'. Reduce via secure OTA signature verification (ctrl-001)."
+      },
+      {
+        "id": "rtd-002",
+        "riskValueId": "rv-002",
+        "decision": "reduce",
+        "controls": ["ctrl-002"],
+        "justification": "Medium risk band; chose to reduce via CAN message authentication rather than accept or share."
+      }
+    ]
+  }
+}

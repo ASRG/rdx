@@ -383,6 +383,65 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "riskThresholdMatrix": {
+                "type": "array",
+                "description": "Defines allowed risk treatment strategies per risk band for this methodology. Used to codify organizational risk acceptance policy that can be overlaid on risk data during interpretation.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "band",
+                    "allowedTreatments"
+                  ],
+                  "properties": {
+                    "band": {
+                      "type": "string",
+                      "description": "The risk band label for this threshold entry (e.g., 'Very High', 'High', 'Medium', 'Low')"
+                    },
+                    "allowedTreatments": {
+                      "type": "array",
+                      "description": "The set of risk treatment strategies permitted for this risk band. Restricting to a subset enforces policy (e.g., High risk may only allow 'reduce' or 'avoid').",
+                      "minItems": 1,
+                      "items": {
+                        "enum": [
+                          "reduce",
+                          "avoid",
+                          "accept",
+                          "share"
+                        ]
+                      }
+                    },
+                    "scoreRange": {
+                      "type": "object",
+                      "description": "Optional numeric score range that maps to this band",
+                      "properties": {
+                        "min": {
+                          "type": ["number", "string"]
+                        },
+                        "max": {
+                          "type": ["number", "string"]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "escalationRequired": {
+                      "type": "boolean",
+                      "description": "If true, risks in this band require management escalation before treatment"
+                    },
+                    "rationale": {
+                      "type": "string",
+                      "description": "Justification for the allowed treatments at this risk band"
+                    },
+                    "references": {
+                      "type": "array",
+                      "description": "References to policies, standards, or regulations that define this threshold",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
               }
             },
             "additionalProperties": true
@@ -611,7 +670,7 @@
               },
               "decision": {
                 "enum": [
-                  "treat",
+                  "reduce",
                   "avoid",
                   "accept",
                   "share"
