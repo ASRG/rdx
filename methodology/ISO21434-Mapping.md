@@ -3,7 +3,11 @@
 ## ISO/SAE 21434 Mapping
 | Work Product | Clause | RDX Object | Notes |
 |---|---|---|---|
-| Item definition | 9.3 / WP-09-01 | `riskSet.itemDefinition` | Boundary, functions, architecture, environment |
+| Item definition | 9.2 / WP-09-01 | `riskSet.itemDefinition` | Boundary, functions, architecture, environment |
+| Cybersecurity goals | 9.3 / WP-09-02 | `riskSet.cybersecurityGoals[]` | Goals linked to threat/damage scenarios and risk values |
+| Cybersecurity concept | 9.4 / WP-09-03 | `riskSet.cybersecurityConcept[]` | Design decisions and architectural choices per goal |
+| Cybersecurity requirements | 9.4 / WP-09-03 | `riskSet.cybersecurityRequirements[]` | Requirements derived from goals with allocation and verification |
+| Cybersecurity claims | 9.3–9.4 | `riskSet.cybersecurityClaims[]` | Assertions that security properties are achieved (with evidence) |
 | Damage scenarios | 15.5 / WP-15-01 | `riskSet.damageScenarios[]` | Adverse consequences |
 | Assets (CIA) | 15.4 / WP-15-02 | `riskSet.assets[]` | CIA properties + linkage |
 | Threat scenarios | 15.5 / WP-15-03 | `riskSet.threatScenarios[]` | Targeted assets + properties + cause |

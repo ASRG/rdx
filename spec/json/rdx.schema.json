@@ -868,7 +868,11 @@
                   "protects",
                   "requires_cal",
                   "achieves_cal",
-                  "related_to"
+                  "related_to",
+                  "derived_from",
+                  "addresses",
+                  "satisfies",
+                  "supports"
                 ]
               },
               "sourceRef": {
@@ -888,14 +892,299 @@
             },
             "additionalProperties": true
           }
+        },
+        "cybersecurityGoals": {
+          "description": "Cybersecurity goals derived from risk assessment (ISO/SAE 21434 Clause 9.3, WP-09-02). Goals define the high-level security objectives the item must achieve.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "linkedThreatScenarioIds": {
+                "type": "array",
+                "description": "Threat scenarios that motivated this cybersecurity goal",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedRiskValueIds": {
+                "type": "array",
+                "description": "Risk values that are addressed by this cybersecurity goal",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedDamageScenarioIds": {
+                "type": "array",
+                "description": "Damage scenarios prevented by achieving this cybersecurity goal",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "goalType": {
+                "type": "string",
+                "description": "The primary CIA or other security property this goal targets",
+                "enum": [
+                  "confidentiality",
+                  "integrity",
+                  "availability",
+                  "authenticity",
+                  "non-repudiation",
+                  "general"
+                ]
+              },
+              "acceptanceCriteria": {
+                "type": "string",
+                "description": "Verifiable criteria that determine when this goal is achieved"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "proposed",
+                  "approved",
+                  "verified",
+                  "deprecated"
+                ]
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "cybersecurityClaims": {
+          "description": "Cybersecurity claims asserting that security properties have been achieved. Claims support cybersecurity goals and may reference evidence.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "claim"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "claim": {
+                "type": "string",
+                "description": "The assertion being made about a cybersecurity property"
+              },
+              "linkedGoalIds": {
+                "type": "array",
+                "description": "Cybersecurity goals this claim supports",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedControlIds": {
+                "type": "array",
+                "description": "Controls providing evidence for this claim",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedRequirementIds": {
+                "type": "array",
+                "description": "Cybersecurity requirements this claim supports",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidenceRef": {
+                "type": "string",
+                "description": "Reference to evidence substantiating this claim"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "asserted",
+                  "verified",
+                  "rejected",
+                  "pending"
+                ]
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "cybersecurityRequirements": {
+          "description": "Cybersecurity requirements derived from cybersecurity goals (ISO/SAE 21434 Clause 9.4, WP-09-03). Requirements specify what the item must do to achieve its cybersecurity goals.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "cybersecurityGoalId": {
+                "type": "string",
+                "description": "The cybersecurity goal this requirement derives from"
+              },
+              "requirementType": {
+                "type": "string",
+                "description": "Classification of the requirement",
+                "enum": [
+                  "functional",
+                  "non-functional",
+                  "constraint",
+                  "interface",
+                  "process"
+                ]
+              },
+              "allocatedTo": {
+                "type": "string",
+                "description": "Component, subsystem, or layer to which this requirement is allocated"
+              },
+              "verificationMethod": {
+                "type": "string",
+                "description": "How conformance to this requirement will be verified",
+                "enum": [
+                  "test",
+                  "analysis",
+                  "inspection",
+                  "demonstration",
+                  "review"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "proposed",
+                  "approved",
+                  "implemented",
+                  "verified",
+                  "deprecated"
+                ]
+              },
+              "linkedControlIds": {
+                "type": "array",
+                "description": "Controls implementing this requirement",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "cybersecurityConcept": {
+          "description": "Cybersecurity concept entries describing the high-level approach to achieving cybersecurity goals (ISO/SAE 21434 Clause 9.4, WP-09-03). Each entry captures a design decision or architectural choice.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "linkedGoalIds": {
+                "type": "array",
+                "description": "Cybersecurity goals this concept entry addresses",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedRequirementIds": {
+                "type": "array",
+                "description": "Cybersecurity requirements derived from or supported by this concept",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "conceptType": {
+                "type": "string",
+                "description": "Category of cybersecurity concept",
+                "enum": [
+                  "architectural",
+                  "operational",
+                  "technology",
+                  "process",
+                  "organizational"
+                ]
+              },
+              "designDecisions": {
+                "type": "array",
+                "description": "Specific design decisions made as part of this concept",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "assumptions": {
+                "type": "array",
+                "description": "Assumptions under which this concept is valid",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
         }
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
-  "additionalProperties": false,
+  },
+  "additionalProperties": true,
   "$defs": {
     "Hash": {
       "type": "object",

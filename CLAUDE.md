@@ -25,6 +25,7 @@ ajv -s spec/json/rdx.schema.json -d examples/rdx-relationships-example.json --st
 ajv -s spec/json/rdx.schema.json -d examples/rdx-multiple-threats-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-mitigation-relationships-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-cal-taf-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-clause9-cybersecurity-concept.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/headlight-tara-iso21434.json --strict=false
 ```
 
@@ -64,6 +65,12 @@ Minimum required fields in **bold**:
 - **controls** (**id**, **title**, catalog, controlId, implementationStatus, requiredCalLevel, achievedCalLevel, references)
 - **riskTreatmentDecisions** (**id**, **riskValueId**, **decision**[treat|avoid|accept|share], controls[], justification)
 
+#### ISO/SAE 21434 Clause 9 Cybersecurity Concept (v0.1.0+)
+- **cybersecurityGoals** (**id**, **title**, description, linkedThreatScenarioIds, linkedRiskValueIds, linkedDamageScenarioIds, goalType[confidentiality|integrity|availability|authenticity|non-repudiation|general], acceptanceCriteria, status, references) — WP-09-02
+- **cybersecurityClaims** (**id**, **title**, **claim**, linkedGoalIds, linkedControlIds, linkedRequirementIds, evidenceRef, status[asserted|verified|rejected|pending], rationale, references)
+- **cybersecurityRequirements** (**id**, **title**, description, cybersecurityGoalId, requirementType[functional|non-functional|constraint|interface|process], allocatedTo, verificationMethod[test|analysis|inspection|demonstration|review], status, linkedControlIds, references) — WP-09-03
+- **cybersecurityConcept** (**id**, **title**, description, linkedGoalIds, linkedRequirementIds, conceptType[architectural|operational|technology|process|organizational], designDecisions[], assumptions[], references) — WP-09-03
+
 #### ISO/SAE PAS 8475 CAL & TAF Framework (v0.1.0+)
 - **calAssuranceLevels** (**id**, **level**[CAL1-4], **objectives[]**, title, description, assuranceActivities[], references)
 - **calAssessments** (**id**, **controlId**, **targetCalLevel**, **assessmentResult**[sufficient|insufficient|pending], achievedCalLevel, evidenceRef, assessmentDate, assessor, rationale)
@@ -73,6 +80,7 @@ Minimum required fields in **bold**:
 - **relationships** (**id**, **relationshipType**, **sourceRef**, **targetRef**, confidence, justification)
   - Standard types: causes, mitigates, implements, assesses, contains, targets, threatens, protects, related_to
   - CAL-specific types: requires_cal, achieves_cal
+  - Clause 9 types: derived_from, addresses, satisfies, supports
 
 ### Document Structure
 Every RDX document requires:
@@ -91,6 +99,7 @@ Every RDX document requires:
 - `rdx-multiple-threats-example.json`: Shows multiple threat scenarios
 - `rdx-mitigation-relationships-example.json`: Shows controls mitigating threats
 - `rdx-cal-taf-example.json`: Demonstrates CAL (Cybersecurity Assurance Levels) and TAF (Targeted Attack Feasibility) framework integration
+- `rdx-clause9-cybersecurity-concept.json`: Demonstrates Clause 9 cybersecurity concept deliverables (goals, claims, requirements, concept) for an OTA Update Manager
 - `headlight-tara-iso21434.json`: Complete ISO 21434 TARA example for Adaptive Front-lighting System
 - `headlight-tara-analysis.md`: Human-readable analysis document for the headlight TARA
 - `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs

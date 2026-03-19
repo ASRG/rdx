@@ -1,0 +1,621 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "c9000000-0000-4000-8000-000000000009",
+  "created": "2026-03-19T00:00:00.000Z",
+  "createdBy": "RDX Example Tool 0.1.0",
+  "sources": [
+    "urn:oem:example:project:EV-SUV-2026"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-OTA",
+      "title": "OTA Update Manager ECU",
+      "boundary": "ECU responsible for receiving, validating, and applying over-the-air software updates across in-vehicle networks",
+      "functions": [
+        "OTA package reception",
+        "Signature and integrity verification",
+        "Rollback management",
+        "Update distribution to target ECUs"
+      ],
+      "architecture": "ARM Cortex-A, AUTOSAR Adaptive, Ethernet/IP backbone, cellular modem for cloud connectivity",
+      "interfaces": [
+        "Cellular (LTE/5G)",
+        "Ethernet (backend OTA server)",
+        "CAN/CAN-FD (target ECU distribution)",
+        "HSM (secure key storage)",
+        "Diagnostics (UDS)"
+      ],
+      "environment": "Series vehicle, global markets, 2026–2030 lifecycle",
+      "assumptions": [
+        "PKI infrastructure managed by OEM",
+        "HSM present and provisioned at manufacturing",
+        "Secure boot enabled on all receiving ECUs",
+        "Backend OTA server operates within OEM security perimeter"
+      ],
+      "countryOfOrigin": "DE"
+    },
+    "assets": [
+      {
+        "id": "ASSET-OTA-PKG",
+        "title": "OTA Software Package",
+        "properties": ["integrity", "authenticity"],
+        "linkedDamageScenarioIds": ["DS-OTA-TAMPER", "DS-OTA-ROLLBACK"]
+      },
+      {
+        "id": "ASSET-OTA-KEY",
+        "title": "OTA Signing Key Material",
+        "properties": ["confidentiality", "integrity"],
+        "linkedDamageScenarioIds": ["DS-OTA-KEYLEAK"]
+      },
+      {
+        "id": "ASSET-OTA-CHANNEL",
+        "title": "OTA Update Communication Channel",
+        "properties": ["integrity", "availability"],
+        "linkedDamageScenarioIds": ["DS-OTA-MITM", "DS-OTA-DOS"]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-OTA-TAMPER",
+        "title": "Unauthorized software deployed via tampered OTA package",
+        "description": "Malicious actor delivers a tampered or malicious software update, causing degraded functionality, safety hazards, or persistent compromise of vehicle ECUs",
+        "impactedFunctions": ["OTA package reception", "Signature and integrity verification"],
+        "affectedRoadUsers": ["vehicle occupants", "other road users"],
+        "references": ["ISO/SAE 21434:2021 Clause 15.5"]
+      },
+      {
+        "id": "DS-OTA-ROLLBACK",
+        "title": "Downgrade to vulnerable software version",
+        "description": "Attacker forces rollback to an older software version with known vulnerabilities, re-exposing previously remediated security issues",
+        "impactedFunctions": ["Rollback management"],
+        "affectedRoadUsers": ["vehicle occupants"],
+        "references": []
+      },
+      {
+        "id": "DS-OTA-KEYLEAK",
+        "title": "OTA signing key compromise enabling persistent unauthorized updates",
+        "description": "Attacker obtains OTA signing key material and can sign arbitrary software packages, leading to persistent and undetectable vehicle compromise",
+        "impactedFunctions": ["Signature and integrity verification"],
+        "affectedRoadUsers": ["all users of affected vehicle fleet"],
+        "references": []
+      },
+      {
+        "id": "DS-OTA-MITM",
+        "title": "Man-in-the-middle of OTA channel leads to corrupted update",
+        "description": "Network attacker intercepts and modifies the OTA communication channel, injecting a malicious update payload",
+        "impactedFunctions": ["OTA package reception"],
+        "affectedRoadUsers": ["vehicle occupants"],
+        "references": []
+      },
+      {
+        "id": "DS-OTA-DOS",
+        "title": "OTA channel disruption prevents critical safety patch delivery",
+        "description": "Denial of service on the OTA channel prevents delivery of time-critical security patches, leaving vehicles exposed to known vulnerabilities",
+        "impactedFunctions": ["OTA package reception", "Update distribution to target ECUs"],
+        "affectedRoadUsers": ["vehicle occupants", "OEM operations"],
+        "references": []
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-OTA-01",
+        "title": "Injection of unsigned OTA package via compromised backend",
+        "targetedAssetIds": ["ASSET-OTA-PKG"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Attacker compromises backend OTA server or intercepts update distribution, replacing legitimate package with tampered version lacking valid signature"
+      },
+      {
+        "id": "TS-OTA-02",
+        "title": "Forced rollback attack via crafted update metadata",
+        "targetedAssetIds": ["ASSET-OTA-PKG"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Attacker crafts update metadata indicating an older version is newer, causing the ECU to downgrade to a vulnerable software version"
+      },
+      {
+        "id": "TS-OTA-03",
+        "title": "Exfiltration of HSM-protected signing keys",
+        "targetedAssetIds": ["ASSET-OTA-KEY"],
+        "compromisedProperties": ["confidentiality"],
+        "cause": "Side-channel attack or physical extraction of HSM yields signing key material usable for crafting valid malicious update packages"
+      },
+      {
+        "id": "TS-OTA-04",
+        "title": "TLS downgrade or MITM on OTA channel",
+        "targetedAssetIds": ["ASSET-OTA-CHANNEL"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Attacker performs protocol downgrade attack on TLS session or exploits weak cipher negotiation to intercept and modify OTA traffic"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-OTA-01",
+        "title": "Backend compromise leading to malicious OTA package delivery",
+        "threatScenarioId": "TS-OTA-01",
+        "steps": [
+          "Gain access to OEM backend OTA infrastructure via credential theft or RCE",
+          "Replace or inject a malicious update package in the distribution pipeline",
+          "ECU receives package, signature check fails or is bypassed",
+          "Malicious software executes on vehicle ECU"
+        ],
+        "references": []
+      },
+      {
+        "id": "AP-OTA-02",
+        "title": "Version rollback via metadata manipulation",
+        "threatScenarioId": "TS-OTA-02",
+        "steps": [
+          "Intercept or modify OTA metadata in transit",
+          "Set version field to trigger rollback logic",
+          "ECU installs older version without anti-rollback enforcement"
+        ],
+        "references": []
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 AFR",
+        "version": "1.0",
+        "factors": ["time", "expertise", "knowledge", "window", "equipment"]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact",
+        "version": "1.0",
+        "factors": ["safety", "financial", "operational", "privacy"]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-OTA-01",
+        "attackPathId": "AP-OTA-01",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "high",
+          "expertise": "expert",
+          "knowledge": "insider",
+          "equipment": "specialized"
+        },
+        "score": "4",
+        "band": "High",
+        "rationale": "Requires sophisticated backend compromise and exploitation of update pipeline"
+      },
+      {
+        "id": "AFR-OTA-02",
+        "attackPathId": "AP-OTA-02",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "time": "medium",
+          "expertise": "high",
+          "knowledge": "public",
+          "equipment": "standard"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Rollback attacks are well-understood; feasibility depends on anti-rollback enforcement"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-OTA-TAMPER",
+        "damageScenarioId": "DS-OTA-TAMPER",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "critical",
+          "financial": "high",
+          "operational": "high"
+        },
+        "score": "5",
+        "rationale": "Unauthorized code execution on safety-critical ECUs can lead to loss of vehicle control and broad fleet impact"
+      },
+      {
+        "id": "IR-OTA-ROLLBACK",
+        "damageScenarioId": "DS-OTA-ROLLBACK",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "high",
+          "financial": "medium"
+        },
+        "score": "4",
+        "rationale": "Re-exposure of patched vulnerabilities may enable further attacks with safety implications"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-OTA-01",
+        "threatScenarioId": "TS-OTA-01",
+        "afrRef": "AFR-OTA-01",
+        "impactRef": "IR-OTA-TAMPER",
+        "methodId": "iso21434-afr-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "High impact combined with high but not insurmountable attack feasibility yields HIGH overall risk"
+      },
+      {
+        "id": "RV-OTA-02",
+        "threatScenarioId": "TS-OTA-02",
+        "afrRef": "AFR-OTA-02",
+        "impactRef": "IR-OTA-ROLLBACK",
+        "methodId": "iso21434-afr-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium feasibility with high impact results in HIGH risk; must be mitigated"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-OTA-SIG",
+        "title": "Mandatory cryptographic signature verification for all OTA packages",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-SIG-01",
+        "implementationStatus": "implemented"
+      },
+      {
+        "id": "CTRL-OTA-ARV",
+        "title": "Anti-rollback counter enforcement in bootloader",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-ARV-01",
+        "implementationStatus": "implemented"
+      },
+      {
+        "id": "CTRL-OTA-TLS",
+        "title": "Mutual TLS with certificate pinning for OTA channel",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-TLS-01",
+        "implementationStatus": "implemented"
+      },
+      {
+        "id": "CTRL-OTA-HSM",
+        "title": "HSM-based key storage and signing operations",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-HSM-01",
+        "implementationStatus": "implemented"
+      },
+      {
+        "id": "CTRL-OTA-AUDIT",
+        "title": "OTA update audit log with tamper-evident storage",
+        "catalog": "OEM-SEC-CTRL",
+        "controlId": "OTA-AUDIT-01",
+        "implementationStatus": "planned"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-OTA-01",
+        "riskValueId": "RV-OTA-01",
+        "decision": "treat",
+        "controls": ["CTRL-OTA-SIG", "CTRL-OTA-HSM", "CTRL-OTA-TLS"],
+        "justification": "Cryptographic controls reduce the feasibility of injecting unsigned packages; backend protections address infrastructure attack vectors"
+      },
+      {
+        "id": "RTD-OTA-02",
+        "riskValueId": "RV-OTA-02",
+        "decision": "treat",
+        "controls": ["CTRL-OTA-ARV"],
+        "justification": "Hardware anti-rollback counters prevent version downgrade regardless of metadata manipulation"
+      }
+    ],
+    "cybersecurityGoals": [
+      {
+        "id": "CSG-OTA-01",
+        "title": "Ensure authenticity and integrity of all OTA software packages",
+        "description": "The OTA Update Manager SHALL only accept and apply software packages that have been cryptographically signed by the OEM's authorized code-signing authority. Any package failing verification MUST be rejected and the update aborted.",
+        "linkedThreatScenarioIds": ["TS-OTA-01"],
+        "linkedRiskValueIds": ["RV-OTA-01"],
+        "linkedDamageScenarioIds": ["DS-OTA-TAMPER"],
+        "goalType": "integrity",
+        "acceptanceCriteria": "100% of OTA packages are verified against OEM public key certificate chain before installation; unsigned or invalid packages are rejected and logged with no partial installation",
+        "status": "approved",
+        "references": ["ISO/SAE 21434:2021 Clause 9.3", "UNECE WP.29 R156 §5.4.3"]
+      },
+      {
+        "id": "CSG-OTA-02",
+        "title": "Prevent unauthorized software version rollback",
+        "description": "The OTA Update Manager and target ECU bootloaders SHALL enforce monotonic version counters such that previously superseded software versions cannot be reinstalled, preventing re-introduction of patched vulnerabilities.",
+        "linkedThreatScenarioIds": ["TS-OTA-02"],
+        "linkedRiskValueIds": ["RV-OTA-02"],
+        "linkedDamageScenarioIds": ["DS-OTA-ROLLBACK"],
+        "goalType": "integrity",
+        "acceptanceCriteria": "Anti-rollback counter is incremented with each security-relevant update; attempts to install versions with lower counter values are rejected by bootloader",
+        "status": "approved",
+        "references": ["ISO/SAE 21434:2021 Clause 9.3", "NIST SP 800-193"]
+      },
+      {
+        "id": "CSG-OTA-03",
+        "title": "Protect OTA signing key material from unauthorized access",
+        "description": "Private key material used for OTA package signing SHALL be stored exclusively in hardware security modules (HSM) with no plaintext export capability. All signing operations SHALL occur within the HSM boundary.",
+        "linkedThreatScenarioIds": ["TS-OTA-03"],
+        "linkedRiskValueIds": [],
+        "linkedDamageScenarioIds": ["DS-OTA-KEYLEAK"],
+        "goalType": "confidentiality",
+        "acceptanceCriteria": "OTA signing private keys are generated and stored in FIPS 140-2 Level 3 or equivalent HSM; no key export interface is enabled; key usage is logged and auditable",
+        "status": "approved",
+        "references": ["ISO/SAE 21434:2021 Clause 9.3", "NIST SP 800-57"]
+      },
+      {
+        "id": "CSG-OTA-04",
+        "title": "Ensure confidentiality and integrity of OTA communication channel",
+        "description": "All communications between the vehicle OTA client and the OEM backend server SHALL be protected by mutually authenticated TLS with certificate pinning to prevent interception or modification in transit.",
+        "linkedThreatScenarioIds": ["TS-OTA-04"],
+        "linkedRiskValueIds": [],
+        "linkedDamageScenarioIds": ["DS-OTA-MITM"],
+        "goalType": "integrity",
+        "acceptanceCriteria": "OTA channel uses TLS 1.3 minimum with mutual authentication; certificate pinning prevents connection to unauthorized servers; all TLS handshake failures are logged",
+        "status": "approved",
+        "references": ["ISO/SAE 21434:2021 Clause 9.3", "RFC 8446"]
+      }
+    ],
+    "cybersecurityClaims": [
+      {
+        "id": "CSC-OTA-01",
+        "title": "OTA signature verification is correctly implemented",
+        "claim": "The OTA Update Manager correctly verifies the ECDSA P-256 signature of every received update package against the OEM's provisioned root CA certificate chain before initiating any installation, and rejects any package that fails this check.",
+        "linkedGoalIds": ["CSG-OTA-01"],
+        "linkedControlIds": ["CTRL-OTA-SIG"],
+        "linkedRequirementIds": ["CSR-OTA-01", "CSR-OTA-02"],
+        "evidenceRef": "urn:oem:testreport:OTA-SIG-VERIFICATION-2026-001",
+        "status": "verified",
+        "rationale": "Verified by penetration testing (OTA-PENTEST-2026-Q1) and static code analysis (SAST-OTA-2026-003); all test cases in OTA-TC-SIG-001 through OTA-TC-SIG-025 pass",
+        "references": ["urn:oem:pentest:OTA-PENTEST-2026-Q1", "urn:oem:sast:SAST-OTA-2026-003"]
+      },
+      {
+        "id": "CSC-OTA-02",
+        "title": "Anti-rollback enforcement prevents downgrade attacks",
+        "claim": "The OTA bootloader anti-rollback counter implementation correctly prevents installation of any software package with a version counter value less than or equal to the currently stored counter value.",
+        "linkedGoalIds": ["CSG-OTA-02"],
+        "linkedControlIds": ["CTRL-OTA-ARV"],
+        "linkedRequirementIds": ["CSR-OTA-03"],
+        "evidenceRef": "urn:oem:testreport:OTA-ARV-TEST-2026-001",
+        "status": "verified",
+        "rationale": "Verified by functional testing of rollback scenarios; hardware counter implemented in OTP memory is non-decreasing by construction",
+        "references": []
+      },
+      {
+        "id": "CSC-OTA-03",
+        "title": "OTA channel TLS configuration meets minimum security requirements",
+        "claim": "The OTA communication channel enforces TLS 1.3 as minimum protocol version, uses only approved cipher suites, and implements certificate pinning against the OEM's backend certificate authority.",
+        "linkedGoalIds": ["CSG-OTA-04"],
+        "linkedControlIds": ["CTRL-OTA-TLS"],
+        "linkedRequirementIds": ["CSR-OTA-05"],
+        "evidenceRef": "urn:oem:testreport:OTA-TLS-AUDIT-2026-001",
+        "status": "verified",
+        "rationale": "TLS configuration audited by external security team; cipher suite configuration reviewed and approved",
+        "references": []
+      }
+    ],
+    "cybersecurityRequirements": [
+      {
+        "id": "CSR-OTA-01",
+        "title": "OTA package signature verification SHALL use OEM root CA",
+        "description": "The OTA Update Manager SHALL verify the digital signature of each received update package using the ECDSA P-256 algorithm against the OEM root CA certificate pre-provisioned in the ECU's secure storage. Verification SHALL occur before any portion of the package is written to flash storage.",
+        "cybersecurityGoalId": "CSG-OTA-01",
+        "requirementType": "functional",
+        "allocatedTo": "OTA Update Manager ECU — update reception module",
+        "verificationMethod": "test",
+        "status": "verified",
+        "linkedControlIds": ["CTRL-OTA-SIG"],
+        "references": ["ISO/SAE 21434:2021 Clause 9.4"]
+      },
+      {
+        "id": "CSR-OTA-02",
+        "title": "Failed signature verification SHALL abort update and generate security event",
+        "description": "If OTA package signature verification fails for any reason, the update process SHALL be immediately aborted, no package data SHALL be written to non-volatile storage, and a security event SHALL be logged to the vehicle security event log with the package hash, timestamp, and failure reason.",
+        "cybersecurityGoalId": "CSG-OTA-01",
+        "requirementType": "functional",
+        "allocatedTo": "OTA Update Manager ECU — update reception module",
+        "verificationMethod": "test",
+        "status": "verified",
+        "linkedControlIds": ["CTRL-OTA-SIG", "CTRL-OTA-AUDIT"],
+        "references": []
+      },
+      {
+        "id": "CSR-OTA-03",
+        "title": "Bootloader anti-rollback counter SHALL be enforced in hardware",
+        "description": "Each target ECU bootloader SHALL maintain a monotonically increasing anti-rollback counter stored in OTP (One-Time Programmable) memory or equivalent hardware. Software updates SHALL only be accepted if the update package version counter is strictly greater than the stored counter value.",
+        "cybersecurityGoalId": "CSG-OTA-02",
+        "requirementType": "constraint",
+        "allocatedTo": "Target ECU bootloaders",
+        "verificationMethod": "test",
+        "status": "verified",
+        "linkedControlIds": ["CTRL-OTA-ARV"],
+        "references": ["NIST SP 800-193 §3.2"]
+      },
+      {
+        "id": "CSR-OTA-04",
+        "title": "OTA signing private keys SHALL reside exclusively in HSM",
+        "description": "The private key material used to sign OTA update packages SHALL be generated within and permanently stored in a Hardware Security Module certified to FIPS 140-2 Level 3 or higher. The HSM SHALL NOT provide any interface for exporting private key material in plaintext form.",
+        "cybersecurityGoalId": "CSG-OTA-03",
+        "requirementType": "constraint",
+        "allocatedTo": "OEM backend OTA signing infrastructure",
+        "verificationMethod": "inspection",
+        "status": "approved",
+        "linkedControlIds": ["CTRL-OTA-HSM"],
+        "references": ["NIST SP 800-57 Part 1 §8.2"]
+      },
+      {
+        "id": "CSR-OTA-05",
+        "title": "OTA channel SHALL enforce TLS 1.3 with certificate pinning",
+        "description": "The OTA communication channel between the vehicle and the OEM backend SHALL use TLS 1.3 as the minimum protocol version. The OTA client SHALL implement certificate pinning against the OEM backend's certificate authority public key to prevent connection to unauthorized servers.",
+        "cybersecurityGoalId": "CSG-OTA-04",
+        "requirementType": "interface",
+        "allocatedTo": "OTA Update Manager ECU — communication module",
+        "verificationMethod": "test",
+        "status": "verified",
+        "linkedControlIds": ["CTRL-OTA-TLS"],
+        "references": ["RFC 8446", "RFC 7469"]
+      },
+      {
+        "id": "CSR-OTA-06",
+        "title": "OTA audit log SHALL record all update attempts",
+        "description": "The OTA Update Manager SHALL maintain a tamper-evident audit log recording all update attempts including: package identifier, version, timestamp, verification outcome, and whether installation was completed or aborted. Log entries SHALL be cryptographically chained to detect tampering.",
+        "cybersecurityGoalId": "CSG-OTA-01",
+        "requirementType": "non-functional",
+        "allocatedTo": "OTA Update Manager ECU — audit module",
+        "verificationMethod": "test",
+        "status": "approved",
+        "linkedControlIds": ["CTRL-OTA-AUDIT"],
+        "references": []
+      }
+    ],
+    "cybersecurityConcept": [
+      {
+        "id": "CC-OTA-01",
+        "title": "Defense-in-depth OTA security architecture",
+        "description": "The OTA security architecture employs multiple independent layers of protection ensuring that compromise of any single layer is insufficient to deploy unauthorized software. The layers are: (1) authenticated and encrypted transport channel, (2) cryptographic package signature verification, (3) hardware-enforced anti-rollback, and (4) audit logging. This aligns with ISO/SAE 21434 Clause 9.4 cybersecurity concept requirements.",
+        "linkedGoalIds": ["CSG-OTA-01", "CSG-OTA-02", "CSG-OTA-03", "CSG-OTA-04"],
+        "linkedRequirementIds": ["CSR-OTA-01", "CSR-OTA-02", "CSR-OTA-03", "CSR-OTA-04", "CSR-OTA-05", "CSR-OTA-06"],
+        "conceptType": "architectural",
+        "designDecisions": [
+          "ECDSA P-256 selected for package signing due to performance characteristics on embedded targets and strong security margin",
+          "TLS 1.3 mandated to eliminate known vulnerabilities in earlier protocol versions (POODLE, BEAST, etc.)",
+          "Hardware OTP anti-rollback counter chosen over software counter to prevent bypass via flash manipulation",
+          "HSM-based signing at backend eliminates software key exposure risks during signing operations",
+          "Certificate pinning implemented at OTA client to reduce exposure to PKI infrastructure compromise",
+          "Audit log uses hash-chaining to provide tamper evidence without requiring specialized hardware"
+        ],
+        "assumptions": [
+          "OEM PKI infrastructure maintains adequate security controls for root CA private keys",
+          "HSM at backend is operated and maintained according to OEM key management policy",
+          "Target ECUs have sufficient flash memory to maintain previous version for rollback recovery",
+          "Cellular network availability may be intermittent; OTA client handles partial download resumption securely"
+        ],
+        "references": [
+          "ISO/SAE 21434:2021 Clause 9.4",
+          "UNECE WP.29 R156 §5.4",
+          "NIST SP 800-193",
+          "RFC 8446"
+        ]
+      },
+      {
+        "id": "CC-OTA-02",
+        "title": "Organizational OTA key management and governance process",
+        "description": "An organizational process governs the entire lifecycle of OTA code-signing keys including generation, rotation, revocation, and destruction. This process ensures continuity of update capability while minimizing key exposure duration and providing rapid response to key compromise events.",
+        "linkedGoalIds": ["CSG-OTA-03"],
+        "linkedRequirementIds": ["CSR-OTA-04"],
+        "conceptType": "organizational",
+        "designDecisions": [
+          "Dual-control ceremony required for all root CA key operations with minimum two authorized personnel",
+          "Subordinate signing keys rotated annually with 90-day overlap period for in-flight updates",
+          "Key compromise response procedure defined with maximum 4-hour revocation and re-issuance SLA",
+          "Hardware tokens required for all personnel with signing authority"
+        ],
+        "assumptions": [
+          "OEM security team maintains 24/7 on-call capability for key compromise response",
+          "HSM vendor provides maintenance and replacement within SLA during key ceremony windows"
+        ],
+        "references": [
+          "ISO/SAE 21434:2021 Clause 9.4",
+          "NIST SP 800-57 Part 2"
+        ]
+      },
+      {
+        "id": "CC-OTA-03",
+        "title": "Fail-secure update recovery and rollback strategy",
+        "description": "In the event of an interrupted or failed update installation, the system SHALL revert to the last known-good software state. This recovery concept ensures vehicle operability is maintained while preventing installation of partially written or corrupted update images.",
+        "linkedGoalIds": ["CSG-OTA-01", "CSG-OTA-02"],
+        "linkedRequirementIds": ["CSR-OTA-01", "CSR-OTA-03"],
+        "conceptType": "operational",
+        "designDecisions": [
+          "A/B partition scheme used in target ECU flash layout to enable atomic update swap",
+          "Bootloader commits to new partition only after successful signature verification and integrity check",
+          "Anti-rollback counter is incremented only after successful boot from new partition is confirmed",
+          "Failed updates trigger automatic revert to previous partition without requiring OTA retry"
+        ],
+        "assumptions": [
+          "Target ECU flash provides sufficient storage for A/B partition scheme",
+          "Power loss during flash write handled by hardware ECC and write-verify mechanisms"
+        ],
+        "references": [
+          "ISO/SAE 21434:2021 Clause 9.4",
+          "NIST SP 800-193 §3.3"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-C9-001",
+        "relationshipType": "addresses",
+        "sourceRef": "CSG-OTA-01",
+        "targetRef": "TS-OTA-01",
+        "justification": "Cybersecurity goal CSG-OTA-01 directly addresses the threat scenario of injecting unsigned OTA packages"
+      },
+      {
+        "id": "REL-C9-002",
+        "relationshipType": "addresses",
+        "sourceRef": "CSG-OTA-02",
+        "targetRef": "TS-OTA-02",
+        "justification": "Cybersecurity goal CSG-OTA-02 directly addresses the rollback attack threat scenario"
+      },
+      {
+        "id": "REL-C9-003",
+        "relationshipType": "derived_from",
+        "sourceRef": "CSG-OTA-01",
+        "targetRef": "RV-OTA-01",
+        "justification": "Cybersecurity goal CSG-OTA-01 was derived from the HIGH risk value assessment of the unauthorized package injection scenario"
+      },
+      {
+        "id": "REL-C9-004",
+        "relationshipType": "derived_from",
+        "sourceRef": "CSG-OTA-02",
+        "targetRef": "RV-OTA-02",
+        "justification": "Cybersecurity goal CSG-OTA-02 was derived from the HIGH risk value assessment of the rollback attack scenario"
+      },
+      {
+        "id": "REL-C9-005",
+        "relationshipType": "derived_from",
+        "sourceRef": "CSR-OTA-01",
+        "targetRef": "CSG-OTA-01",
+        "justification": "Requirement CSR-OTA-01 was derived from cybersecurity goal CSG-OTA-01 to specify the concrete technical mechanism"
+      },
+      {
+        "id": "REL-C9-006",
+        "relationshipType": "derived_from",
+        "sourceRef": "CSR-OTA-03",
+        "targetRef": "CSG-OTA-02",
+        "justification": "Requirement CSR-OTA-03 was derived from cybersecurity goal CSG-OTA-02 for hardware anti-rollback enforcement"
+      },
+      {
+        "id": "REL-C9-007",
+        "relationshipType": "satisfies",
+        "sourceRef": "CTRL-OTA-SIG",
+        "targetRef": "CSR-OTA-01",
+        "justification": "Control CTRL-OTA-SIG implements the mandatory signature verification required by CSR-OTA-01"
+      },
+      {
+        "id": "REL-C9-008",
+        "relationshipType": "satisfies",
+        "sourceRef": "CTRL-OTA-ARV",
+        "targetRef": "CSR-OTA-03",
+        "justification": "Control CTRL-OTA-ARV implements hardware anti-rollback enforcement required by CSR-OTA-03"
+      },
+      {
+        "id": "REL-C9-009",
+        "relationshipType": "supports",
+        "sourceRef": "CSC-OTA-01",
+        "targetRef": "CSG-OTA-01",
+        "justification": "Claim CSC-OTA-01 provides verified evidence that cybersecurity goal CSG-OTA-01 has been achieved"
+      },
+      {
+        "id": "REL-C9-010",
+        "relationshipType": "supports",
+        "sourceRef": "CC-OTA-01",
+        "targetRef": "CSG-OTA-01",
+        "justification": "Cybersecurity concept CC-OTA-01 describes the architectural approach by which CSG-OTA-01 is achieved"
+      },
+      {
+        "id": "REL-C9-011",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-OTA-SIG",
+        "targetRef": "TS-OTA-01",
+        "justification": "Mandatory signature verification directly mitigates the unsigned package injection threat"
+      },
+      {
+        "id": "REL-C9-012",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-OTA-ARV",
+        "targetRef": "TS-OTA-02",
+        "justification": "Hardware anti-rollback counter directly mitigates the version downgrade threat scenario"
+      }
+    ]
+  }
+}

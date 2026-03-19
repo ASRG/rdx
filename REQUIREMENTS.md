@@ -216,3 +216,38 @@ The following requirements were identified through ASRG TC: Risk Data Exchange m
 - **RDX-110**: The RDX format MUST support SHA-512 hash values and digital signature capabilities for document integrity verification and non-repudiation of risk assessment data (see GitHub issue #8)
 - **RDX-111**: The RDX JSON schema MUST set `additionalProperties: true` to allow tool-specific and organization-specific extensions without breaking schema validation, enabling ecosystem-wide extensibility (see GitHub issue #27)
 - **RDX-112**: The RDX format MUST support Cybersecurity Management work products as defined in ISO/SAE 21434 Clause 9, including governance structures, organizational interfaces, and cybersecurity policy references within the TARA document context (see GitHub issue #28)
+
+## 14. Clause 9 Cybersecurity Concept Requirements (ISO/SAE 21434)
+
+### 14.1 Cybersecurity Goals (WP-09-02)
+
+- **RDX-113**: The RDX format MUST support `cybersecurityGoals` objects representing WP-09-02 outputs, each with required **id** and **title** fields
+- **RDX-114**: Cybersecurity goals MUST support linkage to threat scenarios, damage scenarios, and risk values that motivated the goal
+- **RDX-115**: Cybersecurity goals SHOULD include a `goalType` field classifying the primary security property targeted (confidentiality, integrity, availability, authenticity, non-repudiation, general)
+- **RDX-116**: Cybersecurity goals SHOULD support `acceptanceCriteria` for verifiable goal achievement and a `status` lifecycle field
+
+### 14.2 Cybersecurity Claims
+
+- **RDX-117**: The RDX format MUST support `cybersecurityClaims` objects allowing stakeholders to assert that security properties have been achieved, with required **id**, **title**, and **claim** fields
+- **RDX-118**: Cybersecurity claims MUST support linkage to cybersecurity goals, controls, and requirements they substantiate
+- **RDX-119**: Cybersecurity claims SHOULD include `evidenceRef`, `status`, and `rationale` fields for auditability
+
+### 14.3 Cybersecurity Requirements (WP-09-03)
+
+- **RDX-120**: The RDX format MUST support `cybersecurityRequirements` objects representing WP-09-03 outputs, each with required **id** and **title** fields
+- **RDX-121**: Cybersecurity requirements MUST support a `cybersecurityGoalId` field linking each requirement to its parent goal
+- **RDX-122**: Cybersecurity requirements SHOULD support `requirementType` (functional, non-functional, constraint, interface, process), `allocatedTo`, `verificationMethod`, and `status` fields
+- **RDX-123**: Cybersecurity requirements SHOULD support `linkedControlIds` to reference implementing controls
+
+### 14.4 Cybersecurity Concept (WP-09-03)
+
+- **RDX-124**: The RDX format MUST support `cybersecurityConcept` objects capturing high-level design decisions for achieving cybersecurity goals, each with required **id** and **title** fields
+- **RDX-125**: Cybersecurity concept entries MUST support linkage to cybersecurity goals and requirements they address
+- **RDX-126**: Cybersecurity concept entries SHOULD include `conceptType` (architectural, operational, technology, process, organizational), `designDecisions[]`, and `assumptions[]` fields
+
+### 14.5 Clause 9 Relationship Types
+
+- **RDX-127**: The RDX relationships model MUST support `derived_from` relationship type indicating a requirement or goal is derived from another object
+- **RDX-128**: The RDX relationships model MUST support `addresses` relationship type indicating a goal or concept addresses a threat or damage scenario
+- **RDX-129**: The RDX relationships model MUST support `satisfies` relationship type indicating a control or requirement satisfies another requirement
+- **RDX-130**: The RDX relationships model MUST support `supports` relationship type indicating a claim or concept supports a goal or requirement

@@ -10,8 +10,14 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 
 ## Object model (minimums in **bold**)
 
+### Clause 9 Cybersecurity Concept Objects (ISO/SAE 21434)
+- **cybersecurityGoals**: (**id**, **title**, description?, linkedThreatScenarioIds?, linkedRiskValueIds?, linkedDamageScenarioIds?, goalType?, acceptanceCriteria?, status?, references?) — WP-09-02
+- **cybersecurityClaims**: (**id**, **title**, **claim**, linkedGoalIds?, linkedControlIds?, linkedRequirementIds?, evidenceRef?, status?, rationale?, references?)
+- **cybersecurityRequirements**: (**id**, **title**, description?, cybersecurityGoalId?, requirementType?, allocatedTo?, verificationMethod?, status?, linkedControlIds?, references?) — WP-09-03
+- **cybersecurityConcept**: (**id**, **title**, description?, linkedGoalIds?, linkedRequirementIds?, conceptType?, designDecisions[]?, assumptions[]?, references?) — WP-09-03
+
 ### Core Risk Assessment Objects
-- **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions)
+- **itemDefinition** (**id**, **title**, boundary, functions, architecture, interfaces, environment, assumptions) — WP-09-01
 - **assets**: (**id**, **title**, properties[C|I|A], linkedDamageScenarioIds, externalIds?)
 - **damageScenarios**: (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
 - **threatScenarios**: (**id**, **title**, targetedAssetIds[], compromisedProperties[], cause, references)
@@ -26,6 +32,7 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - **relationships**: (**id**, **relationshipType**, **sourceRef**, **targetRef**, confidence?, justification?)
   - Standard types: causes, mitigates, implements, assesses, contains, targets, threatens, protects, related_to
   - CAL-specific types: requires_cal (control requires CAL level), achieves_cal (assessment achieves CAL level)
+  - Clause 9 types: derived_from (requirement/goal derived from another object), addresses (goal/concept addresses a threat/damage scenario), satisfies (control/requirement satisfies another requirement), supports (claim/concept supports a goal)
 
 ### CAL (Cybersecurity Assurance Levels) Framework - ISO/SAE PAS 8475
 - **calAssuranceLevels**: (**id**, **level**[CAL1-4], **objectives**[], title?, description?, assuranceActivities?, references?)
