@@ -62,7 +62,43 @@
               }
             },
             "architecture": {
-              "type": "string"
+              "description": "System architecture description. Supports both a simple text description (legacy) or a structured representation with components and data flows.",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Simple text description of the system architecture (legacy format)"
+                },
+                {
+                  "type": "object",
+                  "description": "Structured system architecture representation",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "High-level description of the system architecture"
+                    },
+                    "components": {
+                      "type": "array",
+                      "description": "List of system components",
+                      "items": {
+                        "$ref": "#/$defs/ArchitectureComponent"
+                      }
+                    },
+                    "dataFlows": {
+                      "type": "array",
+                      "description": "List of data flows between components",
+                      "items": {
+                        "$ref": "#/$defs/DataFlow"
+                      }
+                    },
+                    "diagramUrl": {
+                      "type": "string",
+                      "description": "URL to an architecture diagram",
+                      "format": "uri"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
             },
             "interfaces": {
               "type": "array",
@@ -83,6 +119,13 @@
               "type": "string",
               "pattern": "^[A-Z]{2}$",
               "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
+            },
+            "hashes": {
+              "type": "array",
+              "description": "Cryptographic hashes for the item definition document or binary",
+              "items": {
+                "$ref": "#/$defs/Hash"
+              }
             }
           },
           "additionalProperties": true
@@ -120,6 +163,20 @@
               },
               "externalIds": {
                 "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hashes": {
+                "type": "array",
+                "description": "Cryptographic hashes for the asset (e.g., firmware binary, software component)",
+                "items": {
+                  "$ref": "#/$defs/Hash"
+                }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components this asset is associated with",
                 "items": {
                   "type": "string"
                 }
@@ -205,6 +262,13 @@
               },
               "references": {
                 "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components relevant to this threat scenario",
                 "items": {
                   "type": "string"
                 }
@@ -335,10 +399,14 @@
             ],
             "anyOf": [
               {
-                "required": ["attackPathId"]
+                "required": [
+                  "attackPathId"
+                ]
               },
               {
-                "required": ["attackStepId"]
+                "required": [
+                  "attackStepId"
+                ]
               }
             ],
             "properties": {
@@ -492,16 +560,33 @@
               },
               "requiredCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "achievedCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "references": {
                 "type": "array",
                 "items": {
                   "type": "string"
+                }
+              },
+              "hashes": {
+                "type": "array",
+                "description": "Cryptographic hashes for the control document or specification",
+                "items": {
+                  "$ref": "#/$defs/Hash"
                 }
               }
             },
@@ -560,7 +645,12 @@
               },
               "level": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "title": {
                 "type": "string"
@@ -609,15 +699,29 @@
               },
               "targetCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "assessmentResult": {
                 "type": "string",
-                "enum": ["sufficient", "insufficient", "pending"]
+                "enum": [
+                  "sufficient",
+                  "insufficient",
+                  "pending"
+                ]
               },
               "achievedCalLevel": {
                 "type": "string",
-                "enum": ["CAL1", "CAL2", "CAL3", "CAL4"]
+                "enum": [
+                  "CAL1",
+                  "CAL2",
+                  "CAL3",
+                  "CAL4"
+                ]
               },
               "evidenceRef": {
                 "type": "string"
@@ -661,35 +765,70 @@
                 "properties": {
                   "attackerProfile": {
                     "type": "string",
-                    "enum": ["nation-state", "organized-crime", "hacktivist", "insider", "opportunist"]
+                    "enum": [
+                      "nation-state",
+                      "organized-crime",
+                      "hacktivist",
+                      "insider",
+                      "opportunist"
+                    ]
                   },
                   "attackMotivation": {
                     "type": "string",
-                    "enum": ["financial", "espionage", "disruption", "reputation", "other"]
+                    "enum": [
+                      "financial",
+                      "espionage",
+                      "disruption",
+                      "reputation",
+                      "other"
+                    ]
                   },
                   "targetValue": {
                     "type": "string",
-                    "enum": ["very-high", "high", "medium", "low"]
+                    "enum": [
+                      "very-high",
+                      "high",
+                      "medium",
+                      "low"
+                    ]
                   },
                   "accessRequirement": {
                     "type": "string",
-                    "enum": ["remote", "adjacent", "physical", "insider"]
+                    "enum": [
+                      "remote",
+                      "adjacent",
+                      "physical",
+                      "insider"
+                    ]
                   }
                 },
                 "additionalProperties": true
               },
               "tafScore": {
-                "type": ["number", "string"]
+                "type": [
+                  "number",
+                  "string"
+                ]
               },
               "tafBand": {
                 "type": "string",
-                "enum": ["very-high", "high", "medium", "low", "very-low"]
+                "enum": [
+                  "very-high",
+                  "high",
+                  "medium",
+                  "low",
+                  "very-low"
+                ]
               },
               "factorRatings": {
                 "description": "Factor-specific ratings used in TAF calculation. Keys should align with or extend the method's factors array for custom assessment criteria.",
                 "type": "object",
                 "additionalProperties": {
-                  "type": ["number", "string", "boolean"]
+                  "type": [
+                    "number",
+                    "string",
+                    "boolean"
+                  ]
                 }
               },
               "rationale": {
@@ -753,6 +892,144 @@
       },
       "additionalProperties": true
     }
-  },
+  },d
   "additionalProperties": true
+}
+  "additionalProperties": false,
+  "$defs": {
+    "Hash": {
+      "type": "object",
+      "description": "A cryptographic hash value for integrity verification",
+      "required": [
+        "alg",
+        "content"
+      ],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "description": "The hash algorithm",
+          "enum": [
+            "MD5",
+            "SHA-1",
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512",
+            "BLAKE2b-256",
+            "BLAKE2b-384",
+            "BLAKE2b-512",
+            "BLAKE3"
+          ]
+        },
+        "content": {
+          "type": "string",
+          "description": "The hash value as a hexadecimal string",
+          "pattern": "^[0-9a-fA-F]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ArchitectureComponent": {
+      "type": "object",
+      "description": "A component in the system architecture",
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this component"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the component"
+        },
+        "type": {
+          "type": "string",
+          "description": "Component type classification",
+          "enum": [
+            "ecu",
+            "sensor",
+            "actuator",
+            "gateway",
+            "network",
+            "external-system",
+            "cloud-service",
+            "mobile-app",
+            "ota-server",
+            "diagnostic-tool",
+            "other"
+          ]
+        },
+        "parentId": {
+          "type": "string",
+          "description": "ID of the parent component (for hierarchical architectures)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the component and its role"
+        },
+        "trustBoundary": {
+          "type": "string",
+          "description": "The trust boundary or security zone this component belongs to"
+        },
+        "externalIds": {
+          "type": "array",
+          "description": "External identifiers (e.g., from other tools or standards)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "DataFlow": {
+      "type": "object",
+      "description": "A data flow between architecture components",
+      "required": [
+        "id",
+        "fromComponentId",
+        "toComponentId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this data flow"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the data flow"
+        },
+        "fromComponentId": {
+          "type": "string",
+          "description": "ID of the source component"
+        },
+        "toComponentId": {
+          "type": "string",
+          "description": "ID of the destination component"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Communication protocol used (e.g., CAN, Ethernet, SOME/IP, HTTPS)"
+        },
+        "dataDescription": {
+          "type": "string",
+          "description": "Description of what data is exchanged"
+        },
+        "encrypted": {
+          "type": "boolean",
+          "description": "Whether the data flow is encrypted"
+        },
+        "authenticated": {
+          "type": "boolean",
+          "description": "Whether the data flow is authenticated"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
