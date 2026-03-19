@@ -956,6 +956,59 @@
 }
   "additionalProperties": false,
   "$defs": {
+    "RiskLevel": {
+      "type": "object",
+      "description": "A named risk level (band/tier) within a rating methodology",
+      "required": [
+        "id",
+        "label",
+        "rank"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this risk level within the document"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for this level (e.g., 'Low', 'Medium', 'High', 'Very High')"
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Ordinal rank indicating severity order, where 1 is the lowest/least severe level"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of what this risk level means in context"
+        },
+        "color": {
+          "type": "string",
+          "description": "Optional hex color code for visualization (e.g., '#FF0000' for red)",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "scoreRange": {
+          "type": "object",
+          "description": "Optional numeric score range that maps to this risk level",
+          "properties": {
+            "min": {
+              "type": "number",
+              "description": "Minimum score value (inclusive) for this level"
+            },
+            "max": {
+              "type": "number",
+              "description": "Maximum score value (inclusive) for this level"
+            }
+          },
+          "additionalProperties": false
+        },
+        "treatmentGuidance": {
+          "type": "string",
+          "description": "Recommended risk treatment guidance for risks classified at this level"
+        }
+      },
+      "additionalProperties": false
+    },
     "Hash": {
       "type": "object",
       "description": "A cryptographic hash value for integrity verification",
