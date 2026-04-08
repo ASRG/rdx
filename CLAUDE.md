@@ -57,8 +57,9 @@ Minimum required fields in **bold**:
 - **damageScenarios** (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
 - **threatScenarios** (**id**, **title**, **targetedAssetIds[]**, compromisedProperties[], cause, references)
 - **attackPaths** (**id**, **title**, **threatScenarioId**, steps[], references)
-- **methods** (**id**, **name**, **version**, factors[]) — rating methodologies used
-- **attackFeasibilityRatings** (**id**, **attackPathId**, **methodId**, **score**, inputFactors, band, rationale)
+- **attackSteps** (**id**, **title**, description, **attackFeasibilityRatings[]**, controlIds[], references) — steps with embedded feasibility ratings
+- **methods** (**id**, **name**, **version**, factors[]) — rating methodologies used; standard ISO/SAE 21434 factors: elapsedTime, expertise, knowledge, windowOfOpportunity, equipment
+- **attackFeasibilityRatings** (**id**, **attackPathId**, **methodId**, **score**, inputFactors, band, rationale) — top-level path-level ratings referenced by riskValues.afrRef; prefer embedding ratings directly in attackSteps
 - **impactRatings** (**id**, **damageScenarioId**, **methodId**, **score**, categories, rationale)
 - **riskValues** (**id**, **threatScenarioId**, **afrRef**, **impactRef**, **methodId**, **score**, band, rationale)
 - **controls** (**id**, **title**, catalog, controlId, implementationStatus, requiredCalLevel, achievedCalLevel, references)

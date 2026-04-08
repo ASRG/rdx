@@ -619,10 +619,10 @@
         "name": "ISO/SAE 21434 Attack Feasibility Rating",
         "version": "1.0",
         "factors": [
-          "time",
+          "elapsedTime",
           "expertise",
           "knowledge",
-          "window",
+          "windowOfOpportunity",
           "equipment"
         ]
       },
@@ -670,10 +670,10 @@
         "attackPathId": "AP-MALICIOUS-APP-INSTALL",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "medium",
           "knowledge": "low",
-          "window": "unlimited",
+          "windowOfOpportunity": "unlimited",
           "equipment": "standard"
         },
         "score": "3",
@@ -685,10 +685,10 @@
         "attackPathId": "AP-WIFI-MITM", 
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "low",
           "expertise": "medium",
           "knowledge": "low",
-          "window": "limited",
+          "windowOfOpportunity": "limited",
           "equipment": "standard"
         },
         "score": "2",
@@ -700,10 +700,10 @@
         "attackPathId": "AP-PHYSICAL-USB",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "low",
           "expertise": "high",
           "knowledge": "medium",
-          "window": "limited",
+          "windowOfOpportunity": "limited",
           "equipment": "specialized"
         },
         "score": "3",
@@ -715,10 +715,10 @@
         "attackPathId": "AP-SUPPLY-CHAIN-FIRMWARE",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "high", 
+          "elapsedTime": "high",
           "expertise": "very_high",
           "knowledge": "high",
-          "window": "unlimited",
+          "windowOfOpportunity": "unlimited",
           "equipment": "specialized"
         },
         "score": "4",
@@ -730,10 +730,10 @@
         "attackPathId": "AP-INSIDER-SERVICE",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "low",
           "expertise": "low",
           "knowledge": "medium",
-          "window": "limited",
+          "windowOfOpportunity": "limited",
           "equipment": "standard"
         },
         "score": "4",
@@ -745,10 +745,10 @@
         "attackPathId": "AP-CLOUD-DATABASE", 
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "high",
           "knowledge": "medium",
-          "window": "unlimited",
+          "windowOfOpportunity": "unlimited",
           "equipment": "standard"
         },
         "score": "3",
@@ -760,10 +760,10 @@
         "attackPathId": "AP-ECALL-SPOOF",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "high",
-          "expertise": "very_high", 
+          "elapsedTime": "high",
+          "expertise": "very_high",
           "knowledge": "high",
-          "window": "limited",
+          "windowOfOpportunity": "limited",
           "equipment": "specialized"
         },
         "score": "4",
@@ -775,10 +775,10 @@
         "attackPathId": "AP-UPDATE-REDIRECT",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "high",
+          "elapsedTime": "high",
           "expertise": "very_high",
-          "knowledge": "high", 
-          "window": "limited",
+          "knowledge": "high",
+          "windowOfOpportunity": "limited",
           "equipment": "specialized"
         },
         "score": "4",
@@ -790,10 +790,10 @@
         "attackPathId": "AP-BLUETOOTH-EXPLOIT",
         "methodId": "iso21434-afr-v1", 
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "medium",
           "knowledge": "low",
-          "window": "limited",
+          "windowOfOpportunity": "limited",
           "equipment": "standard"
         },
         "score": "2",
@@ -805,10 +805,10 @@
         "attackPathId": "AP-VOICE-INJECTION",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "high",
           "knowledge": "medium",
-          "window": "unlimited",
+          "windowOfOpportunity": "unlimited",
           "equipment": "standard"
         },
         "score": "3",

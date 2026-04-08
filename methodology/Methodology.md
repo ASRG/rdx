@@ -16,7 +16,9 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - **damageScenarios**: (**id**, **title**, description, impactedFunctions, affectedRoadUsers, references)
 - **threatScenarios**: (**id**, **title**, targetedAssetIds[], compromisedProperties[], cause, references)
 - **attackPaths**: (**id**, **title**, threatScenarioId, steps[], references)
-- **attackFeasibilityRatings**: (**id**, attackPathId, methodId, inputFactors, score, band?, rationale?)
+- **attackSteps**: (**id**, **title**, description?, attackFeasibilityRatings[], controlIds[], references?) — steps with embedded feasibility ratings
+- **attackFeasibilityRatings** (embedded in attackStep): (methodId, inputFactors{elapsedTime, expertise, knowledge, windowOfOpportunity, equipment}, score, band?, rationale?) — no id required
+- **attackFeasibilityRatings** (top-level, path-level): (**id**, **attackPathId**, **methodId**, **score**, inputFactors, band?, rationale?) — used for riskValues.afrRef
 - **impactRatings**: (**id**, damageScenarioId, methodId, categories, score, rationale?)
 - **riskValues**: (**id**, threatScenarioId, afrRef, impactRef, methodId, score, band?, rationale?)
 - **controls**: (**id**, title, catalog?, controlId?, implementationStatus?, requiredCalLevel?, achievedCalLevel?, references?)

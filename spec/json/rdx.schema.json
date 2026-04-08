@@ -295,8 +295,50 @@
               "description": {
                 "type": "string"
               },
+              "attackFeasibilityRatings": {
+                "type": "array",
+                "description": "Attack feasibility ratings embedded directly in this step. Each rating captures the method, input factors, and score for this step without requiring a separate top-level entity.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "methodId",
+                    "score"
+                  ],
+                  "properties": {
+                    "methodId": {
+                      "type": "string"
+                    },
+                    "inputFactors": {
+                      "type": "object",
+                      "description": "Factor values used in the rating. Standard ISO/SAE 21434 factors include elapsedTime, expertise, knowledge, windowOfOpportunity, and equipment.",
+                      "additionalProperties": {
+                        "type": [
+                          "number",
+                          "string",
+                          "boolean"
+                        ]
+                      }
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "string"
+                      ]
+                    },
+                    "band": {
+                      "type": "string"
+                    },
+                    "rationale": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
               "attackFeasibilityRatingIds": {
                 "type": "array",
+                "deprecated": true,
+                "description": "Deprecated: Use embedded attackFeasibilityRatings instead.",
                 "items": {
                   "type": "string"
                 }
@@ -449,6 +491,7 @@
         },
         "attackFeasibilityRatings": {
           "type": "array",
+          "description": "Top-level attack feasibility ratings, primarily used for path-level ratings referenced by riskValues.afrRef. For step-level ratings, prefer embedding directly in attackSteps.attackFeasibilityRatings.",
           "items": {
             "type": "object",
             "required": [
@@ -476,13 +519,16 @@
                 "type": "string"
               },
               "attackStepId": {
-                "type": "string"
+                "type": "string",
+                "deprecated": true,
+                "description": "Deprecated: Embed the rating directly in the attackStep using attackFeasibilityRatings array instead."
               },
               "methodId": {
                 "type": "string"
               },
               "inputFactors": {
                 "type": "object",
+                "description": "Factor values used in the rating. Standard ISO/SAE 21434 factors include elapsedTime, expertise, knowledge, windowOfOpportunity, and equipment.",
                 "additionalProperties": {
                   "type": [
                     "number",
@@ -951,9 +997,7 @@
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
+  },
   "additionalProperties": false,
   "$defs": {
     "RiskLevel": {

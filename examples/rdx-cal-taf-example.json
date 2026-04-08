@@ -125,10 +125,10 @@
         "name": "ISO/SAE 21434 AFR",
         "version": "1.0",
         "factors": [
-          "time",
-          "expertise", 
+          "elapsedTime",
+          "expertise",
           "knowledge",
-          "window",
+          "windowOfOpportunity",
           "equipment"
         ]
       },
@@ -165,8 +165,9 @@
         "attackPathId": "AP-V2X-1",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "high",
+          "windowOfOpportunity": "moderate",
           "equipment": "specialized"
         },
         "score": "3",

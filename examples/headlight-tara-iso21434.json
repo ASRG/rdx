@@ -273,10 +273,10 @@
         "name": "ISO/SAE 21434 Attack Feasibility Rating",
         "version": "1.0",
         "factors": [
-          "elapsed_time",
-          "specialist_expertise",
-          "knowledge_of_item",
-          "window_of_opportunity",
+          "elapsedTime",
+          "expertise",
+          "knowledge",
+          "windowOfOpportunity",
           "equipment"
         ]
       },
@@ -303,10 +303,10 @@
         "attackPathId": "AP-CAN-INJECT",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "elapsed_time": "hours",
-          "specialist_expertise": "proficient",
-          "knowledge_of_item": "public",
-          "window_of_opportunity": "moderate",
+          "elapsedTime": "hours",
+          "expertise": "proficient",
+          "knowledge": "public",
+          "windowOfOpportunity": "moderate",
           "equipment": "standard"
         },
         "score": "2",
@@ -318,10 +318,10 @@
         "attackPathId": "AP-DIAG-PRIV",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "elapsed_time": "hours",
-          "specialist_expertise": "expert",
-          "knowledge_of_item": "restricted",
-          "window_of_opportunity": "easy",
+          "elapsedTime": "hours",
+          "expertise": "expert",
+          "knowledge": "restricted",
+          "windowOfOpportunity": "easy",
           "equipment": "specialized"
         },
         "score": "3",
@@ -333,10 +333,10 @@
         "attackPathId": "AP-FW-MODIFY",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "elapsed_time": "days",
-          "specialist_expertise": "expert",
-          "knowledge_of_item": "restricted",
-          "window_of_opportunity": "difficult",
+          "elapsedTime": "days",
+          "expertise": "expert",
+          "knowledge": "restricted",
+          "windowOfOpportunity": "difficult",
           "equipment": "bespoke"
         },
         "score": "4",
@@ -348,10 +348,10 @@
         "attackPathId": "AP-PASSIVE-TRACK",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "elapsed_time": "hours",
-          "specialist_expertise": "proficient",
-          "knowledge_of_item": "public",
-          "window_of_opportunity": "moderate",
+          "elapsedTime": "hours",
+          "expertise": "proficient",
+          "knowledge": "public",
+          "windowOfOpportunity": "moderate",
           "equipment": "standard"
         },
         "score": "2",

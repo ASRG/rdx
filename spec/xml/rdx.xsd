@@ -110,6 +110,7 @@
       <xs:element name="id" type="xs:string"/>
       <xs:element name="title" type="xs:string"/>
       <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="attackFeasibilityRatings" type="rdx:embeddedAfrsType" minOccurs="0"/>
       <xs:element name="attackFeasibilityRatingIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="controlIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
@@ -145,6 +146,27 @@
       <xs:element name="name" type="xs:string"/>
       <xs:element name="version" type="xs:string"/>
       <xs:element name="factors" type="rdx:stringList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:complexType name="embeddedAfrsType">
+    <xs:annotation>
+      <xs:documentation>Container for attack feasibility ratings embedded directly within an attack step. Ratings here do not require an id, attackStepId, or attackPathId since they are contextually bound to the enclosing step.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="afr" type="rdx:embeddedAfrType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="embeddedAfrType">
+    <xs:annotation>
+      <xs:documentation>An attack feasibility rating embedded within an attack step. Standard ISO/SAE 21434 inputFactors include: elapsedTime, expertise, knowledge, windowOfOpportunity, and equipment.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="score" type="xs:string"/>
+      <xs:element name="band" type="xs:string" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>

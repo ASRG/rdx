@@ -97,15 +97,41 @@
         "id": "AS-001",
         "title": "Scan DoIP services",
         "description": "Network scan to identify exposed DoIP endpoints on the vehicle",
-        "attackFeasibilityRatingIds": ["AFR-AS-001"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "medium",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "2",
+            "band": "Low-Medium",
+            "rationale": "Network scanning is straightforward with standard tools"
+          }
+        ],
         "controlIds": ["CTRL-NET-MON"],
         "references": ["https://example.com/doip-security"]
       },
       {
-        "id": "AS-002", 
+        "id": "AS-002",
         "title": "Exploit vulnerability",
         "description": "Exploit authentication bypass vulnerability in UDS over DoIP",
-        "attackFeasibilityRatingIds": ["AFR-AS-002"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "medium",
+              "expertise": "high",
+              "windowOfOpportunity": "moderate",
+              "equipment": "specialized"
+            },
+            "score": "3",
+            "band": "Medium",
+            "rationale": "Requires knowledge of UDS vulnerabilities and exploitation"
+          }
+        ],
         "controlIds": ["CTRL-VULN-PATCH"],
         "references": ["https://example.com/uds-vulns"]
       },
@@ -113,14 +139,40 @@
         "id": "AS-003",
         "title": "Pivot to CAN network",
         "description": "Gain access to internal CAN bus from compromised DoIP service",
-        "attackFeasibilityRatingIds": ["AFR-AS-003"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "high",
+              "windowOfOpportunity": "moderate",
+              "equipment": "standard"
+            },
+            "score": "3",
+            "band": "Medium",
+            "rationale": "Network pivoting requires advanced technical knowledge"
+          }
+        ],
         "controlIds": ["CTRL-NET-SEG"]
       },
       {
         "id": "AS-004",
         "title": "Inject malicious CAN frames",
         "description": "Send spoofed brake control messages on CAN bus",
-        "attackFeasibilityRatingIds": ["AFR-AS-004"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "medium",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "2",
+            "band": "Low-Medium",
+            "rationale": "CAN frame injection is well-documented"
+          }
+        ],
         "controlIds": ["CTRL-MSG-1"]
       }
     ],
@@ -138,10 +190,10 @@
         "name": "ISO/SAE 21434 AFR",
         "version": "1.0",
         "factors": [
-          "time",
+          "elapsedTime",
           "expertise",
           "knowledge",
-          "window",
+          "windowOfOpportunity",
           "equipment"
         ],
         "riskLevels": [
@@ -276,65 +328,14 @@
         "attackPathId": "AP-1",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "medium",
+          "elapsedTime": "medium",
           "expertise": "high",
+          "windowOfOpportunity": "moderate",
           "equipment": "specialized"
         },
         "score": "3",
         "band": "Medium",
         "rationale": "Requires specialized ECU access"
-      },
-      {
-        "id": "AFR-AS-001",
-        "attackStepId": "AS-001",
-        "methodId": "iso21434-afr-v1",
-        "inputFactors": {
-          "time": "low",
-          "expertise": "medium",
-          "equipment": "standard"
-        },
-        "score": "2",
-        "band": "Low-Medium",
-        "rationale": "Network scanning is straightforward with standard tools"
-      },
-      {
-        "id": "AFR-AS-002",
-        "attackStepId": "AS-002",
-        "methodId": "iso21434-afr-v1",
-        "inputFactors": {
-          "time": "medium",
-          "expertise": "high",
-          "equipment": "specialized"
-        },
-        "score": "3",
-        "band": "Medium",
-        "rationale": "Requires knowledge of UDS vulnerabilities and exploitation"
-      },
-      {
-        "id": "AFR-AS-003",
-        "attackStepId": "AS-003",
-        "methodId": "iso21434-afr-v1",
-        "inputFactors": {
-          "time": "low",
-          "expertise": "high",
-          "equipment": "standard"
-        },
-        "score": "3",
-        "band": "Medium",
-        "rationale": "Network pivoting requires advanced technical knowledge"
-      },
-      {
-        "id": "AFR-AS-004",
-        "attackStepId": "AS-004",
-        "methodId": "iso21434-afr-v1",
-        "inputFactors": {
-          "time": "low",
-          "expertise": "medium",
-          "equipment": "standard"
-        },
-        "score": "2",
-        "band": "Low-Medium",
-        "rationale": "CAN frame injection is well-documented"
       }
     ],
     "impactRatings": [

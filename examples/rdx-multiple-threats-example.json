@@ -83,55 +83,159 @@
         "id": "AS-OBD-001",
         "title": "Break vehicle window",
         "description": "Physical break-in to gain access to vehicle interior",
-        "attackFeasibilityRatingIds": ["AFR-OBD-001"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "low",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "1",
+            "band": "Low",
+            "rationale": "Simple physical action requiring minimal skill or equipment"
+          }
+        ],
         "controlIds": ["CTRL-PHYS-SEC"]
       },
       {
-        "id": "AS-OBD-002", 
+        "id": "AS-OBD-002",
         "title": "Connect to OBD port",
         "description": "Physical connection to OBD-II diagnostic port",
-        "attackFeasibilityRatingIds": ["AFR-OBD-002"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "medium",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "2",
+            "band": "Low-Medium",
+            "rationale": "Standard OBD adapter widely available; minimal expertise needed"
+          }
+        ],
         "controlIds": ["CTRL-OBD-LOCK"]
       },
       {
         "id": "AS-OBD-003",
         "title": "Deploy malicious diagnostic tool",
         "description": "Use compromised or malicious diagnostic equipment",
-        "attackFeasibilityRatingIds": ["AFR-OBD-003"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "medium",
+              "expertise": "high",
+              "windowOfOpportunity": "moderate",
+              "equipment": "specialized"
+            },
+            "score": "3",
+            "band": "Medium",
+            "rationale": "Requires crafting or obtaining a malicious diagnostic tool"
+          }
+        ],
         "controlIds": ["CTRL-AUTH-TOOL"]
       },
       {
         "id": "AS-OBD-004",
         "title": "Legitimate service access",
         "description": "Authorized technician access during service appointment",
-        "attackFeasibilityRatingIds": ["AFR-OBD-004"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "medium",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "2",
+            "band": "Low-Medium",
+            "rationale": "Insider with legitimate access reduces effort significantly"
+          }
+        ],
         "controlIds": ["CTRL-ACCESS-LOG"]
       },
       {
         "id": "AS-OBD-005",
         "title": "Extract ECU data",
         "description": "Read cryptographic keys and configuration data from ECUs",
-        "attackFeasibilityRatingIds": ["AFR-OBD-005"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "high",
+              "expertise": "expert",
+              "windowOfOpportunity": "difficult",
+              "equipment": "specialized"
+            },
+            "score": "4",
+            "band": "High",
+            "rationale": "Extracting protected ECU data requires advanced firmware knowledge"
+          }
+        ],
         "controlIds": ["CTRL-DATA-ENCRYPT"]
       },
       {
         "id": "AS-OBD-006",
         "title": "Program new key",
         "description": "Add new authentication key to vehicle systems",
-        "attackFeasibilityRatingIds": ["AFR-OBD-006"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "medium",
+              "expertise": "high",
+              "windowOfOpportunity": "moderate",
+              "equipment": "specialized"
+            },
+            "score": "3",
+            "band": "Medium",
+            "rationale": "Key programming requires specialized hardware and knowledge of vehicle protocols"
+          }
+        ],
         "controlIds": ["CTRL-KEY-PROTECT"]
       },
       {
         "id": "AS-OBD-007",
         "title": "Start vehicle",
         "description": "Use newly programmed key to start and operate vehicle",
-        "attackFeasibilityRatingIds": ["AFR-OBD-007"]
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "low",
+              "expertise": "low",
+              "windowOfOpportunity": "easy",
+              "equipment": "standard"
+            },
+            "score": "1",
+            "band": "Low",
+            "rationale": "Using a programmed key is trivial once the key exists"
+          }
+        ]
       },
       {
         "id": "AS-OBD-008",
         "title": "Clone keys offline",
         "description": "Create duplicate keys using extracted data in external environment",
-        "attackFeasibilityRatingIds": ["AFR-OBD-008"],
+        "attackFeasibilityRatings": [
+          {
+            "methodId": "iso21434-afr-v1",
+            "inputFactors": {
+              "elapsedTime": "high",
+              "expertise": "expert",
+              "windowOfOpportunity": "moderate",
+              "equipment": "specialized"
+            },
+            "score": "4",
+            "band": "High",
+            "rationale": "Offline key cloning requires cryptographic expertise and specialized lab equipment"
+          }
+        ],
         "controlIds": ["CTRL-KEY-DERIVATION"]
       }
     ],
@@ -161,10 +265,10 @@
         "name": "ISO/SAE 21434 AFR",
         "version": "1.0",
         "factors": [
-          "time",
+          "elapsedTime",
           "expertise",
           "knowledge",
-          "window",
+          "windowOfOpportunity",
           "equipment"
         ]
       },
@@ -186,8 +290,9 @@
         "attackPathId": "AP-PHYSICAL-1",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "low",
           "expertise": "medium",
+          "windowOfOpportunity": "easy",
           "equipment": "standard"
         },
         "score": "2",
@@ -199,8 +304,9 @@
         "attackPathId": "AP-TOOL-1",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "medium",
           "expertise": "high",
+          "windowOfOpportunity": "moderate",
           "equipment": "specialized"
         },
         "score": "3",
@@ -212,8 +318,9 @@
         "attackPathId": "AP-INSIDER-1",
         "methodId": "iso21434-afr-v1",
         "inputFactors": {
-          "time": "low",
+          "elapsedTime": "low",
           "expertise": "high",
+          "windowOfOpportunity": "easy",
           "equipment": "specialized"
         },
         "score": "4",
