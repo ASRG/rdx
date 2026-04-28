@@ -19,25 +19,40 @@
     },
     "created": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "description": "Optional. ISO 8601 date-time when this RDX document was created."
     },
     "createdBy": {
-      "type": "string"
+      "type": "string",
+      "description": "Optional. Tool name or analyst identifier that produced this document."
     },
     "sources": {
       "type": "array",
+      "description": "Optional. List of source references (standards, project URNs, prior documents) that informed this TARA.",
       "items": {
         "type": "string"
       }
     },
     "bomRefRef": {
-      "type": "string"
+      "type": "string",
+      "description": "Optional. CycloneDX BOM reference linking this risk set to a specific component or SBOM entry."
     },
     "riskSet": {
       "type": "object",
       "required": [
-        "itemDefinition"
+        "itemDefinition",
+        "assets",
+        "damageScenarios",
+        "threatScenarios",
+        "attackPaths",
+        "methods",
+        "attackFeasibilityRatings",
+        "impactRatings",
+        "riskValues",
+        "controls",
+        "riskTreatmentDecisions"
       ],
+      "description": "Container for all TARA risk objects. The eleven core arrays (itemDefinition through riskTreatmentDecisions) are mandatory for a minimum viable TARA. Extended arrays (attackSteps, calAssuranceLevels, calAssessments, tafAssessments, relationships) are optional.",
       "properties": {
         "itemDefinition": {
           "type": "object",
@@ -47,22 +62,26 @@
           ],
           "properties": {
             "id": {
-              "type": "string"
+              "type": "string",
+              "description": "Mandatory. Unique identifier for this item definition."
             },
             "title": {
-              "type": "string"
+              "type": "string",
+              "description": "Mandatory. Human-readable name of the item under analysis."
             },
             "boundary": {
-              "type": "string"
+              "type": "string",
+              "description": "Optional. Description of the item boundary — what is in and out of scope."
             },
             "functions": {
               "type": "array",
+              "description": "Optional. List of functions the item provides.",
               "items": {
                 "type": "string"
               }
             },
             "architecture": {
-              "description": "System architecture description. Supports both a simple text description (legacy) or a structured representation with components and data flows.",
+              "description": "Optional. System architecture description. Supports both a simple text description (legacy) or a structured representation with components and data flows.",
               "oneOf": [
                 {
                   "type": "string",
@@ -102,15 +121,18 @@
             },
             "interfaces": {
               "type": "array",
+              "description": "Optional. External interfaces of the item (e.g., CAN, Ethernet, USB).",
               "items": {
                 "type": "string"
               }
             },
             "environment": {
-              "type": "string"
+              "type": "string",
+              "description": "Optional. Operational environment description (e.g., vehicle type, temperature range, market)."
             },
             "assumptions": {
               "type": "array",
+              "description": "Optional. Security assumptions made during the analysis.",
               "items": {
                 "type": "string"
               }
@@ -118,11 +140,11 @@
             "countryOfOrigin": {
               "type": "string",
               "pattern": "^[A-Z]{2}$",
-              "description": "ISO 3166-1 alpha-2 country code indicating the country of origin for this item"
+              "description": "Optional. ISO 3166-1 alpha-2 country code indicating the country of origin for this item."
             },
             "hashes": {
               "type": "array",
-              "description": "Cryptographic hashes for the item definition document or binary",
+              "description": "Optional. Cryptographic hashes for the item definition document or binary.",
               "items": {
                 "$ref": "#/$defs/Hash"
               }
@@ -132,6 +154,7 @@
         },
         "assets": {
           "type": "array",
+          "description": "Mandatory. List of assets under analysis — data, functions, or resources that have value and require protection.",
           "items": {
             "type": "object",
             "required": [
@@ -140,13 +163,16 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this asset."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Human-readable name of the asset."
               },
               "properties": {
                 "type": "array",
+                "description": "Optional. Security properties of this asset (confidentiality, integrity, availability).",
                 "items": {
                   "enum": [
                     "confidentiality",
@@ -157,26 +183,28 @@
               },
               "linkedDamageScenarioIds": {
                 "type": "array",
+                "description": "Optional. IDs of damage scenarios that would occur if this asset is compromised.",
                 "items": {
                   "type": "string"
                 }
               },
               "externalIds": {
                 "type": "array",
+                "description": "Optional. External identifiers from other tools or standards.",
                 "items": {
                   "type": "string"
                 }
               },
               "hashes": {
                 "type": "array",
-                "description": "Cryptographic hashes for the asset (e.g., firmware binary, software component)",
+                "description": "Optional. Cryptographic hashes for the asset (e.g., firmware binary, software component).",
                 "items": {
                   "$ref": "#/$defs/Hash"
                 }
               },
               "componentIds": {
                 "type": "array",
-                "description": "IDs of architecture components this asset is associated with",
+                "description": "Optional. IDs of architecture components this asset is associated with.",
                 "items": {
                   "type": "string"
                 }
@@ -187,6 +215,7 @@
         },
         "damageScenarios": {
           "type": "array",
+          "description": "Mandatory. List of damage scenarios — harm to road users, the organization, or society that can result from a cybersecurity incident.",
           "items": {
             "type": "object",
             "required": [
@@ -195,28 +224,34 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this damage scenario."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Short description of the damage."
               },
               "description": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Detailed explanation of the damage and its safety/privacy/financial consequences."
               },
               "impactedFunctions": {
                 "type": "array",
+                "description": "Optional. Item functions that are impaired if this damage scenario occurs.",
                 "items": {
                   "type": "string"
                 }
               },
               "affectedRoadUsers": {
                 "type": "array",
+                "description": "Optional. Road user categories affected (e.g., Driver, Pedestrians, Oncoming drivers).",
                 "items": {
                   "type": "string"
                 }
               },
               "references": {
                 "type": "array",
+                "description": "Optional. References to standards or requirements that define this damage scenario.",
                 "items": {
                   "type": "string"
                 }
@@ -227,6 +262,7 @@
         },
         "threatScenarios": {
           "type": "array",
+          "description": "Mandatory. List of threat scenarios — potential cybersecurity violations targeting one or more assets.",
           "items": {
             "type": "object",
             "required": [
@@ -236,19 +272,23 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this threat scenario."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Short name of the threat scenario."
               },
               "targetedAssetIds": {
                 "type": "array",
+                "description": "Mandatory. IDs of assets targeted by this threat scenario.",
                 "items": {
                   "type": "string"
                 }
               },
               "compromisedProperties": {
                 "type": "array",
+                "description": "Optional. Security properties violated by this threat (confidentiality, integrity, availability).",
                 "items": {
                   "enum": [
                     "confidentiality",
@@ -258,17 +298,19 @@
                 }
               },
               "cause": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Root cause or attacker motivation for this threat scenario."
               },
               "references": {
                 "type": "array",
+                "description": "Optional. External references (e.g., CVE IDs, research papers) relevant to this threat.",
                 "items": {
                   "type": "string"
                 }
               },
               "componentIds": {
                 "type": "array",
-                "description": "IDs of architecture components relevant to this threat scenario",
+                "description": "Optional. IDs of architecture components relevant to this threat scenario.",
                 "items": {
                   "type": "string"
                 }
@@ -279,6 +321,7 @@
         },
         "attackSteps": {
           "type": "array",
+          "description": "Optional. Granular individual attack steps. Use with attackPaths.stepIds[] to link steps into sequences. Omit this section and use attackPaths alone for minimum viable TARA.",
           "items": {
             "type": "object",
             "required": [
@@ -287,28 +330,34 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this attack step."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Short label for this step."
               },
               "description": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Detailed explanation of what the attacker does at this step."
               },
               "attackFeasibilityRatingIds": {
                 "type": "array",
+                "description": "Optional. IDs of attackFeasibilityRatings that assess this individual step.",
                 "items": {
                   "type": "string"
                 }
               },
               "controlIds": {
                 "type": "array",
+                "description": "Optional. IDs of controls that mitigate this specific step.",
                 "items": {
                   "type": "string"
                 }
               },
               "references": {
                 "type": "array",
+                "description": "Optional. External references relevant to this step.",
                 "items": {
                   "type": "string"
                 }
@@ -319,6 +368,7 @@
         },
         "attackPaths": {
           "type": "array",
+          "description": "Mandatory. List of attack paths — sequences of actions an attacker takes to realize a threat scenario.",
           "items": {
             "type": "object",
             "required": [
@@ -328,22 +378,27 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this attack path."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Short label for this attack path."
               },
               "threatScenarioId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the threat scenario this path realizes."
               },
               "stepIds": {
                 "type": "array",
+                "description": "Optional. Ordered list of attackStep IDs that make up this attack path. Use instead of the deprecated steps field.",
                 "items": {
                   "type": "string"
                 }
               },
               "steps": {
                 "type": "array",
+                "description": "Deprecated. Use stepIds[] with separate attackSteps objects instead.",
                 "items": {
                   "type": "string"
                 },
@@ -351,6 +406,7 @@
               },
               "references": {
                 "type": "array",
+                "description": "Optional. External references for this attack path.",
                 "items": {
                   "type": "string"
                 }
@@ -361,6 +417,7 @@
         },
         "methods": {
           "type": "array",
+          "description": "Mandatory. Rating methodologies used for attack feasibility, impact, and risk determination.",
           "items": {
             "type": "object",
             "required": [
@@ -370,23 +427,27 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this method."
               },
               "name": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Name of the rating methodology (e.g., 'ISO/SAE 21434 Attack Feasibility Rating')."
               },
               "version": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Version of the methodology."
               },
               "factors": {
                 "type": "array",
+                "description": "Optional. List of rating factors defined by this methodology (e.g., elapsed_time, specialist_expertise).",
                 "items": {
                   "type": "string"
                 }
               },
               "riskThresholdMatrix": {
                 "type": "array",
-                "description": "Defines allowed risk treatment strategies per risk band for this methodology. Used to codify organizational risk acceptance policy that can be overlaid on risk data during interpretation.",
+                "description": "Optional. Defines allowed risk treatment strategies per risk band for this methodology. Used to codify organizational risk acceptance policy that can be overlaid on risk data during interpretation.",
                 "items": {
                   "type": "object",
                   "required": [
@@ -470,19 +531,24 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this attack feasibility rating."
               },
               "attackPathId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory (one of attackPathId/attackStepId). ID of the attack path this rating applies to."
               },
               "attackStepId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory (one of attackPathId/attackStepId). ID of the individual attack step this rating applies to."
               },
               "methodId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the method used for this rating."
               },
               "inputFactors": {
                 "type": "object",
+                "description": "Optional. Factor values used as input to the rating (keys should match method.factors).",
                 "additionalProperties": {
                   "type": [
                     "number",
@@ -495,13 +561,16 @@
                 "type": [
                   "number",
                   "string"
-                ]
+                ],
+                "description": "Mandatory. The attack feasibility score (numeric or band label)."
               },
               "band": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. The attack feasibility band label (e.g., High, Medium, Low)."
               },
               "rationale": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Explanation of why this feasibility score was assigned."
               }
             },
             "additionalProperties": true
@@ -509,6 +578,7 @@
         },
         "impactRatings": {
           "type": "array",
+          "description": "Mandatory. Impact ratings that assess the severity of each damage scenario.",
           "items": {
             "type": "object",
             "required": [
@@ -519,16 +589,20 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this impact rating."
               },
               "damageScenarioId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the damage scenario being rated."
               },
               "methodId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the impact rating method used."
               },
               "categories": {
                 "type": "object",
+                "description": "Optional. Per-category impact scores (e.g., safety, financial, operational, privacy).",
                 "additionalProperties": {
                   "type": [
                     "number",
@@ -540,10 +614,12 @@
                 "type": [
                   "number",
                   "string"
-                ]
+                ],
+                "description": "Mandatory. Overall impact score."
               },
               "rationale": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Explanation of why this impact score was assigned."
               }
             },
             "additionalProperties": true
@@ -551,6 +627,7 @@
         },
         "riskValues": {
           "type": "array",
+          "description": "Mandatory. Computed risk values combining attack feasibility and impact ratings for each threat scenario.",
           "items": {
             "type": "object",
             "required": [
@@ -563,31 +640,39 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this risk value."
               },
               "threatScenarioId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the threat scenario this risk value is for."
               },
               "afrRef": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the attackFeasibilityRating used."
               },
               "impactRef": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the impactRating used."
               },
               "methodId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the risk determination method used."
               },
               "score": {
                 "type": [
                   "number",
                   "string"
-                ]
+                ],
+                "description": "Mandatory. The risk score."
               },
               "band": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Risk band label (e.g., Critical, High, Medium, Low)."
               },
               "rationale": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Explanation of this risk determination."
               }
             },
             "additionalProperties": true
@@ -595,6 +680,7 @@
         },
         "controls": {
           "type": "array",
+          "description": "Mandatory. Security controls identified to reduce, avoid, or otherwise treat risks.",
           "items": {
             "type": "object",
             "required": [
@@ -603,22 +689,28 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this control."
               },
               "title": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Short name of the security control."
               },
               "catalog": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Name of the control catalog this control is drawn from (e.g., ISO21434-SEC-CTRL, NIST-SP800-53)."
               },
               "controlId": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Identifier of this control within its catalog."
               },
               "implementationStatus": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Current implementation status (e.g., planned, implemented, not_implemented)."
               },
               "requiredCalLevel": {
                 "type": "string",
+                "description": "Optional. CAL level required for this control per ISO/SAE PAS 8475.",
                 "enum": [
                   "CAL1",
                   "CAL2",
@@ -628,6 +720,7 @@
               },
               "achievedCalLevel": {
                 "type": "string",
+                "description": "Optional. CAL level actually achieved by this control.",
                 "enum": [
                   "CAL1",
                   "CAL2",
@@ -637,13 +730,14 @@
               },
               "references": {
                 "type": "array",
+                "description": "Optional. References to standards, specifications, or implementation guides.",
                 "items": {
                   "type": "string"
                 }
               },
               "hashes": {
                 "type": "array",
-                "description": "Cryptographic hashes for the control document or specification",
+                "description": "Optional. Cryptographic hashes for the control document or specification.",
                 "items": {
                   "$ref": "#/$defs/Hash"
                 }
@@ -654,6 +748,7 @@
         },
         "riskTreatmentDecisions": {
           "type": "array",
+          "description": "Mandatory. Risk treatment decisions recording how each identified risk will be handled.",
           "items": {
             "type": "object",
             "required": [
@@ -663,12 +758,15 @@
             ],
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. Unique identifier for this treatment decision."
               },
               "riskValueId": {
-                "type": "string"
+                "type": "string",
+                "description": "Mandatory. ID of the riskValue this decision applies to."
               },
               "decision": {
+                "description": "Mandatory. Treatment strategy: reduce (implement controls), avoid (eliminate the risk source), accept (document acceptance), or share (transfer via contract/insurance).",
                 "enum": [
                   "reduce",
                   "avoid",
@@ -678,12 +776,14 @@
               },
               "controls": {
                 "type": "array",
+                "description": "Optional. IDs of controls implementing this treatment decision.",
                 "items": {
                   "type": "string"
                 }
               },
               "justification": {
-                "type": "string"
+                "type": "string",
+                "description": "Optional. Rationale for this treatment decision."
               }
             },
             "additionalProperties": true
@@ -691,6 +791,7 @@
         },
         "calAssuranceLevels": {
           "type": "array",
+          "description": "Optional. Cybersecurity Assurance Level (CAL) definitions per ISO/SAE PAS 8475. Include when CAL-based assurance requirements apply to controls.",
           "items": {
             "type": "object",
             "required": [
@@ -741,6 +842,7 @@
         },
         "calAssessments": {
           "type": "array",
+          "description": "Optional. CAL conformance assessments linking controls to achieved assurance levels. Requires calAssuranceLevels to be populated.",
           "items": {
             "type": "object",
             "required": [
@@ -801,6 +903,7 @@
         },
         "tafAssessments": {
           "type": "array",
+          "description": "Optional. Targeted Attack Feasibility (TAF) assessments per ISO/SAE PAS 8475. Provides context-aware feasibility analysis beyond the standard AFR.",
           "items": {
             "type": "object",
             "required": [
@@ -903,6 +1006,7 @@
         },
         "relationships": {
           "type": "array",
+          "description": "Optional. Explicit typed relationships between any two risk objects, providing machine-readable traceability beyond the implicit references embedded in object fields.",
           "items": {
             "type": "object",
             "required": [
@@ -951,9 +1055,7 @@
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
+  },
   "additionalProperties": false,
   "$defs": {
     "RiskLevel": {

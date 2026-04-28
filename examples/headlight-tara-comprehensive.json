@@ -1,0 +1,1932 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa",
+  "created": "2026-04-28T18:00:00.000Z",
+  "createdBy": "RDX Comprehensive Headlight TARA Example v1.0",
+  "sources": [
+    "ISO/SAE 21434:2021 - Road vehicles Cybersecurity engineering - Annex H",
+    "ISO/SAE PAS 8475:2023 - CAL and TAF framework",
+    "UN/ECE WP.29 R155 - Cybersecurity management system",
+    "urn:oem:example:project:AFS-Headlight-2026"
+  ],
+  "bomRefRef": "pkg:cyclonedx/headlight-afs-ecu@2026-model",
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-HEADLIGHT-001",
+      "title": "Adaptive Front-lighting System (AFS)",
+      "boundary": "Adaptive headlight ECU including dual-core MCU, light beam control logic, stepper motor drivers, LED matrix controller, CAN interface, LIN bus, UDS diagnostic stack, ambient light sensor, and vehicle speed sensor input; boundary extends from OBD-II connector to headlight mechanical actuators",
+      "functions": [
+        "Adaptive beam control based on steering angle and speed",
+        "Automatic light intensity adjustment",
+        "Glare-free high beam with camera feedback",
+        "Cornering light activation",
+        "Dynamic vertical leveling",
+        "Diagnostic communication via UDS over CAN",
+        "Secure firmware update via OTA or dealer tool"
+      ],
+      "architecture": {
+        "description": "The AFS system is built around a dual-core MCU (COMP-ECU) connected to the vehicle CAN network via a security gateway (COMP-CAN-GW). The ECU communicates with light actuators (COMP-ACTUATOR), reads sensor data (COMP-SENSOR), and exposes diagnostic services through an OBD-II port (COMP-OBD). A CAN network segment (COMP-CAN-NET) interconnects all electronic nodes.",
+        "components": [
+          {
+            "id": "COMP-ECU",
+            "name": "Headlight ECU",
+            "type": "ecu",
+            "description": "Dual-core Aurix TC3xx MCU running AUTOSAR-compliant headlight control software. Manages LED matrix, stepper actuators, and communicates via CAN and LIN.",
+            "trustBoundary": "Internal ECU trust zone",
+            "externalIds": [
+              "urn:part:OEM-ECU-AFS-v2",
+              "urn:supplier:TIER1-HW-0047"
+            ]
+          },
+          {
+            "id": "COMP-CAN-GW",
+            "name": "Body Domain Gateway",
+            "type": "gateway",
+            "description": "Central gateway ECU that filters and routes CAN messages between body domain and other vehicle domains. Enforces message authentication for safety-critical frames.",
+            "trustBoundary": "Gateway security zone",
+            "externalIds": [
+              "urn:part:OEM-GW-BODY-v3"
+            ]
+          },
+          {
+            "id": "COMP-OBD",
+            "name": "OBD-II Diagnostic Port",
+            "type": "other",
+            "description": "Physical OBD-II connector providing external access to vehicle diagnostic services. Entry point for authorized workshop tools and potential attacker physical access.",
+            "trustBoundary": "External access boundary",
+            "externalIds": [
+              "urn:interface:ISO-15031-OBD-II"
+            ]
+          },
+          {
+            "id": "COMP-CAN-NET",
+            "name": "Body CAN Network",
+            "type": "network",
+            "description": "CAN FD bus at 500 kbps interconnecting body domain ECUs including headlight ECU, BCM, and gateway. No encryption at network layer.",
+            "trustBoundary": "Body domain network",
+            "externalIds": [
+              "urn:network:OEM-CAN-BODY-500k"
+            ]
+          },
+          {
+            "id": "COMP-ACTUATOR",
+            "name": "Headlight Beam Actuator",
+            "type": "actuator",
+            "description": "Stepper-motor-based actuator assembly controlling horizontal and vertical beam direction. Receives commands from headlight ECU via LIN bus.",
+            "trustBoundary": "Internal ECU trust zone",
+            "parentId": "COMP-ECU",
+            "externalIds": [
+              "urn:part:OEM-ACT-BEAM-v1"
+            ]
+          },
+          {
+            "id": "COMP-SENSOR",
+            "name": "Ambient Light and Speed Sensor Interface",
+            "type": "sensor",
+            "description": "Sensor cluster providing ambient light level and vehicle speed input to the headlight ECU. Speed signal sourced from ABS ECU over CAN.",
+            "trustBoundary": "Internal ECU trust zone",
+            "parentId": "COMP-ECU",
+            "externalIds": [
+              "urn:part:OEM-SENS-ALS-v2"
+            ]
+          }
+        ],
+        "dataFlows": [
+          {
+            "id": "DF-CAN-CTRL",
+            "name": "Light Control Commands (CAN)",
+            "fromComponentId": "COMP-CAN-GW",
+            "toComponentId": "COMP-ECU",
+            "protocol": "CAN FD",
+            "dataDescription": "Body Control Module light command frames: beam direction, intensity, mode selection",
+            "encrypted": false,
+            "authenticated": true
+          },
+          {
+            "id": "DF-CAN-SPEED",
+            "name": "Vehicle Speed Signal (CAN)",
+            "fromComponentId": "COMP-SENSOR",
+            "toComponentId": "COMP-ECU",
+            "protocol": "CAN FD",
+            "dataDescription": "Vehicle speed in km/h sourced from ABS ECU, broadcast on body CAN",
+            "encrypted": false,
+            "authenticated": false
+          },
+          {
+            "id": "DF-LIN-ACTUATOR",
+            "name": "Actuator Position Commands (LIN)",
+            "fromComponentId": "COMP-ECU",
+            "toComponentId": "COMP-ACTUATOR",
+            "protocol": "LIN 2.2",
+            "dataDescription": "Stepper motor position setpoints for horizontal and vertical beam adjustment",
+            "encrypted": false,
+            "authenticated": false
+          },
+          {
+            "id": "DF-OBD-DIAG",
+            "name": "UDS Diagnostic Session (OBD-II)",
+            "fromComponentId": "COMP-OBD",
+            "toComponentId": "COMP-ECU",
+            "protocol": "ISO 15765 UDS over CAN",
+            "dataDescription": "Diagnostic requests: read DTC, read data by identifier, security access, firmware update",
+            "encrypted": false,
+            "authenticated": false
+          },
+          {
+            "id": "DF-GW-FILTER",
+            "name": "Gateway Filtered CAN Traffic",
+            "fromComponentId": "COMP-CAN-NET",
+            "toComponentId": "COMP-CAN-GW",
+            "protocol": "CAN FD",
+            "dataDescription": "All body CAN traffic routed through gateway for filtering and routing",
+            "encrypted": false,
+            "authenticated": true
+          }
+        ],
+        "diagramUrl": "https://example.com/afs-architecture-diagram.svg"
+      },
+      "interfaces": [
+        "CAN-Body (500 kbps CAN FD, body domain)",
+        "LIN-Actuators (LIN 2.2, stepper motor commands)",
+        "PWM-LEDs (direct PWM output to LED matrix driver)",
+        "UDS-Diagnostics (ISO 14229 UDS over CAN)",
+        "OBD-II physical connector (ISO 15031)",
+        "LIN-AmbientSensor (ambient light level input)"
+      ],
+      "environment": "Automotive production vehicle, global markets, temperature range -40 degrees C to +85 degrees C, IP67 enclosure, exposed to vibration and humidity per LV124",
+      "assumptions": [
+        "Vehicle CAN network is separated from external networks by security gateway",
+        "Physical access to vehicle interior requires vehicle break-in or owner consent",
+        "OBD-II port access is physically restricted in production vehicles",
+        "Dealer diagnostic tools are authenticated before security-critical operations",
+        "Attacker has no prior cryptographic material for message authentication",
+        "Firmware update signing keys are protected in HSM with no extractable private key material"
+      ],
+      "countryOfOrigin": "DE",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f9"
+        }
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-LIGHT-CTRL",
+        "title": "Light Control Commands",
+        "properties": [
+          "integrity",
+          "availability"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-BLIND",
+          "DS-SAF-GLARE"
+        ],
+        "externalIds": [
+          "urn:asset:OEM-ASSET-LC-001",
+          "urn:iso21434:asset:light-control"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "b2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f6071"
+          }
+        ],
+        "componentIds": [
+          "COMP-ECU",
+          "COMP-CAN-NET",
+          "COMP-CAN-GW"
+        ]
+      },
+      {
+        "id": "ASSET-VEH-SPEED",
+        "title": "Vehicle Speed Data",
+        "properties": [
+          "integrity",
+          "confidentiality"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIV-TRACK"
+        ],
+        "externalIds": [
+          "urn:asset:OEM-ASSET-VS-002",
+          "urn:iso21434:asset:speed-data"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "c3d4e5f60718293ab2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f9"
+          }
+        ],
+        "componentIds": [
+          "COMP-SENSOR",
+          "COMP-CAN-NET"
+        ]
+      },
+      {
+        "id": "ASSET-DIAG-DATA",
+        "title": "Diagnostic Information",
+        "properties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-PRIV-VEH-ID"
+        ],
+        "externalIds": [
+          "urn:asset:OEM-ASSET-DD-003",
+          "urn:iso21434:asset:diagnostic-data"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "d4e5f60718293a4bb2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f9"
+          }
+        ],
+        "componentIds": [
+          "COMP-ECU",
+          "COMP-OBD"
+        ]
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "Headlight ECU Firmware",
+        "properties": [
+          "integrity",
+          "confidentiality"
+        ],
+        "linkedDamageScenarioIds": [
+          "DS-SAF-MALFUNCTION",
+          "DS-SEC-PERSIST"
+        ],
+        "externalIds": [
+          "urn:asset:OEM-ASSET-FW-004",
+          "urn:iso21434:asset:ecu-firmware"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "e5f60718293a4b5cc3d4e5f60718293ab2c3d4e5f6071829a1b2c3d4e5f60718"
+          }
+        ],
+        "componentIds": [
+          "COMP-ECU"
+        ]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-BLIND",
+        "title": "Driver or Other Road Users Blinded by Incorrect Headlight Operation",
+        "description": "An attacker causes the headlight ECU to disable forward lighting or produce maximum intensity in the wrong direction, resulting in loss of driver visibility or blinding of oncoming traffic, creating conditions for a serious traffic accident.",
+        "impactedFunctions": [
+          "Adaptive beam control based on steering angle and speed",
+          "Glare-free high beam with camera feedback"
+        ],
+        "affectedRoadUsers": [
+          "Driver",
+          "Oncoming drivers",
+          "Pedestrians",
+          "Cyclists"
+        ],
+        "references": [
+          "ISO 26262:2018 ASIL-B safety requirement for lighting system",
+          "ECE R48 - Installation of lighting and light-signalling devices",
+          "ISO/SAE 21434:2021 Annex H example H.3"
+        ]
+      },
+      {
+        "id": "DS-SAF-GLARE",
+        "title": "Persistent Oncoming Traffic Glare from Uncontrolled High Beam",
+        "description": "The glare-free high beam function is disabled or overridden, causing continuous full-intensity high beam illumination that blinds oncoming vehicle drivers, increasing collision risk.",
+        "impactedFunctions": [
+          "Glare-free high beam with camera feedback",
+          "Automatic light intensity adjustment"
+        ],
+        "affectedRoadUsers": [
+          "Oncoming drivers",
+          "Cyclists",
+          "Pedestrians"
+        ],
+        "references": [
+          "ECE R123 - Adaptive front-lighting systems",
+          "ISO/SAE 21434:2021 Annex H"
+        ]
+      },
+      {
+        "id": "DS-PRIV-TRACK",
+        "title": "Covert Vehicle Location Tracking via Speed Data Monitoring",
+        "description": "Unauthorized passive monitoring of vehicle speed signals on the CAN bus, combined with GPS or road-map correlation, enables covert tracking of vehicle movements and driver behavior over time without consent.",
+        "impactedFunctions": [
+          "Adaptive beam control based on steering angle and speed"
+        ],
+        "affectedRoadUsers": [
+          "Driver",
+          "Vehicle owner"
+        ],
+        "references": [
+          "GDPR Article 9 - Special categories of personal data",
+          "UN/ECE WP.29 R155 Annex 5 threat list item 5.4"
+        ]
+      },
+      {
+        "id": "DS-PRIV-VEH-ID",
+        "title": "Vehicle Identity and Usage Pattern Exposure via Diagnostic Data",
+        "description": "Extraction of VIN, odometer readings, DTC history, and configuration data from diagnostic services reveals vehicle identity and usage patterns, enabling profiling, targeted theft, or insurance fraud.",
+        "impactedFunctions": [
+          "Diagnostic communication via UDS over CAN"
+        ],
+        "affectedRoadUsers": [
+          "Driver",
+          "Vehicle owner"
+        ],
+        "references": [
+          "ISO 14229-1 UDS standard",
+          "GDPR Article 4 - personal data definition"
+        ]
+      },
+      {
+        "id": "DS-SAF-MALFUNCTION",
+        "title": "Complete Headlight System Failure Due to Corrupted Firmware",
+        "description": "Malicious firmware modification causes total loss of all headlight functions including low beam, high beam, cornering lights, and dynamic leveling, leaving the driver without forward illumination during night or adverse weather conditions.",
+        "impactedFunctions": [
+          "Adaptive beam control based on steering angle and speed",
+          "Automatic light intensity adjustment",
+          "Cornering light activation",
+          "Dynamic vertical leveling"
+        ],
+        "affectedRoadUsers": [
+          "Driver",
+          "Oncoming drivers",
+          "Other road users"
+        ],
+        "references": [
+          "ISO 26262:2018 ASIL-B - headlight system safety goal",
+          "ECE R48 mandatory lighting requirements"
+        ]
+      },
+      {
+        "id": "DS-SEC-PERSIST",
+        "title": "Persistent Vehicle Network Compromise via Headlight ECU as Pivot",
+        "description": "A compromised headlight ECU running attacker-controlled firmware is used as a persistent foothold to conduct lateral attacks against other vehicle systems including powertrain, braking, or telematics, enabling ongoing surveillance or safety-critical manipulation.",
+        "impactedFunctions": [
+          "Diagnostic communication via UDS over CAN",
+          "Secure firmware update via OTA or dealer tool"
+        ],
+        "affectedRoadUsers": [
+          "Driver",
+          "Vehicle occupants"
+        ],
+        "references": [
+          "UN/ECE WP.29 R155 threat category T.10",
+          "Miller & Valasek Jeep Cherokee remote exploit research"
+        ]
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CAN-SPOOF",
+        "title": "CAN Message Injection to Manipulate Light Control",
+        "targetedAssetIds": [
+          "ASSET-LIGHT-CTRL"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Attacker gains physical access to the vehicle CAN network via OBD-II port or exposed harness and injects malicious light control command frames, overriding legitimate BCM commands to cause dangerous lighting behavior.",
+        "references": [
+          "NHTSA Vehicle Cybersecurity Best Practices 2022",
+          "CAN bus injection research: Miller and Valasek 2015",
+          "ISO/SAE 21434 Annex H threat scenario H.TS.1"
+        ],
+        "componentIds": [
+          "COMP-CAN-NET",
+          "COMP-CAN-GW",
+          "COMP-ECU"
+        ]
+      },
+      {
+        "id": "TS-DIAG-EXPLOIT",
+        "title": "UDS Diagnostic Service Exploitation for Data Exfiltration",
+        "targetedAssetIds": [
+          "ASSET-DIAG-DATA",
+          "ASSET-FIRMWARE"
+        ],
+        "compromisedProperties": [
+          "confidentiality",
+          "integrity"
+        ],
+        "cause": "Attacker obtains physical access to OBD-II connector and uses stolen or reverse-engineered diagnostic credentials to authenticate a UDS session, extracting sensitive ECU data or initiating unauthorized firmware operations.",
+        "references": [
+          "ISO 14229-1 UDS security access service",
+          "AUTOSAR SecOC specification",
+          "ISO/SAE 21434 Annex H threat scenario H.TS.2"
+        ],
+        "componentIds": [
+          "COMP-OBD",
+          "COMP-ECU"
+        ]
+      },
+      {
+        "id": "TS-SPEED-SNIFF",
+        "title": "Passive CAN Monitoring for Speed Data Interception",
+        "targetedAssetIds": [
+          "ASSET-VEH-SPEED"
+        ],
+        "compromisedProperties": [
+          "confidentiality"
+        ],
+        "cause": "Attacker installs a covert CAN data logger device (e.g., via OBD-II port or harness tap) that passively records speed and positional correlates for long-term behavioral tracking of the vehicle and driver.",
+        "references": [
+          "GDPR threat model for connected vehicles",
+          "CAN bus passive monitoring research"
+        ],
+        "componentIds": [
+          "COMP-CAN-NET",
+          "COMP-SENSOR"
+        ]
+      },
+      {
+        "id": "TS-FW-TAMPER",
+        "title": "Headlight ECU Firmware Modification for Persistent Compromise",
+        "targetedAssetIds": [
+          "ASSET-FIRMWARE"
+        ],
+        "compromisedProperties": [
+          "integrity"
+        ],
+        "cause": "Attacker exploits weaknesses in the secure boot chain or firmware update authentication to upload malicious firmware to the headlight ECU, creating a persistent backdoor or deliberately damaging safety-critical software.",
+        "references": [
+          "Secure boot specification AUTOSAR R22-11",
+          "ISO/SAE 21434 Annex H threat scenario H.TS.4"
+        ],
+        "componentIds": [
+          "COMP-ECU",
+          "COMP-OBD"
+        ]
+      }
+    ],
+    "attackSteps": [
+      {
+        "id": "STEP-CAN-PHY-ACCESS",
+        "title": "Gain Physical Access to Vehicle Interior",
+        "description": "Attacker breaks into or otherwise obtains access to the vehicle interior to reach the OBD-II port or an exposed CAN harness connector under the dashboard.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-CAN-PHY"
+        ],
+        "controlIds": [],
+        "references": [
+          "Physical security threat model automotive"
+        ]
+      },
+      {
+        "id": "STEP-CAN-CONNECT",
+        "title": "Connect to OBD-II Port or Exposed CAN Bus",
+        "description": "Attacker plugs a standard CAN adapter (e.g., USB-to-CAN or ELM327-compatible device) into the OBD-II port or a tapped harness connector, gaining direct access to the body CAN network.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-CAN-CONNECT"
+        ],
+        "controlIds": [
+          "CTRL-CAN-AUTH"
+        ],
+        "references": [
+          "ELM327 CAN adapter documentation",
+          "ISO 15031 OBD-II standard"
+        ]
+      },
+      {
+        "id": "STEP-CAN-IDENTIFY",
+        "title": "Identify Headlight Control CAN Message IDs",
+        "description": "Attacker uses CAN sniffing software to record traffic and correlates changes in headlight behavior with specific CAN frame identifiers, identifying the light control command messages.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-CAN-IDENTIFY"
+        ],
+        "controlIds": [],
+        "references": [
+          "CAN hacking tutorial resources"
+        ]
+      },
+      {
+        "id": "STEP-CAN-INJECT",
+        "title": "Inject Malicious Light Control CAN Messages",
+        "description": "Attacker replays or crafts malicious CAN frames with the identified headlight control message IDs, overriding legitimate BCM commands to set beam direction, intensity, or mode to dangerous values.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-CAN-INJECT"
+        ],
+        "controlIds": [
+          "CTRL-CAN-AUTH",
+          "CTRL-CAN-ENCRYPT"
+        ],
+        "references": [
+          "ISO/SAE 21434 attack step template"
+        ]
+      },
+      {
+        "id": "STEP-DIAG-CONNECT",
+        "title": "Access Diagnostic Connector with Rogue Tool",
+        "description": "Attacker connects a laptop or custom diagnostic device to the OBD-II port using a standard J2534 interface to initiate a UDS communication session.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-DIAG-CONNECT"
+        ],
+        "controlIds": [
+          "CTRL-DIAG-ACCESS"
+        ],
+        "references": [
+          "J2534 pass-thru interface standard"
+        ]
+      },
+      {
+        "id": "STEP-DIAG-SESSION",
+        "title": "Establish Authenticated UDS Extended Diagnostic Session",
+        "description": "Attacker uses stolen or brute-forced security access seeds and keys to bypass UDS security access and open an extended diagnostic or programming session with the headlight ECU.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-DIAG-SESSION"
+        ],
+        "controlIds": [
+          "CTRL-DIAG-ACCESS",
+          "CTRL-RATE-LIMIT"
+        ],
+        "references": [
+          "UDS security access algorithm reverse engineering research",
+          "ISO 14229-1 clause 10.4"
+        ]
+      },
+      {
+        "id": "STEP-DIAG-EXTRACT",
+        "title": "Extract Diagnostic Data, VIN, and ECU Configuration",
+        "description": "Within the authenticated session, attacker reads ECU data via ReadDataByIdentifier (0x22), reads stored DTCs, and extracts VIN, calibration data, and hardware/software version identifiers.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-DIAG-EXTRACT"
+        ],
+        "controlIds": [
+          "CTRL-DIAG-ACCESS"
+        ],
+        "references": [
+          "ISO 14229-1 ReadDataByIdentifier service"
+        ]
+      },
+      {
+        "id": "STEP-FW-ACCESS",
+        "title": "Obtain Firmware Update Access via Programming Session",
+        "description": "Attacker escalates the UDS session to a programming level session, enabling firmware erase and download services by exploiting weak security seed algorithms or previously extracted credentials.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-FW-ACCESS"
+        ],
+        "controlIds": [
+          "CTRL-FW-VERIFY",
+          "CTRL-DIAG-ACCESS"
+        ],
+        "references": [
+          "UDS RequestDownload service ISO 14229-1 clause 14"
+        ]
+      },
+      {
+        "id": "STEP-FW-EXPLOIT",
+        "title": "Bypass Firmware Signature Verification",
+        "description": "Attacker reverse-engineers the firmware signature verification implementation, identifies a vulnerability such as a missing check or a weak algorithm, and crafts a payload that passes signature validation.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-FW-EXPLOIT"
+        ],
+        "controlIds": [
+          "CTRL-FW-VERIFY"
+        ],
+        "references": [
+          "Secure boot bypass research - automotive ECU"
+        ]
+      },
+      {
+        "id": "STEP-FW-UPLOAD",
+        "title": "Upload Malicious Firmware Image to Headlight ECU",
+        "description": "Attacker uses the TransferData and RequestTransferExit UDS services to upload a crafted firmware binary containing backdoor or sabotage payloads to the ECU flash memory.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-FW-UPLOAD"
+        ],
+        "controlIds": [
+          "CTRL-FW-VERIFY"
+        ],
+        "references": [
+          "UDS TransferData service ISO 14229-1 clause 15"
+        ]
+      },
+      {
+        "id": "STEP-FW-PERSIST",
+        "title": "Establish Persistent Backdoor in ECU",
+        "description": "Malicious firmware activates a persistent backdoor that survives normal ECU resets, providing attacker ongoing access to vehicle network from the headlight ECU as a pivot point.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-FW-PERSIST"
+        ],
+        "controlIds": [
+          "CTRL-FW-VERIFY"
+        ],
+        "references": [
+          "ECU persistence mechanisms research"
+        ]
+      },
+      {
+        "id": "STEP-TRACK-MONITOR",
+        "title": "Install Covert CAN Data Logger for Passive Speed Monitoring",
+        "description": "Attacker installs a small CAN data logger (OBD-II dongle or inline harness device) that passively records all CAN traffic including periodic speed messages broadcast by the ABS ECU.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-TRACK-MONITOR"
+        ],
+        "controlIds": [],
+        "references": [
+          "OBD-II tracking device market analysis"
+        ]
+      },
+      {
+        "id": "STEP-TRACK-CORRELATE",
+        "title": "Correlate Speed Data Patterns with Location and Build Movement Profile",
+        "description": "Attacker retrieves logged speed data and correlates it with known road network characteristics, timestamps, and optional GPS data from a co-located device to reconstruct vehicle movement history and build a surveillance profile.",
+        "attackFeasibilityRatingIds": [
+          "AFRS-TRACK-CORRELATE"
+        ],
+        "controlIds": [],
+        "references": [
+          "Speed-to-location correlation academic research",
+          "GDPR vehicle data privacy study 2023"
+        ]
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CAN-INJECT",
+        "title": "CAN Network Physical Access Leading to Light Control Manipulation",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "stepIds": [
+          "STEP-CAN-PHY-ACCESS",
+          "STEP-CAN-CONNECT",
+          "STEP-CAN-IDENTIFY",
+          "STEP-CAN-INJECT"
+        ],
+        "references": [
+          "NHTSA CAN security research 2022",
+          "ISO/SAE 21434 Annex H attack path H.AP.1"
+        ]
+      },
+      {
+        "id": "AP-DIAG-PRIV",
+        "title": "Diagnostic Access Leading to Data Exfiltration",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "stepIds": [
+          "STEP-DIAG-CONNECT",
+          "STEP-DIAG-SESSION",
+          "STEP-DIAG-EXTRACT"
+        ],
+        "references": [
+          "ISO 14229-1 UDS standard",
+          "ISO/SAE 21434 Annex H attack path H.AP.2"
+        ]
+      },
+      {
+        "id": "AP-FW-MODIFY",
+        "title": "Diagnostic Access Leading to Firmware Modification and Persistent Compromise",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "stepIds": [
+          "STEP-DIAG-CONNECT",
+          "STEP-DIAG-SESSION",
+          "STEP-FW-ACCESS",
+          "STEP-FW-EXPLOIT",
+          "STEP-FW-UPLOAD",
+          "STEP-FW-PERSIST"
+        ],
+        "references": [
+          "AUTOSAR Secure Boot specification",
+          "ISO/SAE 21434 Annex H attack path H.AP.3"
+        ]
+      },
+      {
+        "id": "AP-PASSIVE-TRACK",
+        "title": "Passive CAN Monitoring Leading to Vehicle Movement Profile Construction",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "stepIds": [
+          "STEP-CAN-PHY-ACCESS",
+          "STEP-TRACK-MONITOR",
+          "STEP-TRACK-CORRELATE"
+        ],
+        "references": [
+          "GDPR vehicle tracking threat analysis",
+          "ISO/SAE 21434 Annex H attack path H.AP.4"
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 Attack Feasibility Rating",
+        "version": "1.0",
+        "factors": [
+          "elapsed_time",
+          "specialist_expertise",
+          "knowledge_of_item",
+          "window_of_opportunity",
+          "equipment"
+        ],
+        "riskThresholdMatrix": [
+          {
+            "band": "High",
+            "allowedTreatments": ["reduce", "avoid"],
+            "scoreRange": { "min": 0, "max": 1 },
+            "escalationRequired": true,
+            "rationale": "High attack feasibility means the attack is very achievable; only reduce or avoid are acceptable treatments per organizational policy.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15.8",
+              "OEM cybersecurity policy doc CP-001 v3.2"
+            ]
+          },
+          {
+            "band": "Medium",
+            "allowedTreatments": ["reduce", "avoid", "share"],
+            "scoreRange": { "min": 2, "max": 3 },
+            "escalationRequired": false,
+            "rationale": "Medium feasibility attacks may be treated by reducing attack surface, avoiding the risk through design change, or sharing risk through contractual means.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15.8"
+            ]
+          },
+          {
+            "band": "Low",
+            "allowedTreatments": ["reduce", "avoid", "accept", "share"],
+            "scoreRange": { "min": 4, "max": 5 },
+            "escalationRequired": false,
+            "rationale": "Low feasibility attacks may be accepted if residual risk is within tolerance and documented justification is provided.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15.8"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ],
+        "riskThresholdMatrix": [
+          {
+            "band": "Severe",
+            "allowedTreatments": ["reduce", "avoid"],
+            "scoreRange": { "min": 4, "max": 4 },
+            "escalationRequired": true,
+            "rationale": "Severe impact scenarios involving potential fatalities require mandatory risk reduction or elimination.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 14.4",
+              "ISO 26262 safety goal requirements"
+            ]
+          },
+          {
+            "band": "Major",
+            "allowedTreatments": ["reduce", "avoid", "share"],
+            "scoreRange": { "min": 3, "max": 3 },
+            "escalationRequired": true,
+            "rationale": "Major impact requires management review and treatment strategy justification.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 14.4"
+            ]
+          },
+          {
+            "band": "Moderate",
+            "allowedTreatments": ["reduce", "avoid", "accept", "share"],
+            "scoreRange": { "min": 2, "max": 2 },
+            "escalationRequired": false,
+            "rationale": "Moderate impact allows full range of treatment strategies with appropriate documentation.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 14.4"
+            ]
+          },
+          {
+            "band": "Negligible",
+            "allowedTreatments": ["accept"],
+            "scoreRange": { "min": 1, "max": 1 },
+            "escalationRequired": false,
+            "rationale": "Negligible impact scenarios may be accepted without treatment.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 14.4"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0",
+        "factors": [
+          "attack_feasibility_band",
+          "impact_score"
+        ],
+        "riskThresholdMatrix": [
+          {
+            "band": "Critical",
+            "allowedTreatments": ["reduce", "avoid"],
+            "escalationRequired": true,
+            "rationale": "Critical risks must be escalated to CISO and program management before any treatment decision.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15",
+              "UN/ECE WP.29 R155 Article 7"
+            ]
+          },
+          {
+            "band": "High",
+            "allowedTreatments": ["reduce", "avoid"],
+            "escalationRequired": true,
+            "rationale": "High risks require documented treatment plans reviewed by cybersecurity officer.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15"
+            ]
+          },
+          {
+            "band": "Medium",
+            "allowedTreatments": ["reduce", "avoid", "accept", "share"],
+            "escalationRequired": false,
+            "rationale": "Medium risks allow full treatment range with justification.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15"
+            ]
+          },
+          {
+            "band": "Low",
+            "allowedTreatments": ["accept"],
+            "escalationRequired": false,
+            "rationale": "Low risks may be accepted with documented rationale.",
+            "references": [
+              "ISO/SAE 21434:2021 clause 15"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pas8475-taf-v1",
+        "name": "ISO/SAE PAS 8475 Targeted Attack Feasibility",
+        "version": "1.0",
+        "factors": [
+          "attacker_potential",
+          "attack_vector",
+          "attack_complexity",
+          "privileges_required",
+          "user_interaction",
+          "scope"
+        ],
+        "riskThresholdMatrix": [
+          {
+            "band": "very-high",
+            "allowedTreatments": ["reduce", "avoid"],
+            "escalationRequired": true,
+            "rationale": "Very high TAF indicates the attack is within reach of motivated organized adversaries; mandatory treatment required.",
+            "references": [
+              "ISO/SAE PAS 8475:2023 clause 6"
+            ]
+          },
+          {
+            "band": "high",
+            "allowedTreatments": ["reduce", "avoid", "share"],
+            "escalationRequired": true,
+            "rationale": "High TAF requires treatment strategy with documented rationale.",
+            "references": [
+              "ISO/SAE PAS 8475:2023 clause 6"
+            ]
+          },
+          {
+            "band": "medium",
+            "allowedTreatments": ["reduce", "avoid", "accept", "share"],
+            "escalationRequired": false,
+            "rationale": "Medium TAF permits full treatment range.",
+            "references": [
+              "ISO/SAE PAS 8475:2023 clause 6"
+            ]
+          },
+          {
+            "band": "low",
+            "allowedTreatments": ["accept", "share"],
+            "escalationRequired": false,
+            "rationale": "Low TAF scenarios may be accepted or shared with documented justification.",
+            "references": [
+              "ISO/SAE PAS 8475:2023 clause 6"
+            ]
+          },
+          {
+            "band": "very-low",
+            "allowedTreatments": ["accept"],
+            "escalationRequired": false,
+            "rationale": "Very low TAF scenarios are considered theoretical and may be accepted.",
+            "references": [
+              "ISO/SAE PAS 8475:2023 clause 6"
+            ]
+          }
+        ]
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CAN-INJECT",
+        "attackPathId": "AP-CAN-INJECT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "moderate",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "CAN injection requires physical access (hours to achieve) but uses standard off-the-shelf tools and publicly documented CAN protocols; no specialist reverse engineering needed."
+      },
+      {
+        "id": "AFR-DIAG-PRIV",
+        "attackPathId": "AP-DIAG-PRIV",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "easy",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Requires specialized diagnostic tools and knowledge of OEM-specific UDS security access seed/key algorithm; expertise level raises overall feasibility score."
+      },
+      {
+        "id": "AFR-FW-MODIFY",
+        "attackPathId": "AP-FW-MODIFY",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "bespoke"
+        },
+        "score": "4",
+        "band": "Low",
+        "rationale": "Firmware modification requires significant reverse engineering of secure boot chain, custom exploit development, and bespoke tooling; estimated effort in days to weeks."
+      },
+      {
+        "id": "AFR-PASSIVE-TRACK",
+        "attackPathId": "AP-PASSIVE-TRACK",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "moderate",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "Passive CAN monitoring requires only brief physical access to install a commercially available OBD-II logger; subsequent data analysis requires moderate expertise."
+      },
+      {
+        "id": "AFRS-CAN-PHY",
+        "attackStepId": "STEP-CAN-PHY-ACCESS",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "minutes",
+          "specialist_expertise": "layman",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "easy",
+          "equipment": "none"
+        },
+        "score": "1",
+        "band": "High",
+        "rationale": "Gaining access to vehicle interior is a well-understood physical security problem requiring no technical expertise."
+      },
+      {
+        "id": "AFRS-CAN-CONNECT",
+        "attackStepId": "STEP-CAN-CONNECT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "minutes",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "easy",
+          "equipment": "standard"
+        },
+        "score": "1",
+        "band": "High",
+        "rationale": "OBD-II CAN adapters are commercially available and widely documented; connecting to bus is straightforward."
+      },
+      {
+        "id": "AFRS-CAN-IDENTIFY",
+        "attackStepId": "STEP-CAN-IDENTIFY",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "moderate",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "Identifying headlight CAN IDs through traffic analysis and behavioral correlation requires moderate time but is achievable with open-source tools."
+      },
+      {
+        "id": "AFRS-CAN-INJECT",
+        "attackStepId": "STEP-CAN-INJECT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "moderate",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "CAN frame injection using identified message IDs is achievable with standard tools once IDs are known."
+      },
+      {
+        "id": "AFRS-DIAG-CONNECT",
+        "attackStepId": "STEP-DIAG-CONNECT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "minutes",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "easy",
+          "equipment": "specialized"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "J2534 pass-thru interfaces are commercially available; connecting to OBD-II and starting a UDS session is well-documented."
+      },
+      {
+        "id": "AFRS-DIAG-SESSION",
+        "attackStepId": "STEP-DIAG-SESSION",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Bypassing UDS security access requires knowledge of OEM-specific seed/key algorithms, which are restricted and require reverse engineering effort."
+      },
+      {
+        "id": "AFRS-DIAG-EXTRACT",
+        "attackStepId": "STEP-DIAG-EXTRACT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "easy",
+          "equipment": "specialized"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "Once authenticated session is established, data extraction via standard UDS services is straightforward for someone with diagnostic expertise."
+      },
+      {
+        "id": "AFRS-FW-ACCESS",
+        "attackStepId": "STEP-FW-ACCESS",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "specialized"
+        },
+        "score": "3",
+        "band": "Medium",
+        "rationale": "Obtaining programming session access requires advanced UDS knowledge and OEM-specific credentials or exploiting a vulnerability in the security access mechanism."
+      },
+      {
+        "id": "AFRS-FW-EXPLOIT",
+        "attackStepId": "STEP-FW-EXPLOIT",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "weeks",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "bespoke"
+        },
+        "score": "4",
+        "band": "Low",
+        "rationale": "Bypassing firmware signature verification requires deep knowledge of the cryptographic implementation and significant reverse engineering with custom tooling."
+      },
+      {
+        "id": "AFRS-FW-UPLOAD",
+        "attackStepId": "STEP-FW-UPLOAD",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "bespoke"
+        },
+        "score": "4",
+        "band": "Low",
+        "rationale": "Uploading custom firmware assumes signature bypass has been achieved; the upload process itself follows standard UDS protocols."
+      },
+      {
+        "id": "AFRS-FW-PERSIST",
+        "attackStepId": "STEP-FW-PERSIST",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "days",
+          "specialist_expertise": "expert",
+          "knowledge_of_item": "restricted",
+          "window_of_opportunity": "difficult",
+          "equipment": "bespoke"
+        },
+        "score": "4",
+        "band": "Low",
+        "rationale": "Establishing persistence in ECU firmware is the final step after upload and requires deep understanding of AUTOSAR runtime and flash memory management."
+      },
+      {
+        "id": "AFRS-TRACK-MONITOR",
+        "attackStepId": "STEP-TRACK-MONITOR",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "minutes",
+          "specialist_expertise": "layman",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "easy",
+          "equipment": "standard"
+        },
+        "score": "1",
+        "band": "High",
+        "rationale": "Commercial OBD-II data loggers are freely available and trivial to install; no technical expertise required beyond plugging in a device."
+      },
+      {
+        "id": "AFRS-TRACK-CORRELATE",
+        "attackStepId": "STEP-TRACK-CORRELATE",
+        "methodId": "iso21434-afr-v1",
+        "inputFactors": {
+          "elapsed_time": "hours",
+          "specialist_expertise": "proficient",
+          "knowledge_of_item": "public",
+          "window_of_opportunity": "easy",
+          "equipment": "standard"
+        },
+        "score": "2",
+        "band": "Medium",
+        "rationale": "Correlating speed data with road network and timeline requires moderate analytical skill but is achievable with open-source mapping tools and publicly available road data."
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-SAF-BLIND",
+        "damageScenarioId": "DS-SAF-BLIND",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "severe",
+          "financial": "moderate",
+          "operational": "major",
+          "privacy": "negligible"
+        },
+        "score": "4",
+        "rationale": "Loss of forward illumination or blinding of driver constitutes a safety-critical condition directly causing potential fatalities; severe safety rating dominates overall impact score."
+      },
+      {
+        "id": "IR-SAF-GLARE",
+        "damageScenarioId": "DS-SAF-GLARE",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "major",
+          "financial": "moderate",
+          "operational": "moderate",
+          "privacy": "negligible"
+        },
+        "score": "3",
+        "rationale": "Persistent glare to oncoming traffic creates a significant accident risk and potential regulatory violation; rated major safety impact rather than severe as the vehicle's own driver is not directly blinded."
+      },
+      {
+        "id": "IR-PRIV-TRACK",
+        "damageScenarioId": "DS-PRIV-TRACK",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "negligible",
+          "financial": "minor",
+          "operational": "negligible",
+          "privacy": "major"
+        },
+        "score": "2",
+        "rationale": "Long-term movement tracking constitutes a major privacy violation under GDPR but poses limited direct safety or financial harm; privacy category drives the rating."
+      },
+      {
+        "id": "IR-PRIV-VEH-ID",
+        "damageScenarioId": "DS-PRIV-VEH-ID",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "negligible",
+          "financial": "minor",
+          "operational": "negligible",
+          "privacy": "moderate"
+        },
+        "score": "1",
+        "rationale": "Diagnostic data exposure reveals vehicle identity but has limited immediate actionable impact compared to movement tracking or safety scenarios."
+      },
+      {
+        "id": "IR-SAF-MALFUNCTION",
+        "damageScenarioId": "DS-SAF-MALFUNCTION",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "severe",
+          "financial": "major",
+          "operational": "severe",
+          "privacy": "negligible"
+        },
+        "score": "4",
+        "rationale": "Complete headlight failure in low-visibility conditions creates an extreme safety hazard equivalent to total lighting failure; also triggers costly recall and regulatory action."
+      },
+      {
+        "id": "IR-SEC-PERSIST",
+        "damageScenarioId": "DS-SEC-PERSIST",
+        "methodId": "iso21434-impact-v1",
+        "categories": {
+          "safety": "major",
+          "financial": "major",
+          "operational": "major",
+          "privacy": "major"
+        },
+        "score": "3",
+        "rationale": "Using the headlight ECU as a pivot enables attacks on safety-critical systems; multi-category major impact reflects broad blast radius of persistent compromise."
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CAN-SPOOF",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "afrRef": "AFR-CAN-INJECT",
+        "impactRef": "IR-SAF-BLIND",
+        "methodId": "iso21434-risk-v1",
+        "score": "H",
+        "band": "High",
+        "rationale": "Medium attack feasibility (physical access required but using standard tools) combined with severe safety impact (potential fatalities) results in a High risk rating requiring mandatory treatment."
+      },
+      {
+        "id": "RV-DIAG-EXPLOIT",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "afrRef": "AFR-DIAG-PRIV",
+        "impactRef": "IR-PRIV-VEH-ID",
+        "methodId": "iso21434-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Medium feasibility (requires specialist tools and expertise) with limited privacy impact yields Medium risk; treatment focused on access control is sufficient."
+      },
+      {
+        "id": "RV-SPEED-SNIFF",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "afrRef": "AFR-PASSIVE-TRACK",
+        "impactRef": "IR-PRIV-TRACK",
+        "methodId": "iso21434-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Medium feasibility (brief physical access needed) with major privacy impact results in Medium risk; monitoring controls and GDPR compliance measures address the threat."
+      },
+      {
+        "id": "RV-FW-TAMPER",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "afrRef": "AFR-FW-MODIFY",
+        "impactRef": "IR-SEC-PERSIST",
+        "methodId": "iso21434-risk-v1",
+        "score": "M",
+        "band": "Medium",
+        "rationale": "Low feasibility (requires weeks of expert effort with bespoke tools) despite major multi-category impact; strong firmware signing controls reduce residual risk to acceptable level."
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CAN-AUTH",
+        "title": "CAN Message Authentication Code (MAC) via CANSec or AUTOSAR SecOC",
+        "catalog": "ISO/SAE 21434 Security Controls Catalogue",
+        "controlId": "NET-AUTH-01",
+        "implementationStatus": "planned",
+        "requiredCalLevel": "CAL3",
+        "achievedCalLevel": "CAL2",
+        "references": [
+          "AUTOSAR SecOC (Secure Onboard Communication) specification R22-11",
+          "CANSec IEEE 802.1AE adaptation for CAN",
+          "ISO/SAE 21434:2021 clause 10.4.3 network security"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "f6071829a1b2c3d4e5f60718293a4b5cb2c3d4e5f6071829a1b2c3d4e5f60718"
+          }
+        ]
+      },
+      {
+        "id": "CTRL-DIAG-ACCESS",
+        "title": "UDS Diagnostic Security Access with Cryptographic Challenge-Response",
+        "catalog": "ISO/SAE 21434 Security Controls Catalogue",
+        "controlId": "DIAG-ACC-01",
+        "implementationStatus": "implemented",
+        "requiredCalLevel": "CAL2",
+        "achievedCalLevel": "CAL2",
+        "references": [
+          "ISO 14229-1:2020 UDS security access service (0x27)",
+          "NIST SP 800-63B authentication guidelines",
+          "AUTOSAR Crypto Stack specification"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "07182930a1b2c3d4e5f60718293a4b5cb2c3d4e5f6071829a1b2c3d4e5f60718"
+          }
+        ]
+      },
+      {
+        "id": "CTRL-FW-VERIFY",
+        "title": "Secure Boot with Asymmetric Firmware Signature Verification",
+        "catalog": "ISO/SAE 21434 Security Controls Catalogue",
+        "controlId": "FW-VER-01",
+        "implementationStatus": "implemented",
+        "requiredCalLevel": "CAL3",
+        "achievedCalLevel": "CAL3",
+        "references": [
+          "AUTOSAR Trusted Platform Manager specification",
+          "NIST SP 800-193 Platform Firmware Resiliency Guidelines",
+          "Infineon Aurix secure boot application note"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "18293a4b5c6d7e8fb2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f9"
+          }
+        ]
+      },
+      {
+        "id": "CTRL-CAN-ENCRYPT",
+        "title": "CAN Payload Encryption for Sensitive Messages",
+        "catalog": "ISO/SAE 21434 Security Controls Catalogue",
+        "controlId": "NET-ENC-01",
+        "implementationStatus": "not_implemented",
+        "requiredCalLevel": "CAL2",
+        "references": [
+          "AUTOSAR SecOC encryption mode specification",
+          "CAN FD payload encryption research"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "293a4b5c6d7e8f90b2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f9"
+          }
+        ]
+      },
+      {
+        "id": "CTRL-RATE-LIMIT",
+        "title": "Diagnostic Request Rate Limiting and Intrusion Detection",
+        "catalog": "ISO/SAE 21434 Security Controls Catalogue",
+        "controlId": "DIAG-RATE-01",
+        "implementationStatus": "implemented",
+        "requiredCalLevel": "CAL1",
+        "achievedCalLevel": "CAL1",
+        "references": [
+          "ISO 14229-1 response pending and timing parameters",
+          "AUTOSAR Intrusion Detection System Manager (IdsM) specification"
+        ],
+        "hashes": [
+          {
+            "alg": "SHA-256",
+            "content": "3a4b5c6d7e8f9001b2c3d4e5f6071829a1b2c3d4e5f60718293a4b5c6d7e8f9"
+          }
+        ]
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CAN-SPOOF",
+        "riskValueId": "RV-CAN-SPOOF",
+        "decision": "reduce",
+        "controls": [
+          "CTRL-CAN-AUTH",
+          "CTRL-CAN-ENCRYPT"
+        ],
+        "justification": "High safety risk classification mandates reduction. CAN message authentication prevents injection of forged light control commands by requiring cryptographic MACs; payload encryption further prevents message replay. Combined controls are projected to reduce the attack feasibility band from Medium to Low."
+      },
+      {
+        "id": "RTD-DIAG-EXPLOIT",
+        "riskValueId": "RV-DIAG-EXPLOIT",
+        "decision": "reduce",
+        "controls": [
+          "CTRL-DIAG-ACCESS",
+          "CTRL-RATE-LIMIT"
+        ],
+        "justification": "Cryptographic challenge-response security access prevents unauthorized diagnostic sessions; rate limiting detects and throttles brute-force seed attacks. Together these controls reduce feasibility to Low band and bring residual risk within tolerance."
+      },
+      {
+        "id": "RTD-SPEED-SNIFF",
+        "riskValueId": "RV-SPEED-SNIFF",
+        "decision": "accept",
+        "controls": [],
+        "justification": "The privacy impact of passive speed data monitoring is rated as Medium risk. Physical access is required to install a monitoring device, and the vehicle already benefits from physical security measures. The cost-benefit analysis of CAN encryption for all speed messages does not justify the implementation effort given the residual risk level and existing physical access restrictions."
+      },
+      {
+        "id": "RTD-FW-TAMPER",
+        "riskValueId": "RV-FW-TAMPER",
+        "decision": "reduce",
+        "controls": [
+          "CTRL-FW-VERIFY",
+          "CTRL-DIAG-ACCESS"
+        ],
+        "justification": "Firmware signature verification via secure boot prevents execution of unsigned firmware images. Diagnostic access control prevents unauthorized programming sessions. These controls address both the upload mechanism and the execution of malicious code, reducing the residual risk to Low band."
+      }
+    ],
+    "calAssuranceLevels": [
+      {
+        "id": "CAL-LEVEL-1",
+        "level": "CAL1",
+        "title": "Cybersecurity Assurance Level 1 - Basic",
+        "description": "CAL 1 represents basic cybersecurity assurance appropriate for components with low cybersecurity risk. Activities focus on documenting security requirements and performing basic testing.",
+        "objectives": [
+          "Cybersecurity requirements are documented",
+          "Basic vulnerability analysis has been performed",
+          "Security testing covers basic functional validation",
+          "Residual risks are identified and documented"
+        ],
+        "assuranceActivities": [
+          "Threat analysis and risk assessment (TARA) documentation",
+          "Security requirements specification",
+          "Basic penetration testing",
+          "Code review for obvious security issues",
+          "Security test case execution"
+        ],
+        "references": [
+          "ISO/SAE PAS 8475:2023 clause 5.3 - CAL 1 requirements",
+          "ISO/SAE 21434:2021 clause 11 - Product development"
+        ]
+      },
+      {
+        "id": "CAL-LEVEL-2",
+        "level": "CAL2",
+        "title": "Cybersecurity Assurance Level 2 - Enhanced",
+        "description": "CAL 2 represents enhanced cybersecurity assurance for components with moderate cybersecurity risk. Activities include structured design analysis, security architecture review, and systematic testing.",
+        "objectives": [
+          "Security architecture is formally documented and reviewed",
+          "Attack feasibility ratings are systematically derived",
+          "Security testing includes structured penetration testing",
+          "Vulnerability management process is established",
+          "Security design patterns are applied and documented"
+        ],
+        "assuranceActivities": [
+          "Formal security architecture documentation",
+          "Systematic TARA with traceability to security requirements",
+          "Structured penetration testing with documented methodology",
+          "Static analysis and code scanning with security rulesets",
+          "Security design pattern review",
+          "Independent security review"
+        ],
+        "references": [
+          "ISO/SAE PAS 8475:2023 clause 5.4 - CAL 2 requirements",
+          "ISO/SAE 21434:2021 clause 12 - Cybersecurity validation"
+        ]
+      },
+      {
+        "id": "CAL-LEVEL-3",
+        "level": "CAL3",
+        "title": "Cybersecurity Assurance Level 3 - Rigorous",
+        "description": "CAL 3 represents rigorous cybersecurity assurance for components with high cybersecurity risk affecting safety-critical functions. Activities include formal methods, advanced penetration testing, and independent verification.",
+        "objectives": [
+          "Formal security proofs or model-based analysis are applied to cryptographic implementations",
+          "Advanced penetration testing including hardware attacks is performed",
+          "Supply chain security for security-critical components is verified",
+          "Continuous monitoring and incident response capabilities are demonstrated",
+          "Independent third-party security assessment has been completed"
+        ],
+        "assuranceActivities": [
+          "Formal security model verification for cryptographic protocols",
+          "Hardware-level penetration testing including side-channel analysis",
+          "Supply chain integrity verification with signed bills of materials",
+          "Fuzz testing of all external interfaces",
+          "Third-party independent security assessment",
+          "Red team exercise against production representative system",
+          "Continuous vulnerability monitoring with defined SLAs"
+        ],
+        "references": [
+          "ISO/SAE PAS 8475:2023 clause 5.5 - CAL 3 requirements",
+          "ISO/SAE 21434:2021 clause 13 - Cybersecurity monitoring",
+          "Common Criteria EAL4 assurance activities (reference)"
+        ]
+      }
+    ],
+    "calAssessments": [
+      {
+        "id": "CALA-CAN-AUTH",
+        "controlId": "CTRL-CAN-AUTH",
+        "targetCalLevel": "CAL3",
+        "assessmentResult": "insufficient",
+        "achievedCalLevel": "CAL2",
+        "evidenceRef": "urn:evidence:OEM-CALA-CANAUTH-2026-001",
+        "assessmentDate": "2026-03-15T09:00:00.000Z",
+        "assessor": "Automotive Cybersecurity Assessment Team, TUV Rheinland",
+        "rationale": "SecOC implementation has been reviewed and functional testing passed at CAL2 level. Formal verification of the MAC algorithm implementation and hardware side-channel resistance testing required to achieve CAL3. Remediation plan established targeting CAL3 by SOP-1."
+      },
+      {
+        "id": "CALA-DIAG-ACCESS",
+        "controlId": "CTRL-DIAG-ACCESS",
+        "targetCalLevel": "CAL2",
+        "assessmentResult": "sufficient",
+        "achievedCalLevel": "CAL2",
+        "evidenceRef": "urn:evidence:OEM-CALA-DIAGACC-2026-002",
+        "assessmentDate": "2026-02-20T14:00:00.000Z",
+        "assessor": "Internal Cybersecurity Validation Team, OEM Security Lab",
+        "rationale": "UDS security access implementation uses ECDH-based challenge-response with 128-bit entropy. Penetration testing confirmed resistance to brute-force and replay attacks. CAL2 activities completed including structured pentest, static analysis, and independent review."
+      },
+      {
+        "id": "CALA-FW-VERIFY",
+        "controlId": "CTRL-FW-VERIFY",
+        "targetCalLevel": "CAL3",
+        "assessmentResult": "sufficient",
+        "achievedCalLevel": "CAL3",
+        "evidenceRef": "urn:evidence:OEM-CALA-FWVER-2026-003",
+        "assessmentDate": "2026-01-30T10:00:00.000Z",
+        "assessor": "Automotive Cybersecurity Assessment Team, TUV Rheinland",
+        "rationale": "Secure boot chain verified through formal cryptographic protocol analysis and hardware penetration testing including fault injection and side-channel analysis. Third-party assessment by TUV Rheinland confirmed CAL3 requirements met. Supply chain for HSM components verified."
+      },
+      {
+        "id": "CALA-RATE-LIMIT",
+        "controlId": "CTRL-RATE-LIMIT",
+        "targetCalLevel": "CAL1",
+        "assessmentResult": "sufficient",
+        "achievedCalLevel": "CAL1",
+        "evidenceRef": "urn:evidence:OEM-CALA-RATELIM-2026-004",
+        "assessmentDate": "2026-02-10T11:00:00.000Z",
+        "assessor": "Internal Cybersecurity Validation Team, OEM Security Lab",
+        "rationale": "Rate limiting implementation tested and confirmed functional. Basic security testing completed. AUTOSAR IdsM configuration reviewed. CAL1 activities sufficient for this defensive depth control."
+      }
+    ],
+    "tafAssessments": [
+      {
+        "id": "TAF-CAN-INJECT",
+        "attackPathId": "AP-CAN-INJECT",
+        "methodId": "pas8475-taf-v1",
+        "targetContext": {
+          "attackerProfile": "organized-crime",
+          "attackMotivation": "disruption",
+          "targetValue": "high",
+          "accessRequirement": "physical"
+        },
+        "tafScore": 14,
+        "tafBand": "high",
+        "factorRatings": {
+          "attacker_potential": "medium",
+          "attack_vector": "physical",
+          "attack_complexity": "low",
+          "privileges_required": "none",
+          "user_interaction": "required",
+          "scope": "changed"
+        },
+        "rationale": "CAN injection attack requires physical vehicle access but employs readily available tools and publicly documented techniques. Organized crime groups with automotive expertise (e.g., thieves, insurance fraudsters) have the motivation and means to execute this attack. The safety impact on public road users elevates the target value. Physical access requirement limits the attack surface but does not make it negligible.",
+        "assessmentDate": "2026-04-01T09:00:00.000Z"
+      },
+      {
+        "id": "TAF-FW-MODIFY",
+        "attackPathId": "AP-FW-MODIFY",
+        "methodId": "pas8475-taf-v1",
+        "targetContext": {
+          "attackerProfile": "nation-state",
+          "attackMotivation": "espionage",
+          "targetValue": "very-high",
+          "accessRequirement": "physical"
+        },
+        "tafScore": 8,
+        "tafBand": "medium",
+        "factorRatings": {
+          "attacker_potential": "high",
+          "attack_vector": "physical",
+          "attack_complexity": "high",
+          "privileges_required": "high",
+          "user_interaction": "required",
+          "scope": "changed"
+        },
+        "rationale": "Firmware modification is a sophisticated attack requiring nation-state or advanced persistent threat (APT) actor capabilities. The attack demands weeks of preparation including reverse engineering the secure boot chain and developing bespoke exploitation tools. However, the persistence and lateral movement potential make this highly valuable for espionage or sabotage operations against high-value targets. Physical access requirement significantly limits the attack population.",
+        "assessmentDate": "2026-04-01T10:00:00.000Z"
+      },
+      {
+        "id": "TAF-PASSIVE-TRACK",
+        "attackPathId": "AP-PASSIVE-TRACK",
+        "methodId": "pas8475-taf-v1",
+        "targetContext": {
+          "attackerProfile": "opportunist",
+          "attackMotivation": "financial",
+          "targetValue": "medium",
+          "accessRequirement": "physical"
+        },
+        "tafScore": 16,
+        "tafBand": "high",
+        "factorRatings": {
+          "attacker_potential": "low",
+          "attack_vector": "physical",
+          "attack_complexity": "low",
+          "privileges_required": "none",
+          "user_interaction": "none",
+          "scope": "unchanged"
+        },
+        "rationale": "Passive tracking attack has the lowest attacker skill bar of all scenarios: commercial OBD-II logging devices costing under 50 euros are sufficient. Once installed, no further interaction is needed. The threat is relevant for stalking, insurance fraud, theft planning, and targeted marketing. High score reflects low complexity despite physical access requirement.",
+        "assessmentDate": "2026-04-01T11:00:00.000Z"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-001",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "ASSET-LIGHT-CTRL",
+        "confidence": 0.95,
+        "justification": "CAN message injection directly compromises the integrity of light control commands, the primary asset targeted by this threat scenario."
+      },
+      {
+        "id": "REL-002",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-DIAG-EXPLOIT",
+        "targetRef": "ASSET-DIAG-DATA",
+        "confidence": 0.9,
+        "justification": "Diagnostic exploitation directly targets the confidentiality and integrity of diagnostic information stored and transmitted by the ECU."
+      },
+      {
+        "id": "REL-003",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-SPEED-SNIFF",
+        "targetRef": "ASSET-VEH-SPEED",
+        "confidence": 0.9,
+        "justification": "Passive CAN monitoring directly targets vehicle speed data confidentiality by capturing broadcast speed signals."
+      },
+      {
+        "id": "REL-004",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-FW-TAMPER",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.92,
+        "justification": "Firmware modification attack targets firmware integrity as the primary asset, enabling persistent compromise."
+      },
+      {
+        "id": "REL-005",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "DS-SAF-BLIND",
+        "confidence": 0.85,
+        "justification": "Successful CAN injection of malicious light control commands can disable forward lighting or set maximum intensity, directly causing driver blindness or oncoming traffic glare."
+      },
+      {
+        "id": "REL-006",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "DS-SAF-GLARE",
+        "confidence": 0.8,
+        "justification": "Injected commands overriding glare-free high beam logic can sustain maximum-intensity illumination in the direction of oncoming traffic."
+      },
+      {
+        "id": "REL-007",
+        "relationshipType": "causes",
+        "sourceRef": "TS-DIAG-EXPLOIT",
+        "targetRef": "DS-PRIV-VEH-ID",
+        "confidence": 0.88,
+        "justification": "Unauthorized diagnostic data extraction exposes VIN, DTC history, and usage patterns constituting vehicle identity information."
+      },
+      {
+        "id": "REL-008",
+        "relationshipType": "causes",
+        "sourceRef": "TS-SPEED-SNIFF",
+        "targetRef": "DS-PRIV-TRACK",
+        "confidence": 0.82,
+        "justification": "Collected speed data correlated with road network information enables covert vehicle location tracking over time."
+      },
+      {
+        "id": "REL-009",
+        "relationshipType": "causes",
+        "sourceRef": "TS-FW-TAMPER",
+        "targetRef": "DS-SAF-MALFUNCTION",
+        "confidence": 0.87,
+        "justification": "Malicious firmware replacing legitimate headlight control code can cause complete loss of all lighting functions."
+      },
+      {
+        "id": "REL-010",
+        "relationshipType": "causes",
+        "sourceRef": "TS-FW-TAMPER",
+        "targetRef": "DS-SEC-PERSIST",
+        "confidence": 0.9,
+        "justification": "Persistent backdoor firmware enables ongoing access to vehicle network for lateral movement and surveillance operations."
+      },
+      {
+        "id": "REL-011",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "TS-CAN-SPOOF",
+        "confidence": 0.9,
+        "justification": "CAN MAC authentication prevents injection of unsigned frames; attacker cannot forge valid MACs without knowledge of the symmetric key stored in ECU HSM."
+      },
+      {
+        "id": "REL-012",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CAN-ENCRYPT",
+        "targetRef": "TS-CAN-SPOOF",
+        "confidence": 0.75,
+        "justification": "Payload encryption prevents replay attacks by making captured frames undecodable without the session key, complementing message authentication."
+      },
+      {
+        "id": "REL-013",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "TS-DIAG-EXPLOIT",
+        "confidence": 0.88,
+        "justification": "Cryptographic challenge-response security access prevents unauthorized diagnostic sessions; brute-force attacks are infeasible within the rate-limiting window."
+      },
+      {
+        "id": "REL-014",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-RATE-LIMIT",
+        "targetRef": "TS-DIAG-EXPLOIT",
+        "confidence": 0.7,
+        "justification": "Rate limiting detects anomalous diagnostic request patterns and throttles responses, preventing automated brute-force of security access seeds."
+      },
+      {
+        "id": "REL-015",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "TS-FW-TAMPER",
+        "confidence": 0.95,
+        "justification": "Secure boot verifies each firmware component signature at startup; unsigned or tampered firmware is rejected and the ECU enters a safe fallback mode."
+      },
+      {
+        "id": "REL-016",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "TS-FW-TAMPER",
+        "confidence": 0.8,
+        "justification": "Programming session security access prevents unauthorized initiation of firmware update sequences; an attacker must bypass this before attempting to upload malicious firmware."
+      },
+      {
+        "id": "REL-017",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.95,
+        "justification": "Asymmetric signature verification on every boot ensures only OEM-signed firmware can execute, directly protecting firmware integrity."
+      },
+      {
+        "id": "REL-018",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "ASSET-LIGHT-CTRL",
+        "confidence": 0.88,
+        "justification": "CAN MAC authentication protects light control commands from injection or replay, preserving integrity of the asset."
+      },
+      {
+        "id": "REL-019",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "ASSET-DIAG-DATA",
+        "confidence": 0.85,
+        "justification": "Security access control restricts reading of sensitive diagnostic identifiers and ECU configuration data to authenticated sessions."
+      },
+      {
+        "id": "REL-020",
+        "relationshipType": "implements",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "CAL-LEVEL-3",
+        "confidence": 0.8,
+        "justification": "The CANSec/SecOC implementation is designed to meet CAL3 assurance requirements, currently assessed at CAL2 with remediation underway."
+      },
+      {
+        "id": "REL-021",
+        "relationshipType": "implements",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "CAL-LEVEL-3",
+        "confidence": 0.95,
+        "justification": "Secure boot implementation fully satisfies CAL3 assurance level requirements as confirmed by third-party assessment."
+      },
+      {
+        "id": "REL-022",
+        "relationshipType": "implements",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "CAL-LEVEL-2",
+        "confidence": 0.88,
+        "justification": "UDS security access implementation meets CAL2 assurance requirements as confirmed by internal validation team."
+      },
+      {
+        "id": "REL-023",
+        "relationshipType": "assesses",
+        "sourceRef": "CALA-CAN-AUTH",
+        "targetRef": "CTRL-CAN-AUTH",
+        "confidence": 1.0,
+        "justification": "CAL assessment CALA-CAN-AUTH formally evaluates the achieved assurance level of the CAN authentication control."
+      },
+      {
+        "id": "REL-024",
+        "relationshipType": "assesses",
+        "sourceRef": "CALA-FW-VERIFY",
+        "targetRef": "CTRL-FW-VERIFY",
+        "confidence": 1.0,
+        "justification": "CAL assessment CALA-FW-VERIFY formally evaluates the achieved assurance level of the firmware verification control."
+      },
+      {
+        "id": "REL-025",
+        "relationshipType": "assesses",
+        "sourceRef": "CALA-DIAG-ACCESS",
+        "targetRef": "CTRL-DIAG-ACCESS",
+        "confidence": 1.0,
+        "justification": "CAL assessment CALA-DIAG-ACCESS formally evaluates the achieved assurance level of the diagnostic access control."
+      },
+      {
+        "id": "REL-026",
+        "relationshipType": "assesses",
+        "sourceRef": "CALA-RATE-LIMIT",
+        "targetRef": "CTRL-RATE-LIMIT",
+        "confidence": 1.0,
+        "justification": "CAL assessment CALA-RATE-LIMIT formally evaluates the achieved assurance level of the rate limiting control."
+      },
+      {
+        "id": "REL-027",
+        "relationshipType": "contains",
+        "sourceRef": "AP-FW-MODIFY",
+        "targetRef": "STEP-FW-PERSIST",
+        "confidence": 1.0,
+        "justification": "The firmware modification attack path contains the persistent backdoor establishment step as its final stage."
+      },
+      {
+        "id": "REL-028",
+        "relationshipType": "contains",
+        "sourceRef": "AP-CAN-INJECT",
+        "targetRef": "STEP-CAN-INJECT",
+        "confidence": 1.0,
+        "justification": "The CAN injection attack path contains the malicious frame injection step as its primary attack action."
+      },
+      {
+        "id": "REL-029",
+        "relationshipType": "targets",
+        "sourceRef": "AP-CAN-INJECT",
+        "targetRef": "COMP-CAN-NET",
+        "confidence": 0.95,
+        "justification": "The CAN injection attack path specifically targets the body CAN network segment to inject malicious frames."
+      },
+      {
+        "id": "REL-030",
+        "relationshipType": "targets",
+        "sourceRef": "AP-DIAG-PRIV",
+        "targetRef": "COMP-OBD",
+        "confidence": 0.95,
+        "justification": "The diagnostic exploitation attack path targets the OBD-II port as the entry point for unauthorized diagnostic sessions."
+      },
+      {
+        "id": "REL-031",
+        "relationshipType": "requires_cal",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "CAL-LEVEL-3",
+        "confidence": 0.9,
+        "justification": "CAN message authentication for safety-critical light control commands requires CAL3 assurance level per organizational policy and risk rating."
+      },
+      {
+        "id": "REL-032",
+        "relationshipType": "requires_cal",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "CAL-LEVEL-3",
+        "confidence": 0.95,
+        "justification": "Firmware signature verification protecting against persistent compromise requires CAL3 due to the high impact rating of firmware tampering."
+      },
+      {
+        "id": "REL-033",
+        "relationshipType": "achieves_cal",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "CAL-LEVEL-3",
+        "confidence": 0.95,
+        "justification": "Third-party assessment by TUV Rheinland confirmed CTRL-FW-VERIFY meets all CAL3 assurance requirements."
+      },
+      {
+        "id": "REL-034",
+        "relationshipType": "achieves_cal",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "CAL-LEVEL-2",
+        "confidence": 0.88,
+        "justification": "Internal validation assessment confirmed CTRL-DIAG-ACCESS meets all CAL2 assurance requirements."
+      },
+      {
+        "id": "REL-035",
+        "relationshipType": "related_to",
+        "sourceRef": "TS-DIAG-EXPLOIT",
+        "targetRef": "TS-FW-TAMPER",
+        "confidence": 0.75,
+        "justification": "Diagnostic exploitation is a prerequisite attack path that enables firmware tampering; a successful diagnostic exploit significantly increases the feasibility of firmware modification."
+      },
+      {
+        "id": "REL-036",
+        "relationshipType": "related_to",
+        "sourceRef": "DS-SEC-PERSIST",
+        "targetRef": "DS-SAF-MALFUNCTION",
+        "confidence": 0.7,
+        "justification": "A persistent compromise of the ECU could be leveraged to subsequently cause headlight malfunction, linking these two damage scenarios in a multi-stage attack chain."
+      },
+      {
+        "id": "REL-037",
+        "relationshipType": "related_to",
+        "sourceRef": "RV-CAN-SPOOF",
+        "targetRef": "RV-FW-TAMPER",
+        "confidence": 0.65,
+        "justification": "Both risks relate to the integrity of the headlight ECU's operational commands; treating one may influence the residual risk of the other."
+      }
+    ]
+  }
+}

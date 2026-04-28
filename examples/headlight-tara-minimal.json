@@ -1,0 +1,229 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "bbbbbbbb-2222-4222-8222-bbbbbbbbbbbb",
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-HEADLIGHT-001",
+      "title": "Adaptive Front-lighting System (AFS)"
+    },
+    "assets": [
+      {
+        "id": "ASSET-LIGHT-CTRL",
+        "title": "Light Control Commands"
+      },
+      {
+        "id": "ASSET-VEH-SPEED",
+        "title": "Vehicle Speed Data"
+      },
+      {
+        "id": "ASSET-DIAG-DATA",
+        "title": "Diagnostic Information"
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "Headlight ECU Firmware"
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-BLIND",
+        "title": "Driver/Other Road Users Blinded"
+      },
+      {
+        "id": "DS-SAF-GLARE",
+        "title": "Oncoming Traffic Glare"
+      },
+      {
+        "id": "DS-SAF-MALFUNCTION",
+        "title": "Complete Headlight System Failure"
+      },
+      {
+        "id": "DS-SEC-PERSIST",
+        "title": "Persistent Vehicle Compromise"
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CAN-SPOOF",
+        "title": "CAN Message Injection Attack",
+        "targetedAssetIds": ["ASSET-LIGHT-CTRL"]
+      },
+      {
+        "id": "TS-DIAG-EXPLOIT",
+        "title": "UDS Diagnostic Service Exploitation",
+        "targetedAssetIds": ["ASSET-DIAG-DATA", "ASSET-FIRMWARE"]
+      },
+      {
+        "id": "TS-SPEED-SNIFF",
+        "title": "Vehicle Speed Data Interception",
+        "targetedAssetIds": ["ASSET-VEH-SPEED"]
+      },
+      {
+        "id": "TS-FW-TAMPER",
+        "title": "Firmware Modification Attack",
+        "targetedAssetIds": ["ASSET-FIRMWARE"]
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CAN-INJECT",
+        "title": "CAN Network Access -> Light Control Manipulation",
+        "threatScenarioId": "TS-CAN-SPOOF"
+      },
+      {
+        "id": "AP-DIAG-PRIV",
+        "title": "Diagnostic Access -> Data Exfiltration",
+        "threatScenarioId": "TS-DIAG-EXPLOIT"
+      },
+      {
+        "id": "AP-FW-MODIFY",
+        "title": "Firmware Access -> Persistent Compromise",
+        "threatScenarioId": "TS-FW-TAMPER"
+      },
+      {
+        "id": "AP-PASSIVE-TRACK",
+        "title": "Speed Signal Monitoring -> Location Tracking",
+        "threatScenarioId": "TS-SPEED-SNIFF"
+      }
+    ],
+    "methods": [
+      {
+        "id": "iso21434-afr-v1",
+        "name": "ISO/SAE 21434 Attack Feasibility Rating",
+        "version": "1.0"
+      },
+      {
+        "id": "iso21434-impact-v1",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0"
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0"
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CAN-INJECT",
+        "attackPathId": "AP-CAN-INJECT",
+        "methodId": "iso21434-afr-v1",
+        "score": "2"
+      },
+      {
+        "id": "AFR-DIAG-PRIV",
+        "attackPathId": "AP-DIAG-PRIV",
+        "methodId": "iso21434-afr-v1",
+        "score": "3"
+      },
+      {
+        "id": "AFR-FW-MODIFY",
+        "attackPathId": "AP-FW-MODIFY",
+        "methodId": "iso21434-afr-v1",
+        "score": "4"
+      },
+      {
+        "id": "AFR-PASSIVE-TRACK",
+        "attackPathId": "AP-PASSIVE-TRACK",
+        "methodId": "iso21434-afr-v1",
+        "score": "2"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-SAF-BLIND",
+        "damageScenarioId": "DS-SAF-BLIND",
+        "methodId": "iso21434-impact-v1",
+        "score": "4"
+      },
+      {
+        "id": "IR-SAF-GLARE",
+        "damageScenarioId": "DS-SAF-GLARE",
+        "methodId": "iso21434-impact-v1",
+        "score": "3"
+      },
+      {
+        "id": "IR-SAF-MALFUNCTION",
+        "damageScenarioId": "DS-SAF-MALFUNCTION",
+        "methodId": "iso21434-impact-v1",
+        "score": "4"
+      },
+      {
+        "id": "IR-SEC-PERSIST",
+        "damageScenarioId": "DS-SEC-PERSIST",
+        "methodId": "iso21434-impact-v1",
+        "score": "3"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CAN-SPOOF",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "afrRef": "AFR-CAN-INJECT",
+        "impactRef": "IR-SAF-BLIND",
+        "methodId": "iso21434-risk-v1",
+        "score": "H"
+      },
+      {
+        "id": "RV-DIAG-EXPLOIT",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "afrRef": "AFR-DIAG-PRIV",
+        "impactRef": "IR-SAF-GLARE",
+        "methodId": "iso21434-risk-v1",
+        "score": "M"
+      },
+      {
+        "id": "RV-SPEED-SNIFF",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "afrRef": "AFR-PASSIVE-TRACK",
+        "impactRef": "IR-SAF-MALFUNCTION",
+        "methodId": "iso21434-risk-v1",
+        "score": "M"
+      },
+      {
+        "id": "RV-FW-TAMPER",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "afrRef": "AFR-FW-MODIFY",
+        "impactRef": "IR-SEC-PERSIST",
+        "methodId": "iso21434-risk-v1",
+        "score": "M"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CAN-AUTH",
+        "title": "CAN Message Authentication"
+      },
+      {
+        "id": "CTRL-DIAG-ACCESS",
+        "title": "Diagnostic Access Control"
+      },
+      {
+        "id": "CTRL-FW-VERIFY",
+        "title": "Firmware Signature Verification"
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CAN-SPOOF",
+        "riskValueId": "RV-CAN-SPOOF",
+        "decision": "reduce"
+      },
+      {
+        "id": "RTD-DIAG-EXPLOIT",
+        "riskValueId": "RV-DIAG-EXPLOIT",
+        "decision": "reduce"
+      },
+      {
+        "id": "RTD-SPEED-SNIFF",
+        "riskValueId": "RV-SPEED-SNIFF",
+        "decision": "accept"
+      },
+      {
+        "id": "RTD-FW-TAMPER",
+        "riskValueId": "RV-FW-TAMPER",
+        "decision": "reduce"
+      }
+    ]
+  }
+}
