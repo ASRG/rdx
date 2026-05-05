@@ -312,6 +312,13 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "frameworkReferences": {
+                "type": "array",
+                "description": "References to external attack framework entries (e.g. MITRE ATT&CK for Automotive, EMB3D, Auto-ISAC Threat Matrix, CAPEC)",
+                "items": {
+                  "$ref": "#/$defs/FrameworkReference"
+                }
               }
             },
             "additionalProperties": true
@@ -1142,6 +1149,34 @@
         }
       },
       "additionalProperties": false
+    },
+    "FrameworkReference": {
+      "type": "object",
+      "description": "A reference to an entry in an external attack framework or threat taxonomy",
+      "required": [
+        "framework",
+        "techniqueId"
+      ],
+      "properties": {
+        "framework": {
+          "type": "string",
+          "description": "The name of the attack framework (e.g. MITRE ATT&CK for Automotive, EMB3D, Auto-ISAC Threat Matrix, CAPEC)"
+        },
+        "techniqueId": {
+          "type": "string",
+          "description": "The technique, tactic, or threat identifier within the framework (e.g. AUT.001, EMB.CAP.001, T1059)"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the framework entry for deep-linking"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of how this framework entry relates to the attack step"
+        }
+      },
+      "additionalProperties": true
     }
   }
 }

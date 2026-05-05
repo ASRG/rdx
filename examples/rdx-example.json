@@ -99,29 +99,77 @@
         "description": "Network scan to identify exposed DoIP endpoints on the vehicle",
         "attackFeasibilityRatingIds": ["AFR-AS-001"],
         "controlIds": ["CTRL-NET-MON"],
-        "references": ["https://example.com/doip-security"]
+        "references": ["https://example.com/doip-security"],
+        "frameworkReferences": [
+          {
+            "framework": "MITRE ATT&CK for Automotive",
+            "techniqueId": "AUT.001",
+            "description": "Active Scanning — discovery of exposed vehicle network services"
+          },
+          {
+            "framework": "Auto-ISAC Threat Matrix",
+            "techniqueId": "AM-DISC-01",
+            "description": "Vehicle network service discovery"
+          }
+        ]
       },
       {
-        "id": "AS-002", 
+        "id": "AS-002",
         "title": "Exploit vulnerability",
         "description": "Exploit authentication bypass vulnerability in UDS over DoIP",
         "attackFeasibilityRatingIds": ["AFR-AS-002"],
         "controlIds": ["CTRL-VULN-PATCH"],
-        "references": ["https://example.com/uds-vulns"]
+        "references": ["https://example.com/uds-vulns"],
+        "frameworkReferences": [
+          {
+            "framework": "MITRE ATT&CK for Automotive",
+            "techniqueId": "AUT.007",
+            "description": "Exploit Public-Facing Application — UDS/DoIP authentication bypass"
+          },
+          {
+            "framework": "EMB3D",
+            "techniqueId": "EMB.CAP.003",
+            "description": "Weak Authentication — authentication bypass on diagnostic interface"
+          }
+        ]
       },
       {
         "id": "AS-003",
         "title": "Pivot to CAN network",
         "description": "Gain access to internal CAN bus from compromised DoIP service",
         "attackFeasibilityRatingIds": ["AFR-AS-003"],
-        "controlIds": ["CTRL-NET-SEG"]
+        "controlIds": ["CTRL-NET-SEG"],
+        "frameworkReferences": [
+          {
+            "framework": "MITRE ATT&CK for Automotive",
+            "techniqueId": "AUT.012",
+            "description": "Lateral Movement — pivot from Ethernet/DoIP to CAN bus"
+          }
+        ]
       },
       {
         "id": "AS-004",
         "title": "Inject malicious CAN frames",
         "description": "Send spoofed brake control messages on CAN bus",
         "attackFeasibilityRatingIds": ["AFR-AS-004"],
-        "controlIds": ["CTRL-MSG-1"]
+        "controlIds": ["CTRL-MSG-1"],
+        "frameworkReferences": [
+          {
+            "framework": "MITRE ATT&CK for Automotive",
+            "techniqueId": "AUT.020",
+            "description": "Vehicle CAN Bus Injection — spoofed brake control messages"
+          },
+          {
+            "framework": "EMB3D",
+            "techniqueId": "EMB.CAP.012",
+            "description": "Message Spoofing on Embedded Bus"
+          },
+          {
+            "framework": "Auto-ISAC Threat Matrix",
+            "techniqueId": "AM-EXFIL-04",
+            "description": "Internal bus manipulation via injected frames"
+          }
+        ]
       }
     ],
     "attackPaths": [

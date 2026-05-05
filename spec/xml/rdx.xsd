@@ -113,6 +113,7 @@
       <xs:element name="attackFeasibilityRatingIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="controlIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="frameworkReferences" type="rdx:frameworkReferencesType" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -405,6 +406,22 @@
       <xs:enumeration value="insider"/>
     </xs:restriction>
   </xs:simpleType>
+  <!-- framework reference types -->
+  <xs:complexType name="frameworkReferencesType">
+    <xs:sequence>
+      <xs:element name="frameworkReference" type="rdx:frameworkReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="frameworkReferenceType">
+    <xs:sequence>
+      <xs:element name="framework" type="xs:string"/>
+      <xs:element name="techniqueId" type="xs:string"/>
+      <xs:element name="url" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
   <!-- helpers -->
   <xs:complexType name="ciaList">
     <xs:sequence><xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
