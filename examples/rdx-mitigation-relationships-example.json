@@ -106,28 +106,28 @@
         "cause": "Compromise of telematics backend infrastructure"
       }
     ],
+    "attackSteps": [
+      { "id": "AS-MIT-01", "title": "Deploy IMSI catcher near target vehicle" },
+      { "id": "AS-MIT-02", "title": "Intercept cellular traffic from vehicle telematics unit" },
+      { "id": "AS-MIT-03", "title": "Exploit cellular protocol vulnerability to decrypt traffic" },
+      { "id": "AS-MIT-04", "title": "Extract location data from intercepted telematics messages" },
+      { "id": "AS-MIT-05", "title": "Compromise DNS infrastructure to redirect OTA update requests" },
+      { "id": "AS-MIT-06", "title": "Redirect OTA update server requests to attacker-controlled server" },
+      { "id": "AS-MIT-07", "title": "Serve and install malicious firmware image via redirected update channel" },
+      { "id": "AS-MIT-08", "title": "Gain persistent access to vehicle systems via malicious firmware" }
+    ],
     "attackPaths": [
       {
         "id": "AP-CELLULAR-1",
         "title": "IMSI catcher → Protocol exploit → Data extraction",
         "threatScenarioId": "TS-CELLULAR-ATTACK",
-        "steps": [
-          "Deploy IMSI catcher",
-          "Intercept cellular traffic",
-          "Exploit protocol vulnerability",
-          "Extract location data"
-        ]
+        "stepIds": ["AS-MIT-01", "AS-MIT-02", "AS-MIT-03", "AS-MIT-04"]
       },
       {
         "id": "AP-OTA-1",
         "title": "DNS hijack → MITM → Malicious firmware",
         "threatScenarioId": "TS-OTA-HIJACK",
-        "steps": [
-          "Compromise DNS",
-          "Redirect OTA requests",
-          "Inject malicious firmware",
-          "Gain persistent access"
-        ]
+        "stepIds": ["AS-MIT-05", "AS-MIT-06", "AS-MIT-07", "AS-MIT-08"]
       }
     ],
     "methods": [
@@ -281,7 +281,7 @@
       {
         "id": "RTD-CELLULAR-1",
         "riskValueId": "RV-CELLULAR-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CELLULAR-AUTH",
           "CTRL-TRAFFIC-ENCRYPT",
@@ -292,7 +292,7 @@
       {
         "id": "RTD-OTA-1",
         "riskValueId": "RV-OTA-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-OTA-SIGNING",
           "CTRL-CERT-PINNING",

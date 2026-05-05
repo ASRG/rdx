@@ -1,0 +1,778 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "created": "2026-05-05T12:00:00.000Z",
+  "createdBy": "RDX TARA Tool v0.1.0",
+  "sources": [
+    "ISO/SAE 21434:2021 - Annex H Headlight TARA Example",
+    "urn:oem:example:project:AFS-Headlight-2026"
+  ],
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-HEADLIGHT-001",
+      "title": "Adaptive Front-lighting System (AFS)",
+      "boundary": "AFS headlight ECU including LED matrix control, stepper motor drivers for beam leveling, ambient light sensor, CAN bus interface for vehicle data, and UDS diagnostic services over OBD-II",
+      "functions": [
+        "Adaptive beam control based on speed and steering angle",
+        "Glare-free high beam using camera-based object detection data",
+        "Dynamic leveling using vehicle pitch data",
+        "Cornering light activation on steering input",
+        "LED matrix management and thermal protection",
+        "UDS diagnostic communication for DTC read-out and firmware updates"
+      ],
+      "architecture": {
+        "description": "The AFS ECU is the central processing unit controlling all headlight functions. It receives light control commands from the BCM and speed data from the speed sensor over the body CAN bus. The central gateway interconnects CAN segments and routes diagnostic traffic from the external OBD-II port to the AFS ECU. All diagnostic access to the AFS ECU is performed via the UDS protocol through the gateway. The architecture diagram below can be recreated in any diagram tool using the component positions and sizes provided.",
+        "components": [
+          {
+            "id": "comp-afs-ecu",
+            "name": "AFS ECU",
+            "type": "ecu",
+            "description": "Dual-core microcontroller running AFS application software. Controls LED matrix driver, stepper motors for beam leveling, and handles all CAN communication for light commands and speed data. Hosts UDS server for diagnostics and firmware updates.",
+            "trustBoundary": "Item under consideration",
+            "position": {
+              "x": 490,
+              "y": 280
+            },
+            "size": {
+              "width": 207,
+              "height": 100
+            }
+          },
+          {
+            "id": "comp-bcm",
+            "name": "Body Control Module (BCM)",
+            "type": "ecu",
+            "description": "Manages body electronics including exterior lighting switch requests. Sends CAN messages to AFS ECU with light mode commands (low beam, high beam, cornering, etc.).",
+            "trustBoundary": "In-vehicle network",
+            "position": {
+              "x": 100,
+              "y": 120
+            },
+            "size": {
+              "width": 200,
+              "height": 80
+            }
+          },
+          {
+            "id": "comp-cgw",
+            "name": "Central Gateway (CGW)",
+            "type": "gateway",
+            "description": "Routes CAN messages between powertrain, body, and chassis CAN segments. Acts as the gateway for all diagnostic traffic: tunnels UDS messages from the OBD-II port to target ECUs including the AFS ECU.",
+            "trustBoundary": "In-vehicle network",
+            "position": {
+              "x": 830,
+              "y": 120
+            },
+            "size": {
+              "width": 200,
+              "height": 80
+            }
+          },
+          {
+            "id": "comp-speed-sensor",
+            "name": "Vehicle Speed Sensor / Wheel Speed ECU",
+            "type": "sensor",
+            "description": "Measures vehicle wheel speed and transmits speed data as CAN messages on the body CAN bus. Speed data is used by the AFS ECU for adaptive beam angle calculation.",
+            "trustBoundary": "In-vehicle network",
+            "position": {
+              "x": 100,
+              "y": 440
+            },
+            "size": {
+              "width": 200,
+              "height": 60
+            }
+          },
+          {
+            "id": "comp-body-can",
+            "name": "Body CAN Bus",
+            "type": "network",
+            "description": "125 kbit/s CAN bus connecting BCM, AFS ECU, speed sensor, and central gateway. Carries light control commands, speed data, and internal status messages. No message authentication implemented.",
+            "trustBoundary": "In-vehicle network",
+            "position": {
+              "x": 80,
+              "y": 230
+            },
+            "size": {
+              "width": 880,
+              "height": 40
+            }
+          },
+          {
+            "id": "comp-obd-port",
+            "name": "OBD-II Diagnostic Port",
+            "type": "diagnostic-tool",
+            "description": "Standard 16-pin OBD-II connector located in the driver footwell. Provides physical access to the central gateway and all connected ECUs via UDS over CAN. In production vehicles, access is restricted by security access seed/key mechanism.",
+            "trustBoundary": "External access point",
+            "position": {
+              "x": 890,
+              "y": 440
+            },
+            "size": {
+              "width": 180,
+              "height": 60
+            }
+          }
+        ],
+        "dataFlows": [
+          {
+            "id": "df-speed-to-afs",
+            "name": "Vehicle Speed Signal",
+            "fromComponentId": "comp-speed-sensor",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "CAN",
+            "dataDescription": "Periodic CAN message (10 ms cycle) containing wheel speed in km/h. Used by AFS ECU for beam angle adaptation at high speeds.",
+            "encrypted": false,
+            "authenticated": false
+          },
+          {
+            "id": "df-bcm-to-afs",
+            "name": "Light Control Commands",
+            "fromComponentId": "comp-bcm",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "CAN",
+            "dataDescription": "CAN messages with light mode requests (low beam on/off, high beam toggle, cornering light activation, headlight leveling target angle). Sent on driver input events and periodic 100 ms keep-alive.",
+            "encrypted": false,
+            "authenticated": false
+          },
+          {
+            "id": "df-obd-to-cgw",
+            "name": "Diagnostic Requests (External)",
+            "fromComponentId": "comp-obd-port",
+            "toComponentId": "comp-cgw",
+            "protocol": "UDS",
+            "dataDescription": "UDS diagnostic service requests from external diagnostic tool (ISO 14229). Includes read DTC, read data by identifier, security access, and routine control services.",
+            "encrypted": false,
+            "authenticated": true
+          },
+          {
+            "id": "df-cgw-to-afs",
+            "name": "Routed Diagnostic Messages",
+            "fromComponentId": "comp-cgw",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "UDS",
+            "dataDescription": "Diagnostic messages routed by CGW to AFS ECU target address. Includes all UDS services supported by the AFS ECU: read DTC, read data by identifier (PID), write data by identifier, routine control, and firmware download.",
+            "encrypted": false,
+            "authenticated": true
+          }
+        ]
+      },
+      "interfaces": [
+        "CAN-Body (125 kbit/s, pin 6/14 OBD-II)",
+        "UDS-Diagnostics (ISO 14229, via Central Gateway)",
+        "LIN-LEDMatrix (internal, LED matrix driver)",
+        "PWM-StepperMotor (internal, beam leveling actuator)"
+      ],
+      "environment": "Series production vehicle, global markets (EU, US, CN), operating temperature -40°C to +85°C, humidity 5-95% non-condensing",
+      "assumptions": [
+        "Physical access to the vehicle interior requires unauthorized entry (e.g., vehicle break-in)",
+        "OBD-II port access in production is restricted by UDS security access (seed/key)",
+        "Vehicle CAN network has no firewall between body network segments",
+        "Attacker has knowledge of CAN IDs from publicly available databases or reverse engineering",
+        "Firmware update requires successful security access authentication"
+      ]
+    },
+    "assets": [
+      {
+        "id": "ASSET-LIGHT-CTRL",
+        "title": "Light Control Commands",
+        "properties": ["integrity", "availability"],
+        "linkedDamageScenarioIds": ["DS-SAF-BLIND", "DS-SAF-GLARE"],
+        "componentIds": ["comp-afs-ecu", "comp-body-can"],
+        "externalIds": ["WP-15-02-ASSET-01"]
+      },
+      {
+        "id": "ASSET-VEH-SPEED",
+        "title": "Vehicle Speed Data",
+        "properties": ["integrity", "confidentiality"],
+        "linkedDamageScenarioIds": ["DS-PRIV-TRACK"],
+        "componentIds": ["comp-speed-sensor", "comp-body-can"],
+        "externalIds": ["WP-15-02-ASSET-02"]
+      },
+      {
+        "id": "ASSET-DIAG-DATA",
+        "title": "Diagnostic Information",
+        "properties": ["confidentiality", "integrity"],
+        "linkedDamageScenarioIds": ["DS-PRIV-VEH-ID"],
+        "componentIds": ["comp-obd-port", "comp-afs-ecu"],
+        "externalIds": ["WP-15-02-ASSET-03"]
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "Headlight ECU Firmware",
+        "properties": ["integrity", "confidentiality"],
+        "linkedDamageScenarioIds": ["DS-SAF-MALFUNCTION", "DS-SEC-PERSIST"],
+        "componentIds": ["comp-afs-ecu"],
+        "externalIds": ["WP-15-02-ASSET-04"]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-BLIND",
+        "title": "Driver or Road Users Blinded by Incorrect Headlight Operation",
+        "description": "An attacker manipulates the headlight beam direction or intensity such that the driver loses visibility or oncoming road users are dangerously blinded, potentially causing accidents with injuries or fatalities.",
+        "impactedFunctions": ["Adaptive beam control", "Glare-free high beam"],
+        "affectedRoadUsers": ["Driver", "Oncoming drivers", "Pedestrians"],
+        "linkedAssetIds": ["ASSET-LIGHT-CTRL"],
+        "references": ["ISO 26262 ASIL-B safety requirement for lighting systems"]
+      },
+      {
+        "id": "DS-SAF-GLARE",
+        "title": "Oncoming Traffic Exposed to Dangerous Glare",
+        "description": "High beam is not properly deactivated or dimmed when oncoming vehicles are detected, causing severe glare that reduces visibility for oncoming drivers and may cause accidents.",
+        "impactedFunctions": ["Glare-free high beam", "Adaptive beam control"],
+        "affectedRoadUsers": ["Oncoming drivers", "Pedestrians"],
+        "linkedAssetIds": ["ASSET-LIGHT-CTRL"],
+        "references": ["ECE Regulation No. 48 - Installation of lighting equipment"]
+      },
+      {
+        "id": "DS-PRIV-TRACK",
+        "title": "Driver Location Tracked via Speed Data",
+        "description": "Unauthorized access to vehicle speed data allows an attacker to build a movement profile, enabling real-time or historical location tracking of the vehicle occupant.",
+        "impactedFunctions": ["Adaptive beam control"],
+        "affectedRoadUsers": ["Driver", "Vehicle occupants"],
+        "linkedAssetIds": ["ASSET-VEH-SPEED"],
+        "references": ["GDPR Article 4 - Personal data definition"]
+      },
+      {
+        "id": "DS-PRIV-VEH-ID",
+        "title": "Vehicle Identity and Usage Patterns Exposed",
+        "description": "Extraction of diagnostic data (VIN, DTC history, odometer, software versions) enables identification of the specific vehicle and reveals usage and maintenance patterns.",
+        "impactedFunctions": ["Diagnostic communication"],
+        "affectedRoadUsers": ["Driver", "Vehicle owner"],
+        "linkedAssetIds": ["ASSET-DIAG-DATA"],
+        "references": ["GDPR Article 9 - Special categories of personal data"]
+      },
+      {
+        "id": "DS-SAF-MALFUNCTION",
+        "title": "Complete Headlight System Failure Due to Firmware Corruption",
+        "description": "Corrupted or malicious firmware causes total loss of headlight functionality, leaving the driver without forward illumination and creating extreme safety hazards, particularly during night driving.",
+        "impactedFunctions": ["Adaptive beam control", "LED matrix management"],
+        "affectedRoadUsers": ["Driver", "Other road users"],
+        "linkedAssetIds": ["ASSET-FIRMWARE"],
+        "references": ["FMVSS 108 - Lamps, reflective devices, and associated equipment"]
+      },
+      {
+        "id": "DS-SEC-PERSIST",
+        "title": "AFS ECU Used as Persistent Attack Pivot",
+        "description": "A compromised AFS ECU with persistent malicious firmware serves as a foothold for lateral movement to other vehicle systems via the body CAN bus, enabling further attacks against safety-critical components.",
+        "impactedFunctions": ["Diagnostic communication", "Adaptive beam control"],
+        "affectedRoadUsers": ["Driver"],
+        "linkedAssetIds": ["ASSET-FIRMWARE"]
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CAN-SPOOF",
+        "title": "CAN Message Injection Attack on Light Control",
+        "targetedAssetIds": ["ASSET-LIGHT-CTRL"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Attacker gains physical or remote access to the body CAN bus and injects forged light control CAN messages, overriding legitimate commands from the BCM and forcing dangerous headlight behavior.",
+        "componentIds": ["comp-body-can", "comp-afs-ecu"],
+        "references": ["Miller & Valasek - CAN bus security research (2015)", "NHTSA CAN vulnerability advisories"]
+      },
+      {
+        "id": "TS-DIAG-EXPLOIT",
+        "title": "UDS Diagnostic Service Exploitation for Data Exfiltration",
+        "targetedAssetIds": ["ASSET-DIAG-DATA", "ASSET-FIRMWARE"],
+        "compromisedProperties": ["confidentiality", "integrity"],
+        "cause": "Attacker uses diagnostic tool connected to OBD-II port to bypass security access controls and extract sensitive diagnostic data or read proprietary firmware from the AFS ECU.",
+        "componentIds": ["comp-obd-port", "comp-cgw", "comp-afs-ecu"],
+        "references": ["ISO 14229-1 UDS security vulnerabilities", "ENISA Good Practices for Automotive Cybersecurity"]
+      },
+      {
+        "id": "TS-SPEED-SNIFF",
+        "title": "Passive Speed Data Interception for Location Tracking",
+        "targetedAssetIds": ["ASSET-VEH-SPEED"],
+        "compromisedProperties": ["confidentiality"],
+        "cause": "Attacker installs a passive CAN monitoring device that captures speed data broadcasts without active injection, enabling privacy violations through movement profiling.",
+        "componentIds": ["comp-body-can", "comp-speed-sensor"]
+      },
+      {
+        "id": "TS-FW-TAMPER",
+        "title": "Unauthorized Firmware Modification via Diagnostic Interface",
+        "targetedAssetIds": ["ASSET-FIRMWARE"],
+        "compromisedProperties": ["integrity"],
+        "cause": "Attacker exploits diagnostic service (UDS download/upload memory services) to write malicious firmware to the AFS ECU, either by bypassing the security access mechanism or through firmware download vulnerabilities.",
+        "componentIds": ["comp-afs-ecu", "comp-obd-port", "comp-cgw"]
+      }
+    ],
+    "attackSteps": [
+      {
+        "id": "AS-CAN-01",
+        "title": "Gain physical access to vehicle interior or OBD-II port",
+        "description": "Attacker enters the vehicle (e.g., via break-in or access to parked vehicle) or identifies an externally accessible point on the body CAN wiring harness."
+      },
+      {
+        "id": "AS-CAN-02",
+        "title": "Connect to body CAN network via OBD-II or exposed wiring harness",
+        "description": "Using an off-the-shelf CAN interface (e.g., USB-CAN adapter), the attacker connects to the body CAN bus either through the OBD-II connector (pins 6/14) or by tapping into an accessible wiring harness."
+      },
+      {
+        "id": "AS-CAN-03",
+        "title": "Identify headlight ECU CAN message IDs by sniffing network traffic",
+        "description": "The attacker passively monitors CAN traffic to identify the specific CAN IDs used for light control commands. Known IDs from online databases or reverse engineering of body control documentation are used to accelerate this step."
+      },
+      {
+        "id": "AS-CAN-04",
+        "title": "Inject malicious CAN messages to manipulate headlight beam behavior",
+        "description": "The attacker transmits forged CAN messages with the identified light control IDs to command the AFS ECU to activate dangerous states (e.g., full high beam permanently, beam pointing upward, or all lights off)."
+      },
+      {
+        "id": "AS-DIAG-01",
+        "title": "Access OBD-II diagnostic connector",
+        "description": "Attacker physically connects a diagnostic device (commercial or custom tool) to the OBD-II port in the driver footwell. This port is accessible without tools in most vehicles."
+      },
+      {
+        "id": "AS-DIAG-02",
+        "title": "Establish UDS diagnostic session with AFS ECU via gateway",
+        "description": "Attacker initiates a UDS default or extended diagnostic session, routing through the Central Gateway to the AFS ECU's target address. May require bypassing security access (27 hex service)."
+      },
+      {
+        "id": "AS-DIAG-03",
+        "title": "Read diagnostic data including vehicle identification information",
+        "description": "Using UDS ReadDataByIdentifier (22 hex) services, the attacker reads VIN, hardware/software version numbers, DTC codes, odometer readings, and ECU-specific diagnostic data that can be used for vehicle identification or further exploitation."
+      },
+      {
+        "id": "AS-FW-01",
+        "title": "Establish extended or programming UDS diagnostic session",
+        "description": "Attacker escalates from a default session to an extended or programming session (10 02 / 10 03 hex) to unlock firmware-related UDS services. Security access challenge-response (27 hex) must be passed."
+      },
+      {
+        "id": "AS-FW-02",
+        "title": "Bypass or exploit firmware integrity verification to upload unauthorized payload",
+        "description": "Attacker exploits a weakness in the security access seed/key algorithm or uses a known valid key to pass authentication. Then initiates a RequestDownload (34 hex) and TransferData (36 hex) sequence to write a malicious firmware image."
+      },
+      {
+        "id": "AS-FW-03",
+        "title": "Execute malicious firmware on AFS ECU and establish persistence",
+        "description": "The ECU executes the attacker-supplied firmware after RequestTransferExit (37 hex) and an ECUReset (11 hex). The malicious firmware persists across power cycles and may disable further legitimate updates."
+      },
+      {
+        "id": "AS-TRACK-01",
+        "title": "Install passive CAN monitoring device on body network",
+        "description": "Attacker covertly installs a small CAN data logger on the body CAN bus (accessible via OBD-II or wiring harness tap). The device passively records all CAN traffic without transmitting any messages."
+      },
+      {
+        "id": "AS-TRACK-02",
+        "title": "Capture and decode vehicle speed data from CAN traffic",
+        "description": "The logger captures periodic speed sensor CAN messages. The attacker decodes the speed values from the CAN payload using known signal definitions or DBC database files."
+      },
+      {
+        "id": "AS-TRACK-03",
+        "title": "Correlate speed data with timestamps to reconstruct movement profile",
+        "description": "Using the timestamped speed records, the attacker builds a movement profile of the vehicle (stop-and-go patterns, highway driving, parking durations). Combined with external GPS/map data at known locations, this enables route reconstruction and location tracking."
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CAN-INJECT",
+        "title": "CAN Network Access - Light Control Manipulation",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "stepIds": ["AS-CAN-01", "AS-CAN-02", "AS-CAN-03", "AS-CAN-04"],
+        "references": ["NHTSA CAN security research", "Miller & Valasek Jeep Cherokee attack (2015)"]
+      },
+      {
+        "id": "AP-DIAG-PRIV",
+        "title": "Diagnostic Access - Sensitive Data Exfiltration",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "stepIds": ["AS-DIAG-01", "AS-DIAG-02", "AS-DIAG-03"],
+        "references": ["ISO 14229-1 UDS standard", "ENISA automotive cybersecurity guidelines"]
+      },
+      {
+        "id": "AP-FW-MODIFY",
+        "title": "Firmware Upload via Diagnostic Interface - Persistent ECU Compromise",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "stepIds": ["AS-DIAG-01", "AS-FW-01", "AS-FW-02", "AS-FW-03"],
+        "references": ["UDS programming sequence ISO 14229", "Automotive firmware security research"]
+      },
+      {
+        "id": "AP-PASSIVE-TRACK",
+        "title": "CAN Bus Monitoring - Vehicle Location Tracking",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "stepIds": ["AS-TRACK-01", "AS-TRACK-02", "AS-TRACK-03"]
+      }
+    ],
+    "methods": [
+      {
+        "id": "meth-afr-iso21434",
+        "name": "ISO/SAE 21434 Attack Feasibility Rating",
+        "version": "1.0",
+        "factors": [
+          "elapsed_time",
+          "specialist_expertise",
+          "knowledge_of_item",
+          "window_of_opportunity",
+          "equipment"
+        ]
+      },
+      {
+        "id": "meth-impact-iso21434",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0",
+        "factors": [
+          "safety",
+          "financial",
+          "operational",
+          "privacy"
+        ]
+      },
+      {
+        "id": "meth-risk-iso21434",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0"
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CAN-INJECT",
+        "attackPathId": "AP-CAN-INJECT",
+        "methodId": "meth-afr-iso21434",
+        "inputFactors": {
+          "elapsed_time": "< 1 day",
+          "specialist_expertise": "Proficient",
+          "knowledge_of_item": "Public",
+          "window_of_opportunity": "Easy",
+          "equipment": "Standard"
+        },
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "Physical access to the vehicle is required but can be achieved through break-in. CAN bus interfaces and knowledge of CAN protocols are widely available. Light control message IDs can be identified quickly by sniffing."
+      },
+      {
+        "id": "AFR-DIAG-PRIV",
+        "attackPathId": "AP-DIAG-PRIV",
+        "methodId": "meth-afr-iso21434",
+        "inputFactors": {
+          "elapsed_time": "< 1 day",
+          "specialist_expertise": "Expert",
+          "knowledge_of_item": "Restricted",
+          "window_of_opportunity": "Easy",
+          "equipment": "Specialized"
+        },
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "UDS diagnostic access requires specialist ECU knowledge and a diagnostic tool. Security access seed/key provides a partial barrier but may be bypassable with expertise. The OBD-II port is physically easy to access."
+      },
+      {
+        "id": "AFR-FW-MODIFY",
+        "attackPathId": "AP-FW-MODIFY",
+        "methodId": "meth-afr-iso21434",
+        "inputFactors": {
+          "elapsed_time": "1-4 weeks",
+          "specialist_expertise": "Expert",
+          "knowledge_of_item": "Restricted",
+          "window_of_opportunity": "Moderate",
+          "equipment": "Bespoke"
+        },
+        "score": "Low",
+        "band": "Low",
+        "rationale": "Requires reverse engineering of the firmware update mechanism and the security access algorithm. Custom exploit development is needed. Significant time and expertise investment makes this a low-feasibility attack."
+      },
+      {
+        "id": "AFR-PASSIVE-TRACK",
+        "attackPathId": "AP-PASSIVE-TRACK",
+        "methodId": "meth-afr-iso21434",
+        "inputFactors": {
+          "elapsed_time": "< 1 day",
+          "specialist_expertise": "Proficient",
+          "knowledge_of_item": "Public",
+          "window_of_opportunity": "Easy",
+          "equipment": "Standard"
+        },
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "Passive CAN monitoring requires only brief physical access to install a logger. Speed data decoding uses publicly known CAN signal databases. No active network interference required."
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-SAF-BLIND",
+        "damageScenarioId": "DS-SAF-BLIND",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "Severe",
+          "operational": "Major",
+          "financial": "Moderate"
+        },
+        "score": "4",
+        "rationale": "Loss of driver visibility directly enables collisions. Severity rated as severe because headlight manipulation can prevent the driver from seeing obstacles, other vehicles, or pedestrians in total darkness. Operational impact is major as the vehicle becomes unsafe to operate. Financial losses from accident liability and recalls are moderate."
+      },
+      {
+        "id": "IR-SAF-GLARE",
+        "damageScenarioId": "DS-SAF-GLARE",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "Major",
+          "operational": "Moderate"
+        },
+        "score": "3",
+        "rationale": "Uncontrolled high beam creates safety hazard for oncoming traffic but the impact is less direct than blinding the vehicle driver. Oncoming drivers may be temporarily dazzled leading to accident risk. Safety impact is major; operational impact is moderate as the source vehicle remains driveable."
+      },
+      {
+        "id": "IR-PRIV-TRACK",
+        "damageScenarioId": "DS-PRIV-TRACK",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "privacy": "Major",
+          "financial": "Minor"
+        },
+        "score": "2",
+        "rationale": "Location tracking via speed data is a significant privacy violation, enabling surveillance of the driver's movements over time. However, it has limited immediate safety impact and moderate financial impact (primarily regulatory fines under GDPR)."
+      },
+      {
+        "id": "IR-PRIV-VEH-ID",
+        "damageScenarioId": "DS-PRIV-VEH-ID",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "privacy": "Moderate",
+          "financial": "Minor"
+        },
+        "score": "1",
+        "rationale": "Vehicle identification exposure has limited immediate impact. The VIN is often publicly visible on the vehicle. Combined with other data sources, it could facilitate targeted follow-on attacks. Financial and operational impact are minor."
+      },
+      {
+        "id": "IR-SAF-MALFUNCTION",
+        "damageScenarioId": "DS-SAF-MALFUNCTION",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "Severe",
+          "operational": "Severe"
+        },
+        "score": "4",
+        "rationale": "Complete loss of headlight function during night driving creates an extreme safety hazard. The driver cannot see the road and the vehicle is not visible to other road users. Both safety and operational impact are rated as severe. Vehicle will be inoperable for night driving."
+      },
+      {
+        "id": "IR-SEC-PERSIST",
+        "damageScenarioId": "DS-SEC-PERSIST",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "Major",
+          "operational": "Major",
+          "financial": "Major"
+        },
+        "score": "3",
+        "rationale": "A compromised AFS ECU provides a persistent foothold in the vehicle network. From here, an attacker could inject messages onto the body CAN bus affecting other safety systems. The impact depends on which systems can be reached, but the potential for cascading compromise makes this a major risk across safety, operational, and financial dimensions."
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CAN-SPOOF",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "afrRef": "AFR-CAN-INJECT",
+        "impactRef": "IR-SAF-BLIND",
+        "methodId": "meth-risk-iso21434",
+        "score": "High",
+        "band": "High",
+        "rationale": "Medium attack feasibility combined with severe safety impact (blinding the driver) results in a High risk. This risk requires active treatment to be acceptable."
+      },
+      {
+        "id": "RV-DIAG-EXPLOIT",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "afrRef": "AFR-DIAG-PRIV",
+        "impactRef": "IR-PRIV-VEH-ID",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "Medium attack feasibility with low-moderate privacy impact yields a Medium risk. Access control improvements can reduce this to an acceptable level."
+      },
+      {
+        "id": "RV-SPEED-SNIFF",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "afrRef": "AFR-PASSIVE-TRACK",
+        "impactRef": "IR-PRIV-TRACK",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "Medium feasibility with major privacy impact results in Medium risk. The cost of mitigating passive CAN monitoring (e.g., encrypting all CAN traffic) is disproportionate to the impact given existing physical access requirements."
+      },
+      {
+        "id": "RV-FW-TAMPER",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "afrRef": "AFR-FW-MODIFY",
+        "impactRef": "IR-SAF-MALFUNCTION",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium",
+        "band": "Medium",
+        "rationale": "Low attack feasibility combined with severe safety impact yields a Medium risk. The low feasibility reduces overall risk but the severity of impact still requires treatment through firmware integrity controls."
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CAN-AUTH",
+        "title": "CAN Message Authentication (CANsec / AUTOSAR SecOC)",
+        "catalog": "ISO21434-SEC-CTRL",
+        "controlId": "NET-AUTH-01",
+        "implementationStatus": "planned",
+        "componentIds": ["comp-afs-ecu", "comp-body-can", "comp-bcm"],
+        "references": [
+          "AUTOSAR SecOC specification",
+          "CANsec IEEE 802.1AE adaptation for automotive CAN"
+        ]
+      },
+      {
+        "id": "CTRL-DIAG-ACCESS",
+        "title": "UDS Security Access with Strong Seed/Key Algorithm",
+        "catalog": "ISO21434-SEC-CTRL",
+        "controlId": "DIAG-ACC-01",
+        "implementationStatus": "implemented",
+        "componentIds": ["comp-obd-port", "comp-cgw", "comp-afs-ecu"],
+        "references": [
+          "UDS Security Access Service (ISO 14229-1 §9.4)",
+          "AUTOSAR SWS CryptoDriver"
+        ]
+      },
+      {
+        "id": "CTRL-FW-VERIFY",
+        "title": "Secure Boot and Firmware Signature Verification",
+        "catalog": "ISO21434-SEC-CTRL",
+        "controlId": "FW-VER-01",
+        "implementationStatus": "implemented",
+        "componentIds": ["comp-afs-ecu"],
+        "references": [
+          "AUTOSAR Trusted Platform Module (TPM) integration",
+          "Secure hardware extension (SHE) firmware verification"
+        ]
+      },
+      {
+        "id": "CTRL-CAN-ENCRYPT",
+        "title": "CAN Bus Payload Encryption",
+        "catalog": "ISO21434-SEC-CTRL",
+        "controlId": "NET-ENC-01",
+        "implementationStatus": "not_implemented",
+        "componentIds": ["comp-body-can", "comp-afs-ecu", "comp-bcm", "comp-speed-sensor"],
+        "references": [
+          "CAN XL encryption extension proposals",
+          "AUTOSAR Crypto stack for payload encryption"
+        ]
+      },
+      {
+        "id": "CTRL-RATE-LIMIT",
+        "title": "Diagnostic Request Rate Limiting and Anomaly Detection",
+        "catalog": "ISO21434-SEC-CTRL",
+        "controlId": "DIAG-RATE-01",
+        "implementationStatus": "implemented",
+        "componentIds": ["comp-cgw", "comp-afs-ecu"]
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CAN-SPOOF",
+        "riskValueId": "RV-CAN-SPOOF",
+        "decision": "reduce",
+        "controls": ["CTRL-CAN-AUTH"],
+        "justification": "CAN message authentication prevents injection of unauthorized light control commands. The planned AUTOSAR SecOC implementation will authenticate all safety-relevant CAN messages, reducing attack feasibility from Medium to Very Low."
+      },
+      {
+        "id": "RTD-DIAG-EXPLOIT",
+        "riskValueId": "RV-DIAG-EXPLOIT",
+        "decision": "reduce",
+        "controls": ["CTRL-DIAG-ACCESS", "CTRL-RATE-LIMIT"],
+        "justification": "Enhanced security access controls and rate limiting reduce both the feasibility of brute-force attacks and the amount of data exfiltrable in a limited time window. Combined with the low impact, residual risk is acceptable."
+      },
+      {
+        "id": "RTD-SPEED-SNIFF",
+        "riskValueId": "RV-SPEED-SNIFF",
+        "decision": "accept",
+        "justification": "The cost of encrypting all body CAN traffic to prevent passive speed monitoring is disproportionate to the privacy impact. Physical access is required to install a monitoring device, and existing vehicle security (locks, alarm) provides a primary barrier. Risk is accepted pending future CAN encryption rollout."
+      },
+      {
+        "id": "RTD-FW-TAMPER",
+        "riskValueId": "RV-FW-TAMPER",
+        "decision": "reduce",
+        "controls": ["CTRL-FW-VERIFY", "CTRL-DIAG-ACCESS"],
+        "justification": "Secure boot ensures only cryptographically signed firmware can execute on the AFS ECU, preventing persistent compromise even if the download mechanism is exploited. Strong security access further raises the bar for the download session entry."
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-001",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "ASSET-LIGHT-CTRL",
+        "confidence": 0.95,
+        "justification": "CAN spoofing directly targets and compromises the integrity of light control commands"
+      },
+      {
+        "id": "REL-002",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "DS-SAF-BLIND",
+        "confidence": 0.85,
+        "justification": "Injecting malicious light control commands can cause dangerous headlight states that blind drivers or oncoming traffic"
+      },
+      {
+        "id": "REL-003",
+        "relationshipType": "causes",
+        "sourceRef": "TS-CAN-SPOOF",
+        "targetRef": "DS-SAF-GLARE",
+        "confidence": 0.80,
+        "justification": "Forced high beam activation via CAN injection directly causes glare to oncoming traffic"
+      },
+      {
+        "id": "REL-004",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-DIAG-EXPLOIT",
+        "targetRef": "ASSET-DIAG-DATA",
+        "confidence": 0.90,
+        "justification": "Diagnostic service exploitation directly compromises confidentiality of diagnostic information"
+      },
+      {
+        "id": "REL-005",
+        "relationshipType": "threatens",
+        "sourceRef": "TS-FW-TAMPER",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.90,
+        "justification": "Firmware modification attack directly targets firmware integrity"
+      },
+      {
+        "id": "REL-006",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-CAN-AUTH",
+        "targetRef": "TS-CAN-SPOOF",
+        "confidence": 0.90,
+        "justification": "Authenticated CAN messages prevent injection of unauthorized commands; forged messages without valid MACs are rejected by the AFS ECU"
+      },
+      {
+        "id": "REL-007",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-DIAG-ACCESS",
+        "targetRef": "TS-DIAG-EXPLOIT",
+        "confidence": 0.85,
+        "justification": "Strong security access controls prevent unauthorized diagnostic session establishment"
+      },
+      {
+        "id": "REL-008",
+        "relationshipType": "mitigates",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "TS-FW-TAMPER",
+        "confidence": 0.95,
+        "justification": "Secure boot with firmware signature verification ensures only authenticated firmware images execute"
+      },
+      {
+        "id": "REL-009",
+        "relationshipType": "protects",
+        "sourceRef": "CTRL-FW-VERIFY",
+        "targetRef": "ASSET-FIRMWARE",
+        "confidence": 0.95,
+        "justification": "Signature verification at every boot cycle ensures firmware integrity is maintained"
+      },
+      {
+        "id": "REL-010",
+        "relationshipType": "contains",
+        "sourceRef": "comp-body-can",
+        "targetRef": "ASSET-LIGHT-CTRL",
+        "confidence": 1.0,
+        "justification": "Light control commands are transmitted as CAN messages on the body CAN bus"
+      },
+      {
+        "id": "REL-011",
+        "relationshipType": "contains",
+        "sourceRef": "comp-body-can",
+        "targetRef": "ASSET-VEH-SPEED",
+        "confidence": 1.0,
+        "justification": "Vehicle speed data is broadcast as CAN messages on the body CAN bus"
+      }
+    ]
+  }
+}

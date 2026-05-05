@@ -106,28 +106,28 @@
         "cause": "Malicious Android app with excessive permissions"
       }
     ],
+    "attackSteps": [
+      { "id": "AS-REL-01", "title": "Craft malicious media file" },
+      { "id": "AS-REL-02", "title": "Trigger buffer overflow via crafted media" },
+      { "id": "AS-REL-03", "title": "Execute shellcode to gain code execution" },
+      { "id": "AS-REL-04", "title": "Access location database" },
+      { "id": "AS-REL-05", "title": "Upload malicious app to app store" },
+      { "id": "AS-REL-06", "title": "Social engineer user to install app" },
+      { "id": "AS-REL-07", "title": "Escalate privileges within infotainment system" },
+      { "id": "AS-REL-08", "title": "Access vehicle CAN interface via compromised app" }
+    ],
     "attackPaths": [
       {
         "id": "AP-1",
         "title": "Media file → Code execution → Location theft",
         "threatScenarioId": "TS-1",
-        "steps": [
-          "Craft malicious media file",
-          "Trigger buffer overflow",
-          "Execute shellcode",
-          "Access location database"
-        ]
+        "stepIds": ["AS-REL-01", "AS-REL-02", "AS-REL-03", "AS-REL-04"]
       },
       {
         "id": "AP-2",
         "title": "App store → Malicious app → CAN access",
         "threatScenarioId": "TS-2",
-        "steps": [
-          "Upload malicious app",
-          "User installs app",
-          "Privilege escalation",
-          "Access CAN interface"
-        ]
+        "stepIds": ["AS-REL-05", "AS-REL-06", "AS-REL-07", "AS-REL-08"]
       }
     ],
     "methods": [
@@ -261,7 +261,7 @@
       {
         "id": "RTD-TS-1",
         "riskValueId": "RV-TS-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-INPUT-VAL"
         ],
@@ -270,7 +270,7 @@
       {
         "id": "RTD-TS-2",
         "riskValueId": "RV-TS-2",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-APP-SANDBOXING",
           "CTRL-CAN-ISOLATION"

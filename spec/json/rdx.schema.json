@@ -220,6 +220,13 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "linkedAssetIds": {
+                "type": "array",
+                "description": "IDs of assets linked to this damage scenario (bidirectional reference)",
+                "items": {
+                  "type": "string"
+                }
               }
             },
             "additionalProperties": true
@@ -341,13 +348,6 @@
                 "items": {
                   "type": "string"
                 }
-              },
-              "steps": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "deprecated": true
               },
               "references": {
                 "type": "array",
@@ -646,6 +646,13 @@
                 "description": "Cryptographic hashes for the control document or specification",
                 "items": {
                   "$ref": "#/$defs/Hash"
+                }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components this control is applied to",
+                "items": {
+                  "type": "string"
                 }
               }
             },
@@ -951,9 +958,7 @@
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
+  },
   "additionalProperties": false,
   "$defs": {
     "RiskLevel": {
@@ -1095,6 +1100,38 @@
           "items": {
             "type": "string"
           }
+        },
+        "position": {
+          "type": "object",
+          "description": "Position of this component in the architecture diagram, enabling diagram recreation with tools such as draw.io",
+          "properties": {
+            "x": {
+              "type": "number",
+              "description": "X coordinate in pixels from the left edge of the diagram canvas"
+            },
+            "y": {
+              "type": "number",
+              "description": "Y coordinate in pixels from the top edge of the diagram canvas"
+            }
+          },
+          "required": ["x", "y"],
+          "additionalProperties": false
+        },
+        "size": {
+          "type": "object",
+          "description": "Size of this component in the architecture diagram, enabling diagram recreation with tools such as draw.io",
+          "properties": {
+            "width": {
+              "type": "number",
+              "description": "Width of the component box in pixels"
+            },
+            "height": {
+              "type": "number",
+              "description": "Height of the component box in pixels"
+            }
+          },
+          "required": ["width", "height"],
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

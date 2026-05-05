@@ -214,18 +214,34 @@
         "cause": "Physical or remote modification of headlight ECU firmware"
       }
     ],
+    "attackSteps": [
+      { "id": "AS-CAN-01", "title": "Gain physical access to vehicle interior" },
+      { "id": "AS-CAN-02", "title": "Connect to OBD-II port or exposed CAN wiring" },
+      { "id": "AS-CAN-03", "title": "Identify headlight control CAN IDs by sniffing" },
+      { "id": "AS-CAN-04", "title": "Inject malicious light control messages" },
+      { "id": "AS-CAN-05", "title": "Trigger dangerous lighting behavior" },
+      { "id": "AS-DIAG-01", "title": "Access OBD-II diagnostic connector" },
+      { "id": "AS-DIAG-02", "title": "Establish UDS diagnostic session with headlight ECU" },
+      { "id": "AS-DIAG-03", "title": "Extract DTC codes and diagnostic PIDs" },
+      { "id": "AS-DIAG-04", "title": "Read vehicle identification data" },
+      { "id": "AS-DIAG-05", "title": "Correlate data with speed and location patterns" },
+      { "id": "AS-FW-01", "title": "Establish extended UDS diagnostic session" },
+      { "id": "AS-FW-02", "title": "Exploit firmware update mechanism via download service" },
+      { "id": "AS-FW-03", "title": "Upload malicious firmware payload" },
+      { "id": "AS-FW-04", "title": "Establish persistence in ECU" },
+      { "id": "AS-FW-05", "title": "Use compromised ECU as pivot for network attacks" },
+      { "id": "AS-TRACK-01", "title": "Install passive monitoring device on CAN network" },
+      { "id": "AS-TRACK-02", "title": "Capture and decode speed data patterns" },
+      { "id": "AS-TRACK-03", "title": "Correlate speed data with timing information" },
+      { "id": "AS-TRACK-04", "title": "Build movement profile database" },
+      { "id": "AS-TRACK-05", "title": "Track vehicle locations over time" }
+    ],
     "attackPaths": [
       {
         "id": "AP-CAN-INJECT",
         "title": "CAN Network Access -> Light Control Manipulation",
         "threatScenarioId": "TS-CAN-SPOOF",
-        "steps": [
-          "Gain physical access to vehicle interior",
-          "Connect to OBD-II port or exposed CAN wiring",
-          "Identify headlight control CAN IDs",
-          "Inject malicious light control messages",
-          "Trigger dangerous lighting behavior"
-        ],
+        "stepIds": ["AS-CAN-01", "AS-CAN-02", "AS-CAN-03", "AS-CAN-04", "AS-CAN-05"],
         "references": [
           "NHTSA CAN security research"
         ]
@@ -234,37 +250,19 @@
         "id": "AP-DIAG-PRIV",
         "title": "Diagnostic Access -> Data Exfiltration",
         "threatScenarioId": "TS-DIAG-EXPLOIT",
-        "steps": [
-          "Access diagnostic connector",
-          "Establish UDS session with headlight ECU",
-          "Extract DTC codes and PIDs",
-          "Read vehicle identification data",
-          "Correlate with speed/location patterns"
-        ]
+        "stepIds": ["AS-DIAG-01", "AS-DIAG-02", "AS-DIAG-03", "AS-DIAG-04", "AS-DIAG-05"]
       },
       {
         "id": "AP-FW-MODIFY",
         "title": "Firmware Access -> Persistent Compromise",
         "threatScenarioId": "TS-FW-TAMPER",
-        "steps": [
-          "Gain diagnostic service access",
-          "Exploit firmware update mechanism",
-          "Upload malicious firmware payload",
-          "Establish persistence in ECU",
-          "Use as pivot point for network attacks"
-        ]
+        "stepIds": ["AS-DIAG-01", "AS-FW-01", "AS-FW-02", "AS-FW-03", "AS-FW-04", "AS-FW-05"]
       },
       {
         "id": "AP-PASSIVE-TRACK",
         "title": "Speed Signal Monitoring -> Location Tracking",
         "threatScenarioId": "TS-SPEED-SNIFF",
-        "steps": [
-          "Install monitoring device on CAN network",
-          "Identify speed data patterns",
-          "Correlate with timing information",
-          "Build movement profile database",
-          "Track vehicle locations over time"
-        ]
+        "stepIds": ["AS-TRACK-01", "AS-TRACK-02", "AS-TRACK-03", "AS-TRACK-04", "AS-TRACK-05"]
       }
     ],
     "methods": [
@@ -524,7 +522,7 @@
       {
         "id": "RTD-CAN-SPOOF",
         "riskValueId": "RV-CAN-SPOOF",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CAN-AUTH",
           "CTRL-CAN-ENCRYPT"
@@ -534,7 +532,7 @@
       {
         "id": "RTD-DIAG-EXPLOIT",
         "riskValueId": "RV-DIAG-EXPLOIT",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-DIAG-ACCESS",
           "CTRL-RATE-LIMIT"
@@ -550,7 +548,7 @@
       {
         "id": "RTD-FW-TAMPER",
         "riskValueId": "RV-FW-TAMPER",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-FW-VERIFY"
         ],

@@ -441,19 +441,74 @@
         ]
       }
     ],
+    "attackSteps": [
+      { "id": "AS-INF-01", "title": "Develop malicious app mimicking legitimate functionality" },
+      { "id": "AS-INF-02", "title": "Upload malicious app to official or sideloaded app store" },
+      { "id": "AS-INF-03", "title": "Social engineer user to install malicious app" },
+      { "id": "AS-INF-04", "title": "Request excessive permissions during app installation" },
+      { "id": "AS-INF-05", "title": "Access sensitive user data and location information" },
+      { "id": "AS-INF-06", "title": "Exfiltrate data to attacker-controlled servers" },
+      { "id": "AS-INF-07", "title": "Set up malicious WiFi hotspot with legitimate-sounding SSID" },
+      { "id": "AS-INF-08", "title": "Wait for vehicle infotainment to auto-connect to hotspot" },
+      { "id": "AS-INF-09", "title": "Intercept network traffic including HTTPS sessions" },
+      { "id": "AS-INF-10", "title": "Execute SSL/TLS downgrade attack or certificate spoofing" },
+      { "id": "AS-INF-11", "title": "Capture payment credentials during in-vehicle purchases" },
+      { "id": "AS-INF-12", "title": "Clone payment information for fraudulent use" },
+      { "id": "AS-INF-13", "title": "Gain physical access to vehicle interior" },
+      { "id": "AS-INF-14", "title": "Connect malicious USB device to infotainment USB port" },
+      { "id": "AS-INF-15", "title": "Exploit USB autorun or USB driver vulnerability" },
+      { "id": "AS-INF-16", "title": "Escalate privileges to root or system level" },
+      { "id": "AS-INF-17", "title": "Extract cryptographic keys from hardware security module" },
+      { "id": "AS-INF-18", "title": "Use extracted keys to decrypt user data or forge authentication" },
+      { "id": "AS-INF-19", "title": "Compromise software development or build environment" },
+      { "id": "AS-INF-20", "title": "Insert malicious code into infotainment firmware update" },
+      { "id": "AS-INF-21", "title": "Sign malicious firmware with compromised legitimate certificate" },
+      { "id": "AS-INF-22", "title": "Distribute backdoored firmware through official OTA update channel" },
+      { "id": "AS-INF-23", "title": "Activate backdoor after installation on target vehicles" },
+      { "id": "AS-INF-24", "title": "Maintain persistent access for ongoing data theft" },
+      { "id": "AS-INF-25", "title": "Malicious service technician gains authorized diagnostic access" },
+      { "id": "AS-INF-26", "title": "Connect diagnostic equipment during routine service visit" },
+      { "id": "AS-INF-27", "title": "Use legitimate service credentials to access customer data" },
+      { "id": "AS-INF-28", "title": "Extract personal information and driving usage patterns" },
+      { "id": "AS-INF-29", "title": "Copy cryptographic keys and authentication tokens" },
+      { "id": "AS-INF-30", "title": "Sell data on black market or use for identity theft" },
+      { "id": "AS-INF-31", "title": "Identify vulnerable cloud service hosting vehicle owner data" },
+      { "id": "AS-INF-32", "title": "Exploit unpatched vulnerabilities or cloud misconfigurations" },
+      { "id": "AS-INF-33", "title": "Gain unauthorized access to customer database" },
+      { "id": "AS-INF-34", "title": "Extract personal data from multiple vehicle owners at scale" },
+      { "id": "AS-INF-35", "title": "Access location history and behavioral patterns" },
+      { "id": "AS-INF-36", "title": "Monetize exfiltrated data through sale or targeted attacks" },
+      { "id": "AS-INF-37", "title": "Intercept or spoof emergency service communications" },
+      { "id": "AS-INF-38", "title": "Trigger false emergency calls to identify and track vehicle locations" },
+      { "id": "AS-INF-39", "title": "Exploit emergency system elevated privileges for unauthorized system access" },
+      { "id": "AS-INF-40", "title": "Monitor real-time location and vehicle occupancy data" },
+      { "id": "AS-INF-41", "title": "Disrupt legitimate emergency response capabilities" },
+      { "id": "AS-INF-42", "title": "Use tracking data for stalking or criminal activities" },
+      { "id": "AS-INF-43", "title": "Compromise DNS or network infrastructure used for OTA updates" },
+      { "id": "AS-INF-44", "title": "Redirect firmware update requests to attacker-controlled server" },
+      { "id": "AS-INF-45", "title": "Serve malicious firmware image disguised as legitimate update" },
+      { "id": "AS-INF-46", "title": "Exploit signature verification vulnerability to bypass firmware check" },
+      { "id": "AS-INF-47", "title": "Install backdoor with system-level privileges" },
+      { "id": "AS-INF-48", "title": "Maintain persistent access across system reboots" },
+      { "id": "AS-INF-49", "title": "Discover vehicle Bluetooth services through device scanning" },
+      { "id": "AS-INF-50", "title": "Exploit known Bluetooth stack vulnerability (e.g., BlueBorne)" },
+      { "id": "AS-INF-51", "title": "Gain unauthorized access to infotainment system over Bluetooth" },
+      { "id": "AS-INF-52", "title": "Escalate privileges through local kernel or service exploits" },
+      { "id": "AS-INF-53", "title": "Access stored user data and infotainment system functions" },
+      { "id": "AS-INF-54", "title": "Install persistent malware for ongoing Bluetooth-based access" },
+      { "id": "AS-INF-55", "title": "Analyze voice recognition system and command grammar" },
+      { "id": "AS-INF-56", "title": "Craft malicious audio commands embedded in media content" },
+      { "id": "AS-INF-57", "title": "Trigger voice commands through media playback without user awareness" },
+      { "id": "AS-INF-58", "title": "Bypass voice biometric authentication through replay or synthesis" },
+      { "id": "AS-INF-59", "title": "Execute unauthorized vehicle control commands via voice interface" },
+      { "id": "AS-INF-60", "title": "Cause safety hazards through unexpected vehicle behavior" }
+    ],
     "attackPaths": [
       {
         "id": "AP-MALICIOUS-APP-INSTALL",
         "title": "Malicious app installation → Data exfiltration",
         "threatScenarioId": "TS-MALICIOUS-APP",
-        "steps": [
-          "Develop malicious app mimicking legitimate functionality",
-          "Upload to official or sideloaded app store",
-          "Social engineer user to install app",
-          "Request excessive permissions during installation",
-          "Access sensitive user data and location information",
-          "Exfiltrate data to attacker-controlled servers"
-        ],
+        "stepIds": ["AS-INF-01", "AS-INF-02", "AS-INF-03", "AS-INF-04", "AS-INF-05", "AS-INF-06"],
         "references": [
           "Android Malware Analysis Reports",
           "Mobile App Security Testing Guide"
@@ -462,15 +517,8 @@
       {
         "id": "AP-WIFI-MITM",
         "title": "WiFi man-in-the-middle → Payment interception",
-        "threatScenarioId": "TS-NETWORK-INTERCEPTION", 
-        "steps": [
-          "Set up malicious WiFi hotspot with legitimate-sounding name",
-          "Wait for vehicle to connect to hotspot",
-          "Intercept all network traffic including HTTPS",
-          "Use SSL/TLS downgrade attacks or certificate spoofing",
-          "Capture payment credentials during in-vehicle purchases",
-          "Clone payment information for fraudulent use"
-        ],
+        "threatScenarioId": "TS-NETWORK-INTERCEPTION",
+        "stepIds": ["AS-INF-07", "AS-INF-08", "AS-INF-09", "AS-INF-10", "AS-INF-11", "AS-INF-12"],
         "references": [
           "WiFi Security Assessment Methodologies",
           "SSL/TLS Attack Vectors"
@@ -480,14 +528,7 @@
         "id": "AP-PHYSICAL-USB",
         "title": "Physical USB access → Key extraction",
         "threatScenarioId": "TS-PHYSICAL-ACCESS",
-        "steps": [
-          "Gain physical access to vehicle interior",
-          "Connect malicious USB device to infotainment system",
-          "Exploit USB autorun or driver vulnerabilities",
-          "Escalate privileges to root/system level",
-          "Extract cryptographic keys from hardware security module",
-          "Use keys to decrypt user data or forge authentication"
-        ],
+        "stepIds": ["AS-INF-13", "AS-INF-14", "AS-INF-15", "AS-INF-16", "AS-INF-17", "AS-INF-18"],
         "references": [
           "USB Attack Methodologies",
           "Hardware Security Module Attack Vectors"
@@ -497,14 +538,7 @@
         "id": "AP-SUPPLY-CHAIN-FIRMWARE",
         "title": "Supply chain firmware compromise → Backdoor installation",
         "threatScenarioId": "TS-SUPPLY-CHAIN",
-        "steps": [
-          "Compromise software development environment",
-          "Insert malicious code into firmware update",
-          "Sign malicious firmware with legitimate certificates",
-          "Distribute through official update channels",
-          "Activate backdoor after installation",
-          "Maintain persistent access for data theft"
-        ],
+        "stepIds": ["AS-INF-19", "AS-INF-20", "AS-INF-21", "AS-INF-22", "AS-INF-23", "AS-INF-24"],
         "references": [
           "Software Supply Chain Attack Case Studies",
           "Code Signing Security Best Practices"
@@ -514,14 +548,7 @@
         "id": "AP-INSIDER-SERVICE",
         "title": "Service technician data theft",
         "threatScenarioId": "TS-INSIDER-THREAT",
-        "steps": [
-          "Malicious service technician gains authorized access",
-          "Connect diagnostic equipment during routine service",
-          "Use legitimate credentials to access customer data",
-          "Extract personal information and usage patterns",
-          "Copy cryptographic keys and authentication tokens",
-          "Sell data on black market or use for identity theft"
-        ],
+        "stepIds": ["AS-INF-25", "AS-INF-26", "AS-INF-27", "AS-INF-28", "AS-INF-29", "AS-INF-30"],
         "references": [
           "Insider Threat Case Studies",
           "Service Access Control Best Practices"
@@ -531,14 +558,7 @@
         "id": "AP-CLOUD-DATABASE",
         "title": "Cloud database breach → Mass data theft",
         "threatScenarioId": "TS-CLOUD-COMPROMISE",
-        "steps": [
-          "Identify vulnerable cloud service hosting user data",
-          "Exploit unpatched vulnerabilities or misconfigurations",
-          "Gain unauthorized access to customer database",
-          "Extract personal data from multiple vehicle owners",
-          "Access location history and behavioral patterns",
-          "Monetize data through sale or targeted attacks"
-        ],
+        "stepIds": ["AS-INF-31", "AS-INF-32", "AS-INF-33", "AS-INF-34", "AS-INF-35", "AS-INF-36"],
         "references": [
           "Cloud Security Breach Analysis",
           "Database Security Best Practices"
@@ -548,14 +568,7 @@
         "id": "AP-ECALL-SPOOF",
         "title": "Emergency call system spoofing → Vehicle tracking",
         "threatScenarioId": "TS-EMERGENCY-EXPLOIT",
-        "steps": [
-          "Intercept or spoof emergency service communications",
-          "Trigger false emergency calls to track vehicle locations",
-          "Exploit emergency system privileges for system access",
-          "Monitor real-time location and occupancy data",
-          "Disrupt legitimate emergency response capabilities",
-          "Use tracking data for stalking or criminal activities"
-        ],
+        "stepIds": ["AS-INF-37", "AS-INF-38", "AS-INF-39", "AS-INF-40", "AS-INF-41", "AS-INF-42"],
         "references": [
           "eCall Security Analysis",
           "Emergency Services Communication Standards"
@@ -565,14 +578,7 @@
         "id": "AP-UPDATE-REDIRECT",
         "title": "Update server redirection → Malicious firmware",
         "threatScenarioId": "TS-UPDATE-HIJACKING",
-        "steps": [
-          "Compromise DNS or network infrastructure",
-          "Redirect update requests to attacker-controlled server",
-          "Serve malicious firmware disguised as legitimate update",
-          "Bypass signature verification through vulnerability",
-          "Install backdoor with system-level privileges",
-          "Maintain persistent access across system reboots"
-        ],
+        "stepIds": ["AS-INF-43", "AS-INF-44", "AS-INF-45", "AS-INF-46", "AS-INF-47", "AS-INF-48"],
         "references": [
           "Software Update Attack Vectors",
           "PKI Security Best Practices"
@@ -582,14 +588,7 @@
         "id": "AP-BLUETOOTH-EXPLOIT",
         "title": "Bluetooth vulnerability exploitation",
         "threatScenarioId": "TS-NETWORK-INTERCEPTION",
-        "steps": [
-          "Discover vehicle Bluetooth services through scanning",
-          "Exploit known Bluetooth stack vulnerabilities",
-          "Gain unauthorized access to infotainment system",
-          "Escalate privileges through local exploits",
-          "Access stored user data and system functions",
-          "Install persistent malware for ongoing access"
-        ],
+        "stepIds": ["AS-INF-49", "AS-INF-50", "AS-INF-51", "AS-INF-52", "AS-INF-53", "AS-INF-54"],
         "references": [
           "Bluetooth Security Vulnerability Database",
           "Automotive Bluetooth Attack Methodologies"
@@ -599,14 +598,7 @@
         "id": "AP-VOICE-INJECTION",
         "title": "Voice command injection → Vehicle control",
         "threatScenarioId": "TS-MALICIOUS-APP",
-        "steps": [
-          "Analyze voice recognition system vulnerabilities",
-          "Craft malicious audio commands disguised as media",
-          "Trigger voice commands through media playback",
-          "Bypass voice authentication through spoofing",
-          "Execute unauthorized vehicle control commands",
-          "Cause safety hazards through unexpected behaviors"
-        ],
+        "stepIds": ["AS-INF-55", "AS-INF-56", "AS-INF-57", "AS-INF-58", "AS-INF-59", "AS-INF-60"],
         "references": [
           "Voice Interface Security Research",
           "Audio Injection Attack Methodologies"
@@ -1155,7 +1147,7 @@
       {
         "id": "RTD-MALICIOUS-APP-TREAT",
         "riskValueId": "RV-MALICIOUS-APP-PRIVACY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-APP-SANDBOXING",
           "CTRL-DATA-MINIMIZATION"
@@ -1165,7 +1157,7 @@
       {
         "id": "RTD-NETWORK-INTERCEPTION-TREAT",
         "riskValueId": "RV-NETWORK-INTERCEPTION-PAYMENT",
-        "decision": "treat", 
+        "decision": "reduce", 
         "controls": [
           "CTRL-NETWORK-ENCRYPTION",
           "CTRL-CLOUD-SECURITY"
@@ -1175,7 +1167,7 @@
       {
         "id": "RTD-PHYSICAL-ACCESS-TREAT",
         "riskValueId": "RV-PHYSICAL-ACCESS-KEYS",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-PHYSICAL-TAMPER",
           "CTRL-UPDATE-VERIFICATION"
@@ -1185,7 +1177,7 @@
       {
         "id": "RTD-SUPPLY-CHAIN-TREAT", 
         "riskValueId": "RV-SUPPLY-CHAIN-COMPROMISE",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-SUPPLY-CHAIN-INTEGRITY",
           "CTRL-UPDATE-VERIFICATION"
@@ -1195,7 +1187,7 @@
       {
         "id": "RTD-INSIDER-TREAT",
         "riskValueId": "RV-INSIDER-DATA-THEFT", 
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-INSIDER-MONITORING",
           "CTRL-DATA-MINIMIZATION"
@@ -1205,7 +1197,7 @@
       {
         "id": "RTD-CLOUD-TREAT",
         "riskValueId": "RV-CLOUD-DATA-BREACH",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CLOUD-SECURITY", 
           "CTRL-INCIDENT-RESPONSE"
@@ -1215,7 +1207,7 @@
       {
         "id": "RTD-EMERGENCY-TREAT",
         "riskValueId": "RV-EMERGENCY-EXPLOIT-SAFETY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-EMERGENCY-AUTHENTICATION"
         ],
@@ -1224,7 +1216,7 @@
       {
         "id": "RTD-UPDATE-TREAT",
         "riskValueId": "RV-UPDATE-HIJACKING-SECURITY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-UPDATE-VERIFICATION",
           "CTRL-SUPPLY-CHAIN-INTEGRITY" 
@@ -1234,7 +1226,7 @@
       {
         "id": "RTD-BLUETOOTH-TREAT",
         "riskValueId": "RV-BLUETOOTH-VEHICLE-CONTROL", 
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-BLUETOOTH-SECURITY"
         ],
@@ -1243,7 +1235,7 @@
       {
         "id": "RTD-VOICE-TREAT",
         "riskValueId": "RV-VOICE-INJECTION-SAFETY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-VOICE-AUTHENTICATION"
         ],

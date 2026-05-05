@@ -95,28 +95,28 @@
         "cause": "Physical laser interference with LiDAR sensor"
       }
     ],
+    "attackSteps": [
+      { "id": "AS-CAL-01", "title": "Deploy rogue V2X roadside unit infrastructure" },
+      { "id": "AS-CAL-02", "title": "Inject false traffic information into V2X messages" },
+      { "id": "AS-CAL-03", "title": "Override navigation system recommendations via forged V2X data" },
+      { "id": "AS-CAL-04", "title": "Direct vehicle to unsafe or attacker-chosen path" },
+      { "id": "AS-CAL-05", "title": "Position high-powered laser projection system near road" },
+      { "id": "AS-CAL-06", "title": "Analyze LiDAR scan timing and frequency patterns" },
+      { "id": "AS-CAL-07", "title": "Inject false object signatures into LiDAR field of view" },
+      { "id": "AS-CAL-08", "title": "Mask real obstacles from object detection pipeline" }
+    ],
     "attackPaths": [
       {
         "id": "AP-V2X-1",
         "title": "V2X message injection -> navigation override",
         "threatScenarioId": "TS-V2X-1",
-        "steps": [
-          "Deploy rogue V2X infrastructure",
-          "Inject false traffic information",
-          "Override navigation recommendations",
-          "Direct vehicle to unsafe path"
-        ]
+        "stepIds": ["AS-CAL-01", "AS-CAL-02", "AS-CAL-03", "AS-CAL-04"]
       },
       {
-        "id": "AP-SENSOR-1", 
+        "id": "AP-SENSOR-1",
         "title": "LiDAR spoofing -> object detection bypass",
         "threatScenarioId": "TS-SENSOR-1",
-        "steps": [
-          "Position laser projection system",
-          "Analyze LiDAR scan patterns", 
-          "Inject false object signatures",
-          "Mask real obstacles"
-        ]
+        "stepIds": ["AS-CAL-05", "AS-CAL-06", "AS-CAL-07", "AS-CAL-08"]
       }
     ],
     "methods": [
@@ -322,7 +322,7 @@
       {
         "id": "RTD-TS-V2X-1",
         "riskValueId": "RV-TS-V2X-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-V2X-AUTH"
         ],

@@ -1,0 +1,413 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "riskSet": {
+    "itemDefinition": {
+      "id": "ITEM-HEADLIGHT-001",
+      "title": "Adaptive Front-lighting System (AFS)",
+      "boundary": "AFS headlight ECU including CAN interface, LED matrix control, stepper motor drivers, and UDS diagnostic services",
+      "functions": [
+        "Adaptive beam control",
+        "Glare-free high beam",
+        "Dynamic leveling",
+        "Diagnostic communication"
+      ],
+      "architecture": {
+        "description": "AFS ECU connected to body CAN bus for receiving control commands and speed data; diagnostics routed through central gateway and OBD-II port",
+        "components": [
+          {
+            "id": "comp-afs-ecu",
+            "name": "AFS ECU",
+            "type": "ecu"
+          },
+          {
+            "id": "comp-bcm",
+            "name": "Body Control Module",
+            "type": "ecu"
+          },
+          {
+            "id": "comp-cgw",
+            "name": "Central Gateway",
+            "type": "gateway"
+          },
+          {
+            "id": "comp-speed-sensor",
+            "name": "Vehicle Speed Sensor",
+            "type": "sensor"
+          },
+          {
+            "id": "comp-body-can",
+            "name": "Body CAN Bus",
+            "type": "network"
+          },
+          {
+            "id": "comp-obd-port",
+            "name": "OBD-II Diagnostic Port",
+            "type": "diagnostic-tool"
+          }
+        ],
+        "dataFlows": [
+          {
+            "id": "df-speed-to-afs",
+            "name": "Vehicle Speed Signal",
+            "fromComponentId": "comp-speed-sensor",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "CAN"
+          },
+          {
+            "id": "df-bcm-to-afs",
+            "name": "Light Control Commands",
+            "fromComponentId": "comp-bcm",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "CAN"
+          },
+          {
+            "id": "df-obd-to-cgw",
+            "name": "Diagnostic Requests",
+            "fromComponentId": "comp-obd-port",
+            "toComponentId": "comp-cgw",
+            "protocol": "UDS"
+          },
+          {
+            "id": "df-cgw-to-afs",
+            "name": "Routed Diagnostic Messages",
+            "fromComponentId": "comp-cgw",
+            "toComponentId": "comp-afs-ecu",
+            "protocol": "UDS"
+          }
+        ]
+      }
+    },
+    "assets": [
+      {
+        "id": "ASSET-LIGHT-CTRL",
+        "title": "Light Control Commands",
+        "properties": ["integrity", "availability"],
+        "linkedDamageScenarioIds": ["DS-SAF-BLIND", "DS-SAF-GLARE"],
+        "componentIds": ["comp-afs-ecu", "comp-body-can"]
+      },
+      {
+        "id": "ASSET-VEH-SPEED",
+        "title": "Vehicle Speed Data",
+        "properties": ["integrity", "confidentiality"],
+        "linkedDamageScenarioIds": ["DS-PRIV-TRACK"],
+        "componentIds": ["comp-speed-sensor", "comp-body-can"]
+      },
+      {
+        "id": "ASSET-DIAG-DATA",
+        "title": "Diagnostic Information",
+        "properties": ["confidentiality", "integrity"],
+        "linkedDamageScenarioIds": ["DS-PRIV-VEH-ID"],
+        "componentIds": ["comp-obd-port", "comp-afs-ecu"]
+      },
+      {
+        "id": "ASSET-FIRMWARE",
+        "title": "Headlight ECU Firmware",
+        "properties": ["integrity", "confidentiality"],
+        "linkedDamageScenarioIds": ["DS-SAF-MALFUNCTION"],
+        "componentIds": ["comp-afs-ecu"]
+      }
+    ],
+    "damageScenarios": [
+      {
+        "id": "DS-SAF-BLIND",
+        "title": "Driver or Road Users Blinded",
+        "linkedAssetIds": ["ASSET-LIGHT-CTRL"]
+      },
+      {
+        "id": "DS-SAF-GLARE",
+        "title": "Oncoming Traffic Glare",
+        "linkedAssetIds": ["ASSET-LIGHT-CTRL"]
+      },
+      {
+        "id": "DS-PRIV-TRACK",
+        "title": "Vehicle Tracking via Speed Data",
+        "linkedAssetIds": ["ASSET-VEH-SPEED"]
+      },
+      {
+        "id": "DS-PRIV-VEH-ID",
+        "title": "Vehicle Identification Exposure",
+        "linkedAssetIds": ["ASSET-DIAG-DATA"]
+      },
+      {
+        "id": "DS-SAF-MALFUNCTION",
+        "title": "Complete Headlight System Failure",
+        "linkedAssetIds": ["ASSET-FIRMWARE"]
+      }
+    ],
+    "threatScenarios": [
+      {
+        "id": "TS-CAN-SPOOF",
+        "title": "CAN Message Injection Attack",
+        "targetedAssetIds": ["ASSET-LIGHT-CTRL"],
+        "compromisedProperties": ["integrity"]
+      },
+      {
+        "id": "TS-DIAG-EXPLOIT",
+        "title": "UDS Diagnostic Service Exploitation",
+        "targetedAssetIds": ["ASSET-DIAG-DATA", "ASSET-FIRMWARE"],
+        "compromisedProperties": ["confidentiality", "integrity"]
+      },
+      {
+        "id": "TS-SPEED-SNIFF",
+        "title": "Vehicle Speed Data Interception",
+        "targetedAssetIds": ["ASSET-VEH-SPEED"],
+        "compromisedProperties": ["confidentiality"]
+      },
+      {
+        "id": "TS-FW-TAMPER",
+        "title": "Firmware Modification Attack",
+        "targetedAssetIds": ["ASSET-FIRMWARE"],
+        "compromisedProperties": ["integrity"]
+      }
+    ],
+    "attackSteps": [
+      {
+        "id": "AS-CAN-01",
+        "title": "Gain physical access to vehicle interior or OBD-II port"
+      },
+      {
+        "id": "AS-CAN-02",
+        "title": "Connect to body CAN network via OBD-II or exposed wiring harness"
+      },
+      {
+        "id": "AS-CAN-03",
+        "title": "Identify headlight ECU CAN message IDs by sniffing network traffic"
+      },
+      {
+        "id": "AS-CAN-04",
+        "title": "Inject malicious CAN messages to manipulate headlight beam behavior"
+      },
+      {
+        "id": "AS-DIAG-01",
+        "title": "Access OBD-II diagnostic connector"
+      },
+      {
+        "id": "AS-DIAG-02",
+        "title": "Establish UDS diagnostic session with AFS ECU via gateway"
+      },
+      {
+        "id": "AS-DIAG-03",
+        "title": "Read diagnostic data including vehicle identification information"
+      },
+      {
+        "id": "AS-FW-01",
+        "title": "Establish extended or programming UDS diagnostic session"
+      },
+      {
+        "id": "AS-FW-02",
+        "title": "Exploit firmware update service to bypass integrity checks"
+      },
+      {
+        "id": "AS-FW-03",
+        "title": "Upload and execute malicious firmware payload on AFS ECU"
+      },
+      {
+        "id": "AS-TRACK-01",
+        "title": "Install passive CAN monitoring device on body network"
+      },
+      {
+        "id": "AS-TRACK-02",
+        "title": "Capture and decode vehicle speed data from CAN traffic"
+      },
+      {
+        "id": "AS-TRACK-03",
+        "title": "Correlate speed patterns with timestamps to build movement profile"
+      }
+    ],
+    "attackPaths": [
+      {
+        "id": "AP-CAN-INJECT",
+        "title": "CAN Network Access - Light Control Manipulation",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "stepIds": ["AS-CAN-01", "AS-CAN-02", "AS-CAN-03", "AS-CAN-04"]
+      },
+      {
+        "id": "AP-DIAG-PRIV",
+        "title": "Diagnostic Access - Data Exfiltration",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "stepIds": ["AS-DIAG-01", "AS-DIAG-02", "AS-DIAG-03"]
+      },
+      {
+        "id": "AP-FW-MODIFY",
+        "title": "Firmware Access - Persistent ECU Compromise",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "stepIds": ["AS-DIAG-01", "AS-FW-01", "AS-FW-02", "AS-FW-03"]
+      },
+      {
+        "id": "AP-PASSIVE-TRACK",
+        "title": "Speed Signal Monitoring - Location Tracking",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "stepIds": ["AS-TRACK-01", "AS-TRACK-02", "AS-TRACK-03"]
+      }
+    ],
+    "methods": [
+      {
+        "id": "meth-afr-iso21434",
+        "name": "ISO/SAE 21434 Attack Feasibility Rating",
+        "version": "1.0"
+      },
+      {
+        "id": "meth-impact-iso21434",
+        "name": "ISO/SAE 21434 Impact Rating",
+        "version": "1.0"
+      },
+      {
+        "id": "meth-risk-iso21434",
+        "name": "ISO/SAE 21434 Risk Determination",
+        "version": "1.0"
+      }
+    ],
+    "attackFeasibilityRatings": [
+      {
+        "id": "AFR-CAN-INJECT",
+        "attackPathId": "AP-CAN-INJECT",
+        "methodId": "meth-afr-iso21434",
+        "score": "Medium"
+      },
+      {
+        "id": "AFR-DIAG-PRIV",
+        "attackPathId": "AP-DIAG-PRIV",
+        "methodId": "meth-afr-iso21434",
+        "score": "Medium"
+      },
+      {
+        "id": "AFR-FW-MODIFY",
+        "attackPathId": "AP-FW-MODIFY",
+        "methodId": "meth-afr-iso21434",
+        "score": "Low"
+      },
+      {
+        "id": "AFR-PASSIVE-TRACK",
+        "attackPathId": "AP-PASSIVE-TRACK",
+        "methodId": "meth-afr-iso21434",
+        "score": "Medium"
+      }
+    ],
+    "impactRatings": [
+      {
+        "id": "IR-SAF-BLIND",
+        "damageScenarioId": "DS-SAF-BLIND",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "severe",
+          "operational": "major"
+        },
+        "score": "4"
+      },
+      {
+        "id": "IR-SAF-GLARE",
+        "damageScenarioId": "DS-SAF-GLARE",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "major"
+        },
+        "score": "3"
+      },
+      {
+        "id": "IR-PRIV-TRACK",
+        "damageScenarioId": "DS-PRIV-TRACK",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "privacy": "major"
+        },
+        "score": "2"
+      },
+      {
+        "id": "IR-PRIV-VEH-ID",
+        "damageScenarioId": "DS-PRIV-VEH-ID",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "privacy": "moderate"
+        },
+        "score": "1"
+      },
+      {
+        "id": "IR-SAF-MALFUNCTION",
+        "damageScenarioId": "DS-SAF-MALFUNCTION",
+        "methodId": "meth-impact-iso21434",
+        "categories": {
+          "safety": "severe",
+          "operational": "severe"
+        },
+        "score": "4"
+      }
+    ],
+    "riskValues": [
+      {
+        "id": "RV-CAN-SPOOF",
+        "threatScenarioId": "TS-CAN-SPOOF",
+        "afrRef": "AFR-CAN-INJECT",
+        "impactRef": "IR-SAF-BLIND",
+        "methodId": "meth-risk-iso21434",
+        "score": "High"
+      },
+      {
+        "id": "RV-DIAG-EXPLOIT",
+        "threatScenarioId": "TS-DIAG-EXPLOIT",
+        "afrRef": "AFR-DIAG-PRIV",
+        "impactRef": "IR-PRIV-VEH-ID",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium"
+      },
+      {
+        "id": "RV-SPEED-SNIFF",
+        "threatScenarioId": "TS-SPEED-SNIFF",
+        "afrRef": "AFR-PASSIVE-TRACK",
+        "impactRef": "IR-PRIV-TRACK",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium"
+      },
+      {
+        "id": "RV-FW-TAMPER",
+        "threatScenarioId": "TS-FW-TAMPER",
+        "afrRef": "AFR-FW-MODIFY",
+        "impactRef": "IR-SAF-MALFUNCTION",
+        "methodId": "meth-risk-iso21434",
+        "score": "Medium"
+      }
+    ],
+    "controls": [
+      {
+        "id": "CTRL-CAN-AUTH",
+        "title": "CAN Message Authentication",
+        "componentIds": ["comp-afs-ecu", "comp-body-can"]
+      },
+      {
+        "id": "CTRL-DIAG-ACCESS",
+        "title": "Diagnostic Access Control",
+        "componentIds": ["comp-obd-port", "comp-cgw", "comp-afs-ecu"]
+      },
+      {
+        "id": "CTRL-FW-VERIFY",
+        "title": "Firmware Signature Verification",
+        "componentIds": ["comp-afs-ecu"]
+      }
+    ],
+    "riskTreatmentDecisions": [
+      {
+        "id": "RTD-CAN-SPOOF",
+        "riskValueId": "RV-CAN-SPOOF",
+        "decision": "reduce",
+        "controls": ["CTRL-CAN-AUTH"]
+      },
+      {
+        "id": "RTD-DIAG-EXPLOIT",
+        "riskValueId": "RV-DIAG-EXPLOIT",
+        "decision": "reduce",
+        "controls": ["CTRL-DIAG-ACCESS"]
+      },
+      {
+        "id": "RTD-SPEED-SNIFF",
+        "riskValueId": "RV-SPEED-SNIFF",
+        "decision": "accept"
+      },
+      {
+        "id": "RTD-FW-TAMPER",
+        "riskValueId": "RV-FW-TAMPER",
+        "decision": "reduce",
+        "controls": ["CTRL-FW-VERIFY"]
+      }
+    ]
+  }
+}

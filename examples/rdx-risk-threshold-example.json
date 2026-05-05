@@ -55,26 +55,26 @@
         "cause": "Unauthenticated CAN messages accepted by AFS ECU"
       }
     ],
+    "attackSteps": [
+      { "id": "AS-THR-01", "title": "Attacker compromises OTA backend server" },
+      { "id": "AS-THR-02", "title": "Attacker signs malicious firmware with stolen certificate key" },
+      { "id": "AS-THR-03", "title": "Vehicle downloads and installs malicious firmware via OTA" },
+      { "id": "AS-THR-04", "title": "Attacker gains physical access to vehicle interior" },
+      { "id": "AS-THR-05", "title": "Attacker connects to OBD-II port" },
+      { "id": "AS-THR-06", "title": "Attacker replays or crafts malicious CAN frames targeting AFS ECU" }
+    ],
     "attackPaths": [
       {
         "id": "ap-001",
         "title": "OTA server compromise leading to firmware injection",
         "threatScenarioId": "ts-001",
-        "steps": [
-          "Attacker compromises OTA backend server",
-          "Attacker signs malicious firmware with stolen key",
-          "Vehicle downloads and installs malicious firmware"
-        ]
+        "stepIds": ["AS-THR-01", "AS-THR-02", "AS-THR-03"]
       },
       {
         "id": "ap-002",
         "title": "Physical OBD-II access for CAN injection",
         "threatScenarioId": "ts-002",
-        "steps": [
-          "Attacker gains physical access to vehicle",
-          "Attacker connects to OBD-II port",
-          "Attacker replays or crafts malicious CAN frames targeting AFS"
-        ]
+        "stepIds": ["AS-THR-04", "AS-THR-05", "AS-THR-06"]
       }
     ],
     "methods": [
