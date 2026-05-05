@@ -46,6 +46,7 @@ xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
 
 ### Schema Files
 - **JSON Schema**: `spec/json/rdx.schema.json` — JSON Schema Draft 2020-12 with strict validation
+- **Profile Schema**: `spec/json/rdx-profile.schema.json` — Schema for RDX profile configuration documents
 - **XSD**: `spec/xml/rdx.xsd` — XML Schema Definition for XML-based RDX documents
 
 ### RDX Object Model
@@ -94,6 +95,25 @@ Every RDX document requires:
 - `headlight-tara-iso21434.json`: Complete ISO 21434 TARA example for Adaptive Front-lighting System
 - `headlight-tara-analysis.md`: Human-readable analysis document for the headlight TARA
 - `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs
+
+### Profile System
+RDX profiles define which fields are required, optional, or not allowed in an RDX document. Profiles are consumed by tools — not enforced by the JSON Schema validator itself.
+
+- **Profile Schema**: `spec/json/rdx-profile.schema.json` — defines the structure of a profile document
+- **Reference Profiles**: `spec/profiles/` — pre-built profiles for common use cases:
+  - `rdx-profile-schema-minimum.json` — only JSON schema required fields
+  - `rdx-profile-iso21434-standard.json` — all fields mandatory for ISO/SAE 21434 TARA
+- **Integrity**: each profile includes an `integrity` hash (SHA-256 of canonical JSON) for tamper detection
+- **Custom profiles**: create your own by following `spec/json/rdx-profile.schema.json`
+- **Field path notation**: dot notation with `*` wildcard (e.g., `riskSet.assets.*.properties`)
+- **Default requirement**: `defaultFieldRequirement` applies to any field not explicitly listed
+- **RDX documents** may reference a profile via the optional `profileRef` field
+
+Compute/verify a profile hash:
+```bash
+python3 tools/compute-profile-hash.py spec/profiles/my-profile.json
+python3 tools/compute-profile-hash.py --verify spec/profiles/my-profile.json
+```
 
 ### Key Documentation
 - `methodology/Methodology.md`: Design principles, object model, encoding patterns

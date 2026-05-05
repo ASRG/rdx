@@ -1,0 +1,92 @@
+{
+  "profileId": "a1b2c3d4-0002-4000-8000-000000000002",
+  "profileVersion": "1.0.0",
+  "name": "RDX ISO/SAE 21434 Standard TARA",
+  "description": "Requires all fields identified as mandatory for a complete ISO/SAE 21434 TARA. This includes structured architecture with named components, CIA properties on assets, bidirectional asset-to-damage-scenario links, per-category impact ratings, attack steps within attack paths, and controls linked to architecture elements. Establishes the baseline for exchanging TARA data between OEMs, Tier-1 suppliers, and cybersecurity tool vendors.",
+  "rdxSchemaVersion": "0.1.0",
+  "created": "2026-05-05T00:00:00Z",
+  "createdBy": "ASRG RDX Technical Committee",
+  "defaultFieldRequirement": "optional",
+  "fieldRequirements": {
+    "schemaVersion": "required",
+    "documentId": "required",
+    "riskSet": "required",
+
+    "riskSet.itemDefinition": "required",
+    "riskSet.itemDefinition.id": "required",
+    "riskSet.itemDefinition.title": "required",
+    "riskSet.itemDefinition.architecture": "required",
+    "riskSet.itemDefinition.architecture.components": "required",
+    "riskSet.itemDefinition.architecture.components.*.id": "required",
+    "riskSet.itemDefinition.architecture.components.*.name": "required",
+    "riskSet.itemDefinition.architecture.components.*.type": "required",
+
+    "riskSet.assets": "required",
+    "riskSet.assets.*.id": "required",
+    "riskSet.assets.*.title": "required",
+    "riskSet.assets.*.properties": "required",
+    "riskSet.assets.*.componentIds": "required",
+    "riskSet.assets.*.linkedDamageScenarioIds": "required",
+
+    "riskSet.damageScenarios": "required",
+    "riskSet.damageScenarios.*.id": "required",
+    "riskSet.damageScenarios.*.title": "required",
+    "riskSet.damageScenarios.*.linkedAssetIds": "required",
+
+    "riskSet.threatScenarios": "required",
+    "riskSet.threatScenarios.*.id": "required",
+    "riskSet.threatScenarios.*.title": "required",
+    "riskSet.threatScenarios.*.targetedAssetIds": "required",
+    "riskSet.threatScenarios.*.compromisedProperties": "required",
+
+    "riskSet.attackSteps": "required",
+    "riskSet.attackSteps.*.id": "required",
+    "riskSet.attackSteps.*.title": "required",
+
+    "riskSet.attackPaths": "required",
+    "riskSet.attackPaths.*.id": "required",
+    "riskSet.attackPaths.*.title": "required",
+    "riskSet.attackPaths.*.threatScenarioId": "required",
+    "riskSet.attackPaths.*.stepIds": "required",
+
+    "riskSet.methods": "required",
+    "riskSet.methods.*.id": "required",
+    "riskSet.methods.*.name": "required",
+    "riskSet.methods.*.version": "required",
+
+    "riskSet.attackFeasibilityRatings": "required",
+    "riskSet.attackFeasibilityRatings.*.id": "required",
+    "riskSet.attackFeasibilityRatings.*.methodId": "required",
+    "riskSet.attackFeasibilityRatings.*.score": "required",
+
+    "riskSet.impactRatings": "required",
+    "riskSet.impactRatings.*.id": "required",
+    "riskSet.impactRatings.*.damageScenarioId": "required",
+    "riskSet.impactRatings.*.methodId": "required",
+    "riskSet.impactRatings.*.score": "required",
+    "riskSet.impactRatings.*.categories": "required",
+
+    "riskSet.riskValues": "required",
+    "riskSet.riskValues.*.id": "required",
+    "riskSet.riskValues.*.threatScenarioId": "required",
+    "riskSet.riskValues.*.afrRef": "required",
+    "riskSet.riskValues.*.impactRef": "required",
+    "riskSet.riskValues.*.methodId": "required",
+    "riskSet.riskValues.*.score": "required",
+
+    "riskSet.controls": "required",
+    "riskSet.controls.*.id": "required",
+    "riskSet.controls.*.title": "required",
+    "riskSet.controls.*.componentIds": "required",
+
+    "riskSet.riskTreatmentDecisions": "required",
+    "riskSet.riskTreatmentDecisions.*.id": "required",
+    "riskSet.riskTreatmentDecisions.*.riskValueId": "required",
+    "riskSet.riskTreatmentDecisions.*.decision": "required",
+    "riskSet.riskTreatmentDecisions.*.controls": "required"
+  },
+  "integrity": {
+    "alg": "SHA-256",
+    "content": "0d09bab0400e8d29a7628ab83ebd481f4915f6a4b68b8bbc4f52adf725b90464"
+  }
+}

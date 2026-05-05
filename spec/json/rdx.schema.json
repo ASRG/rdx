@@ -33,6 +33,10 @@
     "bomRefRef": {
       "type": "string"
     },
+    "profileRef": {
+      "type": "string",
+      "description": "URI or identifier of the RDX profile configuration this document should be validated against (e.g., 'https://asrg.io/ns/rdx/profiles/iso21434-standard/1.0.0')"
+    },
     "riskSet": {
       "type": "object",
       "required": [
@@ -217,6 +221,13 @@
               },
               "references": {
                 "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "linkedAssetIds": {
+                "type": "array",
+                "description": "IDs of assets linked to this damage scenario (bidirectional link with asset.linkedDamageScenarioIds)",
                 "items": {
                   "type": "string"
                 }
@@ -647,6 +658,13 @@
                 "items": {
                   "$ref": "#/$defs/Hash"
                 }
+              },
+              "componentIds": {
+                "type": "array",
+                "description": "IDs of architecture components this control is applied to",
+                "items": {
+                  "type": "string"
+                }
               }
             },
             "additionalProperties": true
@@ -951,10 +969,8 @@
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
-  "additionalProperties": false,
+  },
+  "additionalProperties": true,
   "$defs": {
     "RiskLevel": {
       "type": "object",

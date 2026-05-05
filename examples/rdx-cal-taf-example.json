@@ -322,7 +322,7 @@
       {
         "id": "RTD-TS-V2X-1",
         "riskValueId": "RV-TS-V2X-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-V2X-AUTH"
         ],

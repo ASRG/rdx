@@ -524,7 +524,7 @@
       {
         "id": "RTD-CAN-SPOOF",
         "riskValueId": "RV-CAN-SPOOF",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CAN-AUTH",
           "CTRL-CAN-ENCRYPT"
@@ -534,7 +534,7 @@
       {
         "id": "RTD-DIAG-EXPLOIT",
         "riskValueId": "RV-DIAG-EXPLOIT",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-DIAG-ACCESS",
           "CTRL-RATE-LIMIT"
@@ -550,7 +550,7 @@
       {
         "id": "RTD-FW-TAMPER",
         "riskValueId": "RV-FW-TAMPER",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-FW-VERIFY"
         ],

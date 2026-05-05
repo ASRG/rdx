@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asrg.io/ns/rdx/schema/0.1.0/rdx-profile.schema.json",
+  "title": "RDX Profile Configuration",
+  "description": "Defines which fields are required, optional, or not allowed in an RDX document. Profiles are consumed by tools (not by the JSON Schema validator itself) to enforce organization- or standard-specific data completeness requirements. A profile references field paths using dot notation with '*' as the array-item wildcard.",
+  "type": "object",
+  "required": [
+    "profileId",
+    "profileVersion",
+    "name",
+    "rdxSchemaVersion",
+    "defaultFieldRequirement",
+    "fieldRequirements",
+    "integrity"
+  ],
+  "properties": {
+    "profileId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier (UUID) for this profile"
+    },
+    "profileVersion": {
+      "type": "string",
+      "description": "Semantic version of this profile (e.g., '1.0.0')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this profile"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the profile purpose and intended use case"
+    },
+    "rdxSchemaVersion": {
+      "type": "string",
+      "description": "The RDX schema version this profile applies to (e.g., '0.1.0')"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date-time when this profile was created"
+    },
+    "createdBy": {
+      "type": "string",
+      "description": "Author or organization that created this profile"
+    },
+    "defaultFieldRequirement": {
+      "type": "string",
+      "enum": [
+        "required",
+        "optional",
+        "notAllowed"
+      ],
+      "description": "Default requirement level applied to any RDX field not explicitly listed in fieldRequirements. Use 'optional' to allow all undeclared fields, 'required' to mandate them, or 'notAllowed' to prohibit them."
+    },
+    "fieldRequirements": {
+      "type": "object",
+      "description": "Map of RDX field paths to their requirement level. Paths use dot notation; '*' is a wildcard for all items in an array (e.g., 'riskSet.assets.*.properties'). A path ending at an array section (e.g., 'riskSet.attackSteps') controls whether the section itself must be present and non-empty.",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "required",
+          "optional",
+          "notAllowed"
+        ]
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "description": "Cryptographic hash of the profile content for tamper detection in transit. Computed over the canonical JSON serialization of the profile document with the 'integrity' field replaced by an empty object {}. Canonical form: keys sorted lexicographically, no extra whitespace, UTF-8 encoded.",
+      "required": [
+        "alg",
+        "content"
+      ],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "enum": [
+            "SHA-256",
+            "SHA-384",
+            "SHA-512",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512"
+          ],
+          "description": "Hash algorithm used"
+        },
+        "content": {
+          "type": "string",
+          "description": "Lowercase hex-encoded hash value",
+          "pattern": "^[0-9a-f]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -10,6 +10,12 @@ ajv -s spec/json/rdx.schema.json -d examples/rdx-multiple-threats-example.json -
 ajv -s spec/json/rdx.schema.json -d examples/rdx-mitigation-relationships-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-cal-taf-example.json --strict=false
 ajv -s spec/json/rdx.schema.json -d examples/rdx-risk-threshold-example.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/headlight-tara-iso21434.json --strict=false
+ajv -s spec/json/rdx.schema.json -d examples/rdx-infotainment-comprehensive-example.json --strict=false
+
+echo "Validating profile configuration examples..."
+ajv -s spec/json/rdx-profile.schema.json -d spec/profiles/rdx-profile-schema-minimum.json --strict=false
+ajv -s spec/json/rdx-profile.schema.json -d spec/profiles/rdx-profile-iso21434-standard.json --strict=false
 
 echo "Validating XML examples..."
 # xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
