@@ -44,9 +44,12 @@ xmllint --noout --schema spec/xml/rdx.xsd templates/rdx-template.xml
 CI: `.github/workflows/validate.yml` runs `tools/validate.sh` on every push and PR.
 (`.github/workflows/claude.yml` is the separate `@claude` issue/PR bot.)
 
-**Schema parity**: The JSON Schema is the normative reference. The XSD covers the core
-object model but lags on newer optional fields (`riskLevels`, `riskThresholdMatrix`,
-cryptographic `hashes`, structured `architecture`/`dataFlows`) — see CHANGELOG "Known limitations".
+**Schema parity**: The JSON Schema is the normative reference; the XSD is kept at
+field-level parity with it (including `riskLevels`, `riskThresholdMatrix`, cryptographic
+`hashes`, structured `architecture`/`dataFlows`, AFR `inputFactors`, impact `categories`,
+`componentIds`). When you change one schema, change the other and update both an example
+(`examples/rdx-*.json`) and the XML coverage example (`examples/rdx-xml-comprehensive.xml`).
+XSD element order is significant — XML must follow the sequence declared in each `complexType`.
 
 ### OpenXSAM Conversion
 `tools/rdx_to_openxsam.py` converts an RDX JSON document to OpenXSAM format (XML or JSON). No third-party dependencies (stdlib only):
@@ -117,6 +120,7 @@ Every RDX document requires:
 - `headlight-tara-iso21434.json`: Complete ISO 21434 TARA example for Adaptive Front-lighting System
 - `headlight-tara-analysis.md`: Human-readable analysis document for the headlight TARA
 - `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs
+- `rdx-xml-comprehensive.xml`: Standalone XML exercising the full feature set; the XSD coverage/test vector (validated against `spec/xml/rdx.xsd`)
 
 ### Templates
 - `templates/rdx-template.json` / `rdx-template.xml`: Skeleton documents to start a new RDX file from scratch

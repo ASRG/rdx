@@ -10,7 +10,9 @@ First public release of the RDX (Risk Data Exchange) format.
 
 ### Schemas
 - JSON Schema (`spec/json/rdx.schema.json`, Draft 2020-12) — normative reference for v0.1.0.
-- XML Schema (`spec/xml/rdx.xsd`) — covers the core object model (see Known limitations).
+- XML Schema (`spec/xml/rdx.xsd`) — at field-level parity with the JSON Schema,
+  including structured `architecture`/`dataFlows`, cryptographic `hashes`, `riskLevels`,
+  `riskThresholdMatrix`, AFR `inputFactors`, impact `categories`, and `componentIds`.
 
 ### Core risk model
 - `itemDefinition`, `assets`, `damageScenarios`, `threatScenarios`, `attackSteps`,
@@ -44,9 +46,9 @@ First public release of the RDX (Risk Data Exchange) format.
 - GitHub Actions workflow runs validation on every push and pull request.
 
 ### Known limitations
-- The JSON Schema is the normative reference for v0.1.0. The XSD covers the core
-  object model but does not yet model the newer optional fields (`riskLevels`,
-  `riskThresholdMatrix`, cryptographic `hashes`, structured `architecture` /
-  `dataFlows`); full JSON/XML parity is planned for a later release.
+- The JSON Schema is the normative reference for v0.1.0. The XSD is kept at
+  field-level parity with it; where the JSON document carries metadata as siblings
+  of `riskSet` (`created`, `createdBy`, `sources`, `bomRefRef`), the XSD represents
+  these as attributes / a leading `sources` element on the `riskSet` root.
 - `xmllint` validates standalone RDX XML against the XSD; CycloneDX-embedded XML is
   checked for well-formedness only (its root is the CycloneDX `bom` element).

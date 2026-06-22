@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Standalone RDX XML document exercising the full v0.1.0 feature set, including
+  the fields added for JSON/XML schema parity: structured architecture
+  (components + dataFlows), cryptographic hashes, configurable riskLevels,
+  riskThresholdMatrix, AFR inputFactors, impact categories, componentIds, and
+  document-level metadata. Validate with:
+    xmllint (noout) against spec/xml/rdx.xsd
+-->
+<rdx:riskSet xmlns:rdx="https://asrg.io/ns/rdx"
+             schemaVersion="0.1.0"
+             documentId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+             created="2026-06-22T12:00:00Z"
+             createdBy="RDX XML Example Tool 0.1.0">
+  <rdx:sources>
+    <rdx:value>urn:oem:example:project:gateway-xml-demo</rdx:value>
+  </rdx:sources>
+  <rdx:itemDefinition>
+    <rdx:id>ITEM-GW</rdx:id>
+    <rdx:title>Connected Gateway ECU</rdx:title>
+    <rdx:boundary>Gateway ECU bridging in-vehicle networks and external links</rdx:boundary>
+    <rdx:functions>
+      <rdx:value>Routing</rdx:value>
+      <rdx:value>Firewall</rdx:value>
+      <rdx:value>OTA update</rdx:value>
+    </rdx:functions>
+    <rdx:architecture>
+      <rdx:description>Tri-core gateway with CAN, Ethernet, and cellular interfaces</rdx:description>
+      <rdx:components>
+        <rdx:component>
+          <rdx:id>CMP-GW</rdx:id>
+          <rdx:name>Gateway MCU</rdx:name>
+          <rdx:type>gateway</rdx:type>
+          <rdx:description>Central routing and firewall MCU</rdx:description>
+          <rdx:trustBoundary>in-vehicle-trusted</rdx:trustBoundary>
+        </rdx:component>
+        <rdx:component>
+          <rdx:id>CMP-TCU</rdx:id>
+          <rdx:name>Telematics Unit</rdx:name>
+          <rdx:type>ecu</rdx:type>
+          <rdx:parentId>CMP-GW</rdx:parentId>
+          <rdx:trustBoundary>external-facing</rdx:trustBoundary>
+        </rdx:component>
+        <rdx:component>
+          <rdx:id>CMP-OTA</rdx:id>
+          <rdx:name>OTA Backend</rdx:name>
+          <rdx:type>ota-server</rdx:type>
+          <rdx:trustBoundary>cloud</rdx:trustBoundary>
+        </rdx:component>
+      </rdx:components>
+      <rdx:dataFlows>
+        <rdx:dataFlow>
+          <rdx:id>DF-OTA</rdx:id>
+          <rdx:name>OTA firmware delivery</rdx:name>
+          <rdx:fromComponentId>CMP-OTA</rdx:fromComponentId>
+          <rdx:toComponentId>CMP-TCU</rdx:toComponentId>
+          <rdx:protocol>HTTPS</rdx:protocol>
+          <rdx:dataDescription>Signed firmware images</rdx:dataDescription>
+          <rdx:encrypted>true</rdx:encrypted>
+          <rdx:authenticated>true</rdx:authenticated>
+        </rdx:dataFlow>
+      </rdx:dataFlows>
+      <rdx:diagramUrl>https://example.com/diagrams/gateway.svg</rdx:diagramUrl>
+    </rdx:architecture>
+    <rdx:interfaces>
+      <rdx:value>CAN</rdx:value>
+      <rdx:value>Ethernet</rdx:value>
+      <rdx:value>Cellular</rdx:value>
+    </rdx:interfaces>
+    <rdx:environment>Series vehicle, US/EU, 2026 launch</rdx:environment>
+    <rdx:countryOfOrigin>DE</rdx:countryOfOrigin>
+    <rdx:hashes>
+      <rdx:hash>
+        <rdx:alg>SHA-256</rdx:alg>
+        <rdx:content>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</rdx:content>
+      </rdx:hash>
+    </rdx:hashes>
+  </rdx:itemDefinition>
+  <rdx:assets>
+    <rdx:asset>
+      <rdx:id>ASSET-FW</rdx:id>
+      <rdx:title>Gateway Firmware</rdx:title>
+      <rdx:properties>
+        <rdx:property>integrity</rdx:property>
+        <rdx:property>availability</rdx:property>
+      </rdx:properties>
+      <rdx:linkedDamageScenarioIds>
+        <rdx:value>DS-SAF</rdx:value>
+      </rdx:linkedDamageScenarioIds>
+      <rdx:hashes>
+        <rdx:hash>
+          <rdx:alg>SHA-512</rdx:alg>
+          <rdx:content>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</rdx:content>
+        </rdx:hash>
+      </rdx:hashes>
+      <rdx:componentIds>
+        <rdx:value>CMP-GW</rdx:value>
+        <rdx:value>CMP-TCU</rdx:value>
+      </rdx:componentIds>
+    </rdx:asset>
+  </rdx:assets>
+  <rdx:damageScenarios>
+    <rdx:damageScenario>
+      <rdx:id>DS-SAF</rdx:id>
+      <rdx:title>Safety hazard via malicious firmware</rdx:title>
+      <rdx:description>Compromised gateway firmware leads to loss of network isolation</rdx:description>
+    </rdx:damageScenario>
+  </rdx:damageScenarios>
+  <rdx:threatScenarios>
+    <rdx:threatScenario>
+      <rdx:id>TS-OTA</rdx:id>
+      <rdx:title>OTA update hijacking</rdx:title>
+      <rdx:targetedAssetIds>
+        <rdx:value>ASSET-FW</rdx:value>
+      </rdx:targetedAssetIds>
+      <rdx:compromisedProperties>
+        <rdx:property>integrity</rdx:property>
+      </rdx:compromisedProperties>
+      <rdx:cause>Man-in-the-middle on update channel</rdx:cause>
+      <rdx:componentIds>
+        <rdx:value>CMP-OTA</rdx:value>
+        <rdx:value>CMP-TCU</rdx:value>
+      </rdx:componentIds>
+    </rdx:threatScenario>
+  </rdx:threatScenarios>
+  <rdx:attackPaths>
+    <rdx:attackPath>
+      <rdx:id>AP-OTA</rdx:id>
+      <rdx:title>DNS hijack -&gt; MITM -&gt; Malicious firmware</rdx:title>
+      <rdx:threatScenarioId>TS-OTA</rdx:threatScenarioId>
+      <rdx:steps>
+        <rdx:value>Compromise DNS</rdx:value>
+        <rdx:value>Redirect OTA requests</rdx:value>
+        <rdx:value>Inject firmware</rdx:value>
+      </rdx:steps>
+    </rdx:attackPath>
+  </rdx:attackPaths>
+  <rdx:methods>
+    <rdx:method>
+      <rdx:id>iso21434-afr-v1</rdx:id>
+      <rdx:name>ISO/SAE 21434 AFR</rdx:name>
+      <rdx:version>1.0</rdx:version>
+      <rdx:factors>
+        <rdx:value>time</rdx:value>
+        <rdx:value>expertise</rdx:value>
+        <rdx:value>equipment</rdx:value>
+      </rdx:factors>
+    </rdx:method>
+    <rdx:method>
+      <rdx:id>iso21434-impact-v1</rdx:id>
+      <rdx:name>ISO/SAE 21434 Impact</rdx:name>
+      <rdx:version>1.0</rdx:version>
+      <rdx:factors>
+        <rdx:value>safety</rdx:value>
+        <rdx:value>financial</rdx:value>
+      </rdx:factors>
+    </rdx:method>
+    <rdx:method>
+      <rdx:id>iso21434-risk-v1</rdx:id>
+      <rdx:name>ISO/SAE 21434 Risk</rdx:name>
+      <rdx:version>1.0</rdx:version>
+      <rdx:factors>
+        <rdx:value>attackFeasibility</rdx:value>
+        <rdx:value>impact</rdx:value>
+      </rdx:factors>
+      <rdx:riskLevels>
+        <rdx:riskLevel>
+          <rdx:id>RL-LOW</rdx:id>
+          <rdx:label>Low</rdx:label>
+          <rdx:rank>1</rdx:rank>
+          <rdx:color>#2ecc71</rdx:color>
+          <rdx:scoreRange>
+            <rdx:min>0</rdx:min>
+            <rdx:max>3</rdx:max>
+          </rdx:scoreRange>
+          <rdx:treatmentGuidance>May be accepted with documented justification</rdx:treatmentGuidance>
+        </rdx:riskLevel>
+        <rdx:riskLevel>
+          <rdx:id>RL-HIGH</rdx:id>
+          <rdx:label>High</rdx:label>
+          <rdx:rank>3</rdx:rank>
+          <rdx:color>#e74c3c</rdx:color>
+          <rdx:scoreRange>
+            <rdx:min>7</rdx:min>
+            <rdx:max>10</rdx:max>
+          </rdx:scoreRange>
+          <rdx:treatmentGuidance>Must be reduced or avoided</rdx:treatmentGuidance>
+        </rdx:riskLevel>
+      </rdx:riskLevels>
+      <rdx:riskThresholdMatrix>
+        <rdx:entry>
+          <rdx:band>High</rdx:band>
+          <rdx:allowedTreatments>
+            <rdx:treatment>reduce</rdx:treatment>
+            <rdx:treatment>avoid</rdx:treatment>
+          </rdx:allowedTreatments>
+          <rdx:scoreRange>
+            <rdx:min>7</rdx:min>
+            <rdx:max>10</rdx:max>
+          </rdx:scoreRange>
+          <rdx:escalationRequired>true</rdx:escalationRequired>
+          <rdx:rationale>High band per OEM Risk Acceptance Policy v2</rdx:rationale>
+          <rdx:references>
+            <rdx:value>OEM-RAP-v2</rdx:value>
+          </rdx:references>
+        </rdx:entry>
+        <rdx:entry>
+          <rdx:band>Low</rdx:band>
+          <rdx:allowedTreatments>
+            <rdx:treatment>reduce</rdx:treatment>
+            <rdx:treatment>avoid</rdx:treatment>
+            <rdx:treatment>accept</rdx:treatment>
+            <rdx:treatment>share</rdx:treatment>
+          </rdx:allowedTreatments>
+        </rdx:entry>
+      </rdx:riskThresholdMatrix>
+    </rdx:method>
+  </rdx:methods>
+  <rdx:attackFeasibilityRatings>
+    <rdx:afr>
+      <rdx:id>AFR-OTA</rdx:id>
+      <rdx:attackPathId>AP-OTA</rdx:attackPathId>
+      <rdx:methodId>iso21434-afr-v1</rdx:methodId>
+      <rdx:inputFactors>
+        <rdx:entry>
+          <rdx:key>time</rdx:key>
+          <rdx:value>medium</rdx:value>
+        </rdx:entry>
+        <rdx:entry>
+          <rdx:key>expertise</rdx:key>
+          <rdx:value>high</rdx:value>
+        </rdx:entry>
+      </rdx:inputFactors>
+      <rdx:score>3</rdx:score>
+      <rdx:band>Medium</rdx:band>
+      <rdx:rationale>Well-understood attack vector with available tooling</rdx:rationale>
+    </rdx:afr>
+  </rdx:attackFeasibilityRatings>
+  <rdx:impactRatings>
+    <rdx:ir>
+      <rdx:id>IR-SAF</rdx:id>
+      <rdx:damageScenarioId>DS-SAF</rdx:damageScenarioId>
+      <rdx:methodId>iso21434-impact-v1</rdx:methodId>
+      <rdx:categories>
+        <rdx:entry>
+          <rdx:key>safety</rdx:key>
+          <rdx:value>high</rdx:value>
+        </rdx:entry>
+      </rdx:categories>
+      <rdx:score>4</rdx:score>
+      <rdx:rationale>Potential loss of network isolation affecting safety functions</rdx:rationale>
+    </rdx:ir>
+  </rdx:impactRatings>
+  <rdx:riskValues>
+    <rdx:riskValue>
+      <rdx:id>RV-OTA</rdx:id>
+      <rdx:threatScenarioId>TS-OTA</rdx:threatScenarioId>
+      <rdx:afrRef>AFR-OTA</rdx:afrRef>
+      <rdx:impactRef>IR-SAF</rdx:impactRef>
+      <rdx:methodId>iso21434-risk-v1</rdx:methodId>
+      <rdx:score>H</rdx:score>
+      <rdx:band>High</rdx:band>
+      <rdx:rationale>Medium feasibility with high safety impact</rdx:rationale>
+    </rdx:riskValue>
+  </rdx:riskValues>
+  <rdx:controls>
+    <rdx:control>
+      <rdx:id>CTRL-SIG</rdx:id>
+      <rdx:title>Secure OTA signature verification</rdx:title>
+      <rdx:catalog>OEM-SEC-CTRL</rdx:catalog>
+      <rdx:controlId>OTA-SIG-01</rdx:controlId>
+      <rdx:implementationStatus>implemented</rdx:implementationStatus>
+      <rdx:requiredCalLevel>CAL3</rdx:requiredCalLevel>
+      <rdx:hashes>
+        <rdx:hash>
+          <rdx:alg>SHA-256</rdx:alg>
+          <rdx:content>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</rdx:content>
+        </rdx:hash>
+      </rdx:hashes>
+    </rdx:control>
+  </rdx:controls>
+  <rdx:riskTreatmentDecisions>
+    <rdx:rtd>
+      <rdx:id>RTD-OTA</rdx:id>
+      <rdx:riskValueId>RV-OTA</rdx:riskValueId>
+      <rdx:decision>reduce</rdx:decision>
+      <rdx:controls>
+        <rdx:value>CTRL-SIG</rdx:value>
+      </rdx:controls>
+      <rdx:justification>High band only permits reduce or avoid; reduced via signature verification</rdx:justification>
+    </rdx:rtd>
+  </rdx:riskTreatmentDecisions>
+  <rdx:relationships>
+    <rdx:relationship>
+      <rdx:id>REL-1</rdx:id>
+      <rdx:relationshipType>mitigates</rdx:relationshipType>
+      <rdx:sourceRef>CTRL-SIG</rdx:sourceRef>
+      <rdx:targetRef>TS-OTA</rdx:targetRef>
+      <rdx:confidence>0.9</rdx:confidence>
+      <rdx:justification>Signature verification blocks malicious firmware injection</rdx:justification>
+    </rdx:relationship>
+  </rdx:relationships>
+</rdx:riskSet>

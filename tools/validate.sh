@@ -42,6 +42,7 @@ node -e "JSON.parse(require('fs').readFileSync('examples/cyclonedx-embedded.json
 
 echo "==> Validating standalone XML against $XSD"
 xmllint --noout --schema "$XSD" templates/rdx-template.xml
+xmllint --noout --schema "$XSD" examples/rdx-xml-comprehensive.xml
 
 echo "==> Checking CycloneDX-embedded XML is well-formed"
 # NOTE: cyclonedx-embedded.xml is a CycloneDX BOM (root element <bom>) with

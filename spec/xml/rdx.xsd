@@ -4,9 +4,17 @@
            xmlns:rdx="https://asrg.io/ns/rdx"
            elementFormDefault="qualified" attributeFormDefault="unqualified"
            version="0.1.0">
+  <!--
+    RDX XML Schema. The JSON Schema (spec/json/rdx.schema.json) is the normative
+    reference; this XSD is kept at parity with it. Because the XML root element is
+    <rdx:riskSet>, document-level metadata that the JSON carries as siblings of
+    riskSet (created, createdBy, sources, bomRefRef) is represented here as
+    attributes / a leading <sources> element on riskSet.
+  -->
   <xs:element name="riskSet" type="rdx:riskSetType"/>
   <xs:complexType name="riskSetType">
     <xs:sequence>
+      <xs:element name="sources" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="itemDefinition" type="rdx:itemDefinitionType"/>
       <xs:element name="assets" type="rdx:assetsType" minOccurs="0"/>
       <xs:element name="damageScenarios" type="rdx:damageScenariosType" minOccurs="0"/>
@@ -27,6 +35,9 @@
     </xs:sequence>
     <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
     <xs:attribute name="documentId" type="xs:string" use="optional"/>
+    <xs:attribute name="created" type="xs:dateTime" use="optional"/>
+    <xs:attribute name="createdBy" type="xs:string" use="optional"/>
+    <xs:attribute name="bomRefRef" type="xs:string" use="optional"/>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
   <xs:complexType name="itemDefinitionType">
@@ -35,17 +46,12 @@
       <xs:element name="title" type="xs:string"/>
       <xs:element name="boundary" type="xs:string" minOccurs="0"/>
       <xs:element name="functions" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="architecture" type="xs:string" minOccurs="0"/>
+      <xs:element name="architecture" type="rdx:architectureType" minOccurs="0"/>
       <xs:element name="interfaces" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="environment" type="xs:string" minOccurs="0"/>
       <xs:element name="assumptions" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="countryOfOrigin" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z]{2}"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="countryOfOrigin" type="rdx:countryCodeType" minOccurs="0"/>
+      <xs:element name="hashes" type="rdx:hashesType" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -61,7 +67,9 @@
       <xs:element name="title" type="xs:string"/>
       <xs:element name="properties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="linkedDamageScenarioIds" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="externalIds" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="hashes" type="rdx:hashesType" minOccurs="0"/>
+      <xs:element name="componentIds" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -78,7 +86,7 @@
       <xs:element name="description" type="xs:string" minOccurs="0"/>
       <xs:element name="impactedFunctions" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="affectedRoadUsers" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -95,7 +103,8 @@
       <xs:element name="targetedAssetIds" type="rdx:stringList"/>
       <xs:element name="compromisedProperties" type="rdx:ciaList" minOccurs="0"/>
       <xs:element name="cause" type="xs:string" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="componentIds" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -112,7 +121,7 @@
       <xs:element name="description" type="xs:string" minOccurs="0"/>
       <xs:element name="attackFeasibilityRatingIds" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="controlIds" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -128,8 +137,9 @@
       <xs:element name="title" type="xs:string"/>
       <xs:element name="threatScenarioId" type="xs:string"/>
       <xs:element name="stepIds" type="rdx:stringList" minOccurs="0"/>
+      <!-- steps is deprecated in favour of stepIds; retained for compatibility -->
       <xs:element name="steps" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -145,6 +155,8 @@
       <xs:element name="name" type="xs:string"/>
       <xs:element name="version" type="xs:string"/>
       <xs:element name="factors" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="riskLevels" type="rdx:riskLevelsType" minOccurs="0"/>
+      <xs:element name="riskThresholdMatrix" type="rdx:riskThresholdMatrixType" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -160,6 +172,7 @@
       <xs:element name="attackPathId" type="xs:string" minOccurs="0"/>
       <xs:element name="attackStepId" type="xs:string" minOccurs="0"/>
       <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="inputFactors" type="rdx:keyValuePairsType" minOccurs="0"/>
       <xs:element name="score" type="xs:string"/>
       <xs:element name="band" type="xs:string" minOccurs="0"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
@@ -177,6 +190,7 @@
       <xs:element name="id" type="xs:string"/>
       <xs:element name="damageScenarioId" type="xs:string"/>
       <xs:element name="methodId" type="xs:string"/>
+      <xs:element name="categories" type="rdx:keyValuePairsType" minOccurs="0"/>
       <xs:element name="score" type="xs:string"/>
       <xs:element name="rationale" type="xs:string" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -216,7 +230,8 @@
       <xs:element name="implementationStatus" type="xs:string" minOccurs="0"/>
       <xs:element name="requiredCalLevel" type="rdx:calLevelType" minOccurs="0"/>
       <xs:element name="achievedCalLevel" type="rdx:calLevelType" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
+      <xs:element name="hashes" type="rdx:hashesType" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -230,7 +245,7 @@
     <xs:sequence>
       <xs:element name="id" type="xs:string"/>
       <xs:element name="riskValueId" type="xs:string"/>
-      <xs:element name="decision" type="xs:string"/>
+      <xs:element name="decision" type="rdx:treatmentType"/>
       <xs:element name="controls" type="rdx:stringList" minOccurs="0"/>
       <xs:element name="justification" type="xs:string" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -245,23 +260,7 @@
   <xs:complexType name="relationshipType">
     <xs:sequence>
       <xs:element name="id" type="xs:string"/>
-      <xs:element name="relationshipType">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="causes"/>
-            <xs:enumeration value="mitigates"/>
-            <xs:enumeration value="implements"/>
-            <xs:enumeration value="assesses"/>
-            <xs:enumeration value="contains"/>
-            <xs:enumeration value="targets"/>
-            <xs:enumeration value="threatens"/>
-            <xs:enumeration value="protects"/>
-            <xs:enumeration value="requires_cal"/>
-            <xs:enumeration value="achieves_cal"/>
-            <xs:enumeration value="related_to"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="relationshipType" type="rdx:relationshipKindType"/>
       <xs:element name="sourceRef" type="xs:string"/>
       <xs:element name="targetRef" type="xs:string"/>
       <xs:element name="confidence" minOccurs="0">
@@ -291,7 +290,7 @@
       <xs:element name="description" type="xs:string" minOccurs="0"/>
       <xs:element name="objectives" type="rdx:stringList"/>
       <xs:element name="assuranceActivities" type="rdx:stringList" minOccurs="0"/>
-      <xs:element name="references" type="rdx:anyUriList" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -405,15 +404,211 @@
       <xs:enumeration value="insider"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="relationshipKindType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="causes"/>
+      <xs:enumeration value="mitigates"/>
+      <xs:enumeration value="implements"/>
+      <xs:enumeration value="assesses"/>
+      <xs:enumeration value="contains"/>
+      <xs:enumeration value="targets"/>
+      <xs:enumeration value="threatens"/>
+      <xs:enumeration value="protects"/>
+      <xs:enumeration value="requires_cal"/>
+      <xs:enumeration value="achieves_cal"/>
+      <xs:enumeration value="related_to"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="countryCodeType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Risk treatment vocabulary (shared by riskTreatmentDecisions and riskThresholdMatrix) -->
+  <xs:simpleType name="treatmentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="reduce"/>
+      <xs:enumeration value="avoid"/>
+      <xs:enumeration value="accept"/>
+      <xs:enumeration value="share"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Cryptographic hashes -->
+  <xs:complexType name="hashesType">
+    <xs:sequence>
+      <xs:element name="hash" type="rdx:hashType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="hashType">
+    <xs:sequence>
+      <xs:element name="alg" type="rdx:hashAlgType"/>
+      <xs:element name="content" type="rdx:hashContentType"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:simpleType name="hashAlgType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MD5"/>
+      <xs:enumeration value="SHA-1"/>
+      <xs:enumeration value="SHA-256"/>
+      <xs:enumeration value="SHA-384"/>
+      <xs:enumeration value="SHA-512"/>
+      <xs:enumeration value="SHA3-256"/>
+      <xs:enumeration value="SHA3-384"/>
+      <xs:enumeration value="SHA3-512"/>
+      <xs:enumeration value="BLAKE2b-256"/>
+      <xs:enumeration value="BLAKE2b-384"/>
+      <xs:enumeration value="BLAKE2b-512"/>
+      <xs:enumeration value="BLAKE3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="hashContentType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Configurable per-methodology risk levels -->
+  <xs:complexType name="riskLevelsType">
+    <xs:sequence>
+      <xs:element name="riskLevel" type="rdx:riskLevelType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskLevelType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="label" type="xs:string"/>
+      <xs:element name="rank" type="xs:positiveInteger"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="color" type="rdx:hexColorType" minOccurs="0"/>
+      <xs:element name="scoreRange" type="rdx:numericScoreRangeType" minOccurs="0"/>
+      <xs:element name="treatmentGuidance" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:simpleType name="hexColorType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="#[0-9a-fA-F]{6}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="numericScoreRangeType">
+    <xs:sequence>
+      <xs:element name="min" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="max" type="xs:decimal" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Risk threshold matrix -->
+  <xs:complexType name="riskThresholdMatrixType">
+    <xs:sequence>
+      <xs:element name="entry" type="rdx:riskThresholdEntryType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="riskThresholdEntryType">
+    <xs:sequence>
+      <xs:element name="band" type="xs:string"/>
+      <xs:element name="allowedTreatments" type="rdx:allowedTreatmentsType"/>
+      <xs:element name="scoreRange" type="rdx:stringScoreRangeType" minOccurs="0"/>
+      <xs:element name="escalationRequired" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="rationale" type="xs:string" minOccurs="0"/>
+      <xs:element name="references" type="rdx:stringList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:complexType name="allowedTreatmentsType">
+    <xs:sequence>
+      <xs:element name="treatment" type="rdx:treatmentType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- riskThresholdMatrix score range allows numeric or string bounds -->
+  <xs:complexType name="stringScoreRangeType">
+    <xs:sequence>
+      <xs:element name="min" type="xs:string" minOccurs="0"/>
+      <xs:element name="max" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Structured system architecture -->
+  <xs:complexType name="architectureType" mixed="true">
+    <!--
+      Mixed content models the JSON `architecture` oneOf: either a plain text
+      description (legacy) or a structured representation. Plain text appears as
+      the element's character content; the structured form uses the child elements.
+    -->
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="components" type="rdx:architectureComponentsType" minOccurs="0"/>
+      <xs:element name="dataFlows" type="rdx:dataFlowsType" minOccurs="0"/>
+      <xs:element name="diagramUrl" type="xs:anyURI" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:complexType name="architectureComponentsType">
+    <xs:sequence>
+      <xs:element name="component" type="rdx:architectureComponentType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="architectureComponentType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="type" type="rdx:componentClassType"/>
+      <xs:element name="parentId" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="trustBoundary" type="xs:string" minOccurs="0"/>
+      <xs:element name="externalIds" type="rdx:stringList" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+  <xs:simpleType name="componentClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ecu"/>
+      <xs:enumeration value="sensor"/>
+      <xs:enumeration value="actuator"/>
+      <xs:enumeration value="gateway"/>
+      <xs:enumeration value="network"/>
+      <xs:enumeration value="external-system"/>
+      <xs:enumeration value="cloud-service"/>
+      <xs:enumeration value="mobile-app"/>
+      <xs:enumeration value="ota-server"/>
+      <xs:enumeration value="diagnostic-tool"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="dataFlowsType">
+    <xs:sequence>
+      <xs:element name="dataFlow" type="rdx:dataFlowType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dataFlowType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="fromComponentId" type="xs:string"/>
+      <xs:element name="toComponentId" type="xs:string"/>
+      <xs:element name="protocol" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataDescription" type="xs:string" minOccurs="0"/>
+      <xs:element name="encrypted" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="authenticated" type="xs:boolean" minOccurs="0"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
   <!-- helpers -->
   <xs:complexType name="ciaList">
-    <xs:sequence><xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+    <xs:sequence><xs:element name="property" type="rdx:ciaPropertyType" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
   </xs:complexType>
+  <xs:simpleType name="ciaPropertyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="confidentiality"/>
+      <xs:enumeration value="integrity"/>
+      <xs:enumeration value="availability"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:complexType name="stringList">
     <xs:sequence><xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="anyUriList">
-    <xs:sequence><xs:element name="uri" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
   </xs:complexType>
   <xs:complexType name="keyValuePairsType">
     <xs:sequence>
