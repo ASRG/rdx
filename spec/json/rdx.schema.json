@@ -384,6 +384,13 @@
                   "type": "string"
                 }
               },
+              "riskLevels": {
+                "type": "array",
+                "description": "Ordered list of risk level definitions for this methodology. Each entry defines a named band/tier (e.g., Low, Medium, High) with an ordinal rank, optional score range, and optional treatment guidance. Organizations may define 3-level (Low/Medium/High), 5-level (Very Low … Very High), or any custom scale.",
+                "items": {
+                  "$ref": "#/$defs/RiskLevel"
+                }
+              },
               "riskThresholdMatrix": {
                 "type": "array",
                 "description": "Defines allowed risk treatment strategies per risk band for this methodology. Used to codify organizational risk acceptance policy that can be overlaid on risk data during interpretation.",
@@ -951,10 +958,8 @@
       },
       "additionalProperties": true
     }
-  },d
-  "additionalProperties": true
-}
-  "additionalProperties": false,
+  },
+  "additionalProperties": true,
   "$defs": {
     "RiskLevel": {
       "type": "object",

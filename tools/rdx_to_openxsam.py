@@ -93,19 +93,19 @@ def convert_assets(assets: list, root: Element) -> None:
     assets_el = SubElement(root, "Assets")
     for asset in assets:
         a_el = SubElement(assets_el, "Asset")
-        a_el.set("id", to_xsam_id(asset.get("id", str(uuid.uuid4()[:8]))))
+        a_el.set("id", to_xsam_id(asset.get("id", str(uuid.uuid4())[:8])))
         SubElement(a_el, "Name").text = asset.get("title", "Unknown Asset")
         SubElement(a_el, "Description").text = asset.get("description", "")
 
-        # CIA → STRIDE mapping
-        props = asset.get("properties", {})
+        # CIA → STRIDE mapping. RDX asset `properties` is an array of CIA
+        # property labels (e.g. ["confidentiality", "integrity"]).
+        props = asset.get("properties", []) or []
         if props:
             stride_el = SubElement(a_el, "SecurityProperties")
             for cia_prop, stride_label in STRIDE_MAP.items():
-                if props.get(cia_prop):
+                if cia_prop in props:
                     prop_el = SubElement(stride_el, "SecurityProperty")
                     SubElement(prop_el, "Category").text = stride_label
-                    SubElement(prop_el, "Level").text = str(props[cia_prop])
 
         # Hashes (if present)
         hashes = asset.get("hashes", [])

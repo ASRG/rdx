@@ -153,6 +153,15 @@
           "operational",
           "privacy"
         ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk",
+        "version": "1.0",
+        "factors": [
+          "attackFeasibility",
+          "impact"
+        ]
       }
     ],
     "attackFeasibilityRatings": [
@@ -261,7 +270,7 @@
       {
         "id": "RTD-TS-1",
         "riskValueId": "RV-TS-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-INPUT-VAL"
         ],
@@ -270,7 +279,7 @@
       {
         "id": "RTD-TS-2",
         "riskValueId": "RV-TS-2",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-APP-SANDBOXING",
           "CTRL-CAN-ISOLATION"

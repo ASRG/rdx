@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdx:riskSet xmlns:rdx="https://asrg.io/ns/rdx" schemaVersion="0.1.0" documentId="REPLACE-WITH-UUID">
+<rdx:riskSet xmlns:rdx="https://asrg.io/ns/rdx" schemaVersion="0.1.0" documentId="00000000-0000-0000-0000-000000000000">
   <rdx:itemDefinition>
     <rdx:id>ITEM-XXX</rdx:id>
     <rdx:title>...</rdx:title>

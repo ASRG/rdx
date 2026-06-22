@@ -20,10 +20,15 @@ npm-debug.log*
 # Dependencies
 node_modules/
 
-# Build outputs
+# Python
+__pycache__/
+*.py[cod]
+
+# Build / tool outputs
 dist/
 build/
 out/
+output/
 
 # Environment variables
 .env

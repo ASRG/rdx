@@ -26,7 +26,7 @@ It is **based on CycloneDX** for packaging and transport and provides **JSON** a
 - **Attack Paths**: Detailed attack step sequences
 - **Risk Ratings**: Attack feasibility, impact, and combined risk values
 - **Controls**: Security measures with implementation status
-- **Risk Treatment Decisions**: Documented risk handling (treat/avoid/accept/share)
+- **Risk Treatment Decisions**: Documented risk handling (reduce/avoid/accept/share)
 
 ### Advanced Features (v0.1.0+)
 - **Explicit Relationships**: Machine-readable links between risk artifacts (causes, mitigates, implements, etc.)
@@ -50,12 +50,15 @@ Run all validations:
 ./tools/validate.sh
 ```
 
-Validate individual examples:
+Validate an individual example:
 ```bash
-ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
+ajv validate -s spec/json/rdx.schema.json -d examples/rdx-example.json \
+  --spec=draft2020 -c ajv-formats --strict=false
 ```
 
-**Note**: The schema uses JSON Schema Draft 2020-12. Current `ajv-cli` versions support up to Draft 2019-09, which may cause schema reference warnings. All examples are valid JSON and conform to required fields.
+**Note**: The schema uses JSON Schema Draft 2020-12, so `ajv` must be invoked with
+`--spec=draft2020` and the `ajv-formats` plugin (`-c ajv-formats`). Install both with
+`npm install -g ajv-cli ajv-formats`.
 
 ## Examples
 
@@ -64,8 +67,12 @@ ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
 - **`rdx-multiple-threats-example.json`**: Multiple threat scenarios
 - **`rdx-mitigation-relationships-example.json`**: Controls mitigating threats
 - **`rdx-cal-taf-example.json`**: CAL and TAF framework integration
+- **`rdx-risk-threshold-example.json`**: Risk threshold / acceptance criteria
+- **`rdx-infotainment-comprehensive-example.json`**: Large end-to-end example covering most object types
 - **`headlight-tara-iso21434.json`**: Complete ISO 21434 TARA for Adaptive Front-lighting System
 - **`cyclonedx-embedded.json/.xml`**: RDX embedded within CycloneDX BOMs
+
+Skeleton documents for starting a new RDX file are in **`templates/`** (`rdx-template.json`, `rdx-template.xml`).
 
 ## Documentation
 

@@ -31,7 +31,7 @@ This document provides a comprehensive analysis of the headlight Threat Assessme
 | AFR (WP-15-06) | `attackFeasibilityRatings[]` | **Complete** | ISO21434 factors (time, expertise, knowledge, window, equipment) |
 | Impact Rating (WP-15-04) | `impactRatings[]` | **Complete** | Safety, financial, operational, privacy categories |
 | Risk Values (WP-15-07) | `riskValues[]` | **Complete** | AFR + Impact combination with proper references |
-| Treatment Decisions (WP-15-08) | `riskTreatmentDecisions[]` | **Complete** | Decision types (treat/avoid/accept/share) with controls |
+| Treatment Decisions (WP-15-08) | `riskTreatmentDecisions[]` | **Complete** | Decision types (reduce/avoid/accept/share) with controls |
 
 ### ⚠️ Partially Covered Elements
 

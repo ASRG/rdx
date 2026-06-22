@@ -1155,7 +1155,7 @@
       {
         "id": "RTD-MALICIOUS-APP-TREAT",
         "riskValueId": "RV-MALICIOUS-APP-PRIVACY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-APP-SANDBOXING",
           "CTRL-DATA-MINIMIZATION"
@@ -1165,7 +1165,7 @@
       {
         "id": "RTD-NETWORK-INTERCEPTION-TREAT",
         "riskValueId": "RV-NETWORK-INTERCEPTION-PAYMENT",
-        "decision": "treat", 
+        "decision": "reduce", 
         "controls": [
           "CTRL-NETWORK-ENCRYPTION",
           "CTRL-CLOUD-SECURITY"
@@ -1175,7 +1175,7 @@
       {
         "id": "RTD-PHYSICAL-ACCESS-TREAT",
         "riskValueId": "RV-PHYSICAL-ACCESS-KEYS",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-PHYSICAL-TAMPER",
           "CTRL-UPDATE-VERIFICATION"
@@ -1185,7 +1185,7 @@
       {
         "id": "RTD-SUPPLY-CHAIN-TREAT", 
         "riskValueId": "RV-SUPPLY-CHAIN-COMPROMISE",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-SUPPLY-CHAIN-INTEGRITY",
           "CTRL-UPDATE-VERIFICATION"
@@ -1195,7 +1195,7 @@
       {
         "id": "RTD-INSIDER-TREAT",
         "riskValueId": "RV-INSIDER-DATA-THEFT", 
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-INSIDER-MONITORING",
           "CTRL-DATA-MINIMIZATION"
@@ -1205,7 +1205,7 @@
       {
         "id": "RTD-CLOUD-TREAT",
         "riskValueId": "RV-CLOUD-DATA-BREACH",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CLOUD-SECURITY", 
           "CTRL-INCIDENT-RESPONSE"
@@ -1215,7 +1215,7 @@
       {
         "id": "RTD-EMERGENCY-TREAT",
         "riskValueId": "RV-EMERGENCY-EXPLOIT-SAFETY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-EMERGENCY-AUTHENTICATION"
         ],
@@ -1224,7 +1224,7 @@
       {
         "id": "RTD-UPDATE-TREAT",
         "riskValueId": "RV-UPDATE-HIJACKING-SECURITY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-UPDATE-VERIFICATION",
           "CTRL-SUPPLY-CHAIN-INTEGRITY" 
@@ -1234,7 +1234,7 @@
       {
         "id": "RTD-BLUETOOTH-TREAT",
         "riskValueId": "RV-BLUETOOTH-VEHICLE-CONTROL", 
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-BLUETOOTH-SECURITY"
         ],
@@ -1243,7 +1243,7 @@
       {
         "id": "RTD-VOICE-TREAT",
         "riskValueId": "RV-VOICE-INJECTION-SAFETY",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-VOICE-AUTHENTICATION"
         ],

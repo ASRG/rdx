@@ -153,6 +153,15 @@
           "operational",
           "privacy"
         ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk",
+        "version": "1.0",
+        "factors": [
+          "attackFeasibility",
+          "impact"
+        ]
       }
     ],
     "attackFeasibilityRatings": [
@@ -281,7 +290,7 @@
       {
         "id": "RTD-CELLULAR-1",
         "riskValueId": "RV-CELLULAR-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-CELLULAR-AUTH",
           "CTRL-TRAFFIC-ENCRYPT",
@@ -292,7 +301,7 @@
       {
         "id": "RTD-OTA-1",
         "riskValueId": "RV-OTA-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-OTA-SIGNING",
           "CTRL-CERT-PINNING",

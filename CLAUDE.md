@@ -18,22 +18,43 @@ Run all validations:
 ./tools/validate.sh
 ```
 
-Validate individual JSON examples:
+Validate a single JSON example. The schema is JSON Schema Draft 2020-12, so `ajv`
+**must** be invoked with `--spec=draft2020` and the `ajv-formats` plugin
+(`-c ajv-formats`) — without these it fails to resolve the meta-schema or `format` keywords:
 ```bash
-ajv -s spec/json/rdx.schema.json -d examples/rdx-example.json --strict=false
-ajv -s spec/json/rdx.schema.json -d examples/rdx-relationships-example.json --strict=false
-ajv -s spec/json/rdx.schema.json -d examples/rdx-multiple-threats-example.json --strict=false
-ajv -s spec/json/rdx.schema.json -d examples/rdx-mitigation-relationships-example.json --strict=false
-ajv -s spec/json/rdx.schema.json -d examples/rdx-cal-taf-example.json --strict=false
-ajv -s spec/json/rdx.schema.json -d examples/headlight-tara-iso21434.json --strict=false
+ajv validate -s spec/json/rdx.schema.json -d examples/rdx-example.json \
+  --spec=draft2020 -c ajv-formats --strict=false
 ```
 
-**Note**: The schema uses JSON Schema Draft 2020-12. If `ajv-cli` reports issues with the schema version, the examples are still valid JSON and conform to required fields.
+`tools/validate.sh` runs this for every standalone JSON document (all `examples/rdx-*.json`,
+`headlight-tara-iso21434.json`, and `templates/rdx-template.json`), checks the
+CycloneDX-embedded JSON/XML for well-formedness, and validates the standalone XML
+template against the XSD. The list of documents is hard-coded in the script — when
+adding a new standalone example, add it to the `JSON_DOCS` array.
 
-Validate XML (currently commented out in validate.sh):
+**Gotcha**: `ajv` prints "invalid" for failures but the word "valid" is a substring of
+"invalid" — check the exit code (ajv exits non-zero on failure), not a grep for "valid".
+
+XML validation (standalone documents only — CycloneDX-embedded XML has a `bom` root and
+is checked for well-formedness only):
 ```bash
-xmllint --noout --schema spec/xml/rdx.xsd examples/cyclonedx-embedded.xml
+xmllint --noout --schema spec/xml/rdx.xsd templates/rdx-template.xml
 ```
+
+CI: `.github/workflows/validate.yml` runs `tools/validate.sh` on every push and PR.
+(`.github/workflows/claude.yml` is the separate `@claude` issue/PR bot.)
+
+**Schema parity**: The JSON Schema is the normative reference. The XSD covers the core
+object model but lags on newer optional fields (`riskLevels`, `riskThresholdMatrix`,
+cryptographic `hashes`, structured `architecture`/`dataFlows`) — see CHANGELOG "Known limitations".
+
+### OpenXSAM Conversion
+`tools/rdx_to_openxsam.py` converts an RDX JSON document to OpenXSAM format (XML or JSON). No third-party dependencies (stdlib only):
+```bash
+python tools/rdx_to_openxsam.py --input examples/rdx-example.json --output output/analysis.xml
+python tools/rdx_to_openxsam.py --input examples/rdx-example.json --output output/analysis.json --format json
+```
+See `methodology/XSAM-Gap-Analysis.md` for the RDX↔OpenXSAM mapping and known gaps.
 
 ### Development Workflow
 1. Create/update schema in `spec/json/rdx.schema.json` or `spec/xml/rdx.xsd`
@@ -62,7 +83,7 @@ Minimum required fields in **bold**:
 - **impactRatings** (**id**, **damageScenarioId**, **methodId**, **score**, categories, rationale)
 - **riskValues** (**id**, **threatScenarioId**, **afrRef**, **impactRef**, **methodId**, **score**, band, rationale)
 - **controls** (**id**, **title**, catalog, controlId, implementationStatus, requiredCalLevel, achievedCalLevel, references)
-- **riskTreatmentDecisions** (**id**, **riskValueId**, **decision**[treat|avoid|accept|share], controls[], justification)
+- **riskTreatmentDecisions** (**id**, **riskValueId**, **decision**[reduce|avoid|accept|share], controls[], justification)
 
 #### ISO/SAE PAS 8475 CAL & TAF Framework (v0.1.0+)
 - **calAssuranceLevels** (**id**, **level**[CAL1-4], **objectives[]**, title, description, assuranceActivities[], references)
@@ -91,15 +112,21 @@ Every RDX document requires:
 - `rdx-multiple-threats-example.json`: Shows multiple threat scenarios
 - `rdx-mitigation-relationships-example.json`: Shows controls mitigating threats
 - `rdx-cal-taf-example.json`: Demonstrates CAL (Cybersecurity Assurance Levels) and TAF (Targeted Attack Feasibility) framework integration
+- `rdx-risk-threshold-example.json`: Demonstrates risk threshold / acceptance criteria handling
+- `rdx-infotainment-comprehensive-example.json`: Large end-to-end example covering most object types
 - `headlight-tara-iso21434.json`: Complete ISO 21434 TARA example for Adaptive Front-lighting System
 - `headlight-tara-analysis.md`: Human-readable analysis document for the headlight TARA
 - `cyclonedx-embedded.json` / `.xml`: Demonstrates embedding RDX within CycloneDX BOMs
+
+### Templates
+- `templates/rdx-template.json` / `rdx-template.xml`: Skeleton documents to start a new RDX file from scratch
 
 ### Key Documentation
 - `methodology/Methodology.md`: Design principles, object model, encoding patterns
 - `methodology/ISO21434-Mapping.md`: ISO/SAE 21434 clause mappings
 - `methodology/CAL-TAF-Integration.md`: ISO/SAE PAS 8475 CAL and TAF framework integration
 - `methodology/UseCases.md`: Usage scenarios and examples
+- `methodology/XSAM-Gap-Analysis.md`: RDX↔OpenXSAM mapping and gap analysis (see `tools/rdx_to_openxsam.py`)
 - `REQUIREMENTS.md`: Formal requirements tracking with RDX-XXX identifiers
 - `VERSIONING.md`: Semantic versioning policy and compatibility rules
 - `CONTRIBUTING.md`: Contribution process including GitHub issue requirements and automated AI review

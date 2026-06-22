@@ -61,7 +61,7 @@ Each object must include minimum required fields (marked in **bold**):
 
 #### Risk Treatment Decisions
 - **RDX-029**: Must include **id**, **riskValueId**, and **decision** fields (required)
-- **RDX-030**: Decision must be one of: treat, avoid, accept, share
+- **RDX-030**: Decision must be one of: reduce, avoid, accept, share
 - **RDX-031**: Should support controls[] and justification
 
 ### 2.2 Document Structure

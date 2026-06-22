@@ -20,7 +20,7 @@ RDX can travel inside a CycloneDX BOM or as a standalone document.
 - **impactRatings**: (**id**, damageScenarioId, methodId, categories, score, rationale?)
 - **riskValues**: (**id**, threatScenarioId, afrRef, impactRef, methodId, score, band?, rationale?)
 - **controls**: (**id**, title, catalog?, controlId?, implementationStatus?, requiredCalLevel?, achievedCalLevel?, references?)
-- **riskTreatmentDecisions**: (**id**, riskValueId, decision[treat|avoid|accept|share], controls[], justification)
+- **riskTreatmentDecisions**: (**id**, riskValueId, decision[reduce|avoid|accept|share], controls[], justification)
 
 ### Relationships
 - **relationships**: (**id**, **relationshipType**, **sourceRef**, **targetRef**, confidence?, justification?)

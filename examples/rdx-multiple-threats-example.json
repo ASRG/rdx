@@ -178,6 +178,15 @@
           "operational",
           "privacy"
         ]
+      },
+      {
+        "id": "iso21434-risk-v1",
+        "name": "ISO/SAE 21434 Risk",
+        "version": "1.0",
+        "factors": [
+          "attackFeasibility",
+          "impact"
+        ]
       }
     ],
     "attackFeasibilityRatings": [
@@ -290,7 +299,7 @@
       {
         "id": "RTD-PHYSICAL-1",
         "riskValueId": "RV-PHYSICAL-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-OBD-LOCK"
         ],
@@ -299,7 +308,7 @@
       {
         "id": "RTD-TOOL-1",
         "riskValueId": "RV-TOOL-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-AUTH-TOOL",
           "CTRL-KEY-PROTECT"

@@ -391,7 +391,7 @@
       {
         "id": "RTD-TS-1",
         "riskValueId": "RV-TS-1",
-        "decision": "treat",
+        "decision": "reduce",
         "controls": [
           "CTRL-MSG-1"
         ],

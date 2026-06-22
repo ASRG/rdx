@@ -1,3 +1,52 @@
 # Changelog
-## 2025-08-12 — v0.1.0
-- Initial public draft: JSON & XML schemas, CycloneDX embedding examples, methodology & ISO mapping
+
+All notable changes to RDX are documented in this file. The format is based on
+[Keep a Changelog](https://keepachangelog.com/), and the project follows
+[Semantic Versioning](VERSIONING.md).
+
+## v0.1.0 — Initial release
+
+First public release of the RDX (Risk Data Exchange) format.
+
+### Schemas
+- JSON Schema (`spec/json/rdx.schema.json`, Draft 2020-12) — normative reference for v0.1.0.
+- XML Schema (`spec/xml/rdx.xsd`) — covers the core object model (see Known limitations).
+
+### Core risk model
+- `itemDefinition`, `assets`, `damageScenarios`, `threatScenarios`, `attackSteps`,
+  `attackPaths`, `methods`, `attackFeasibilityRatings`, `impactRatings`, `riskValues`,
+  `controls`, and `riskTreatmentDecisions`.
+- Risk treatment decisions use `reduce | avoid | accept | share` (aligned with
+  ISO/SAE 21434 risk treatment options).
+
+### Frameworks and extensions
+- Explicit machine-readable `relationships` between risk objects.
+- ISO/SAE PAS 8475 **CAL** (Cybersecurity Assurance Levels) and **TAF** (Targeted
+  Attack Feasibility) objects: `calAssuranceLevels`, `calAssessments`, `tafAssessments`.
+- Configurable per-methodology `riskLevels` (named bands with ordinal rank, optional
+  score range, and treatment guidance).
+- `riskThresholdMatrix` on methods to codify allowed treatments per risk band.
+- Cryptographic `hashes` for integrity verification.
+- Structured system architecture (`architecture` components and `dataFlows`).
+- `countryOfOrigin` for supply-chain transparency.
+- Vendor-specific fields permitted via `additionalProperties` (JSON) and
+  `##other`-namespace extensibility (XML).
+
+### CycloneDX integration
+- Embed RDX in CycloneDX JSON via `metadata.properties`.
+- Embed RDX in CycloneDX XML via the `rdx:` namespace.
+
+### Tooling and examples
+- `tools/validate.sh` validates all JSON documents against the schema and checks
+  XML well-formedness / standalone XML against the XSD.
+- `tools/rdx_to_openxsam.py` converts RDX JSON to OpenXSAM (XML or JSON).
+- Standalone and embedded examples under `examples/`, plus `templates/`.
+- GitHub Actions workflow runs validation on every push and pull request.
+
+### Known limitations
+- The JSON Schema is the normative reference for v0.1.0. The XSD covers the core
+  object model but does not yet model the newer optional fields (`riskLevels`,
+  `riskThresholdMatrix`, cryptographic `hashes`, structured `architecture` /
+  `dataFlows`); full JSON/XML parity is planned for a later release.
+- `xmllint` validates standalone RDX XML against the XSD; CycloneDX-embedded XML is
+  checked for well-formedness only (its root is the CycloneDX `bom` element).
