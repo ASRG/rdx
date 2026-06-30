@@ -44,6 +44,14 @@ xmllint --noout --schema spec/xml/rdx.xsd templates/rdx-template.xml
 CI: `.github/workflows/validate.yml` runs `tools/validate.sh` on every push and PR.
 (`.github/workflows/claude.yml` is the separate `@claude` issue/PR bot.)
 
+### AI Idea Scout
+`.github/workflows/ai-idea-scout.yml` runs weekly (Mondays 09:00 UTC) and on
+`workflow_dispatch`. It calls `tools/ai_idea_scout.py`, which uses the OpenAI
+Responses API with the `web_search` tool to scout the OWASP CycloneDX / ISO 21434
+/ PAS 8475 / UNECE R155 ecosystems and open one GitHub issue per net-new proposal
+under the `ai-proposal` label. Requires repo secret `OPENAI_API_KEY`. Run locally
+with `OPENAI_API_KEY=... python tools/ai_idea_scout.py --dry-run`.
+
 **Schema parity**: The JSON Schema is the normative reference; the XSD is kept at
 field-level parity with it (including `riskLevels`, `riskThresholdMatrix`, cryptographic
 `hashes`, structured `architecture`/`dataFlows`, AFR `inputFactors`, impact `categories`,

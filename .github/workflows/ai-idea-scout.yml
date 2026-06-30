@@ -1,0 +1,80 @@
+name: AI Idea Scout
+
+# Periodically asks an OpenAI model (with web_search) to scout the OWASP
+# CycloneDX / ISO 21434 / PAS 8475 / UNECE R155 ecosystems for net-new RDX
+# feature ideas, then opens one GitHub issue per proposal for human triage.
+#
+# Required repository secret:
+#   OPENAI_API_KEY - an API key with access to the chosen model and the
+#                    web_search built-in tool.
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'   # Mondays at 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'OpenAI model id'
+        type: string
+        default: 'gpt-5'
+      dry_run:
+        description: 'Print proposals but do not open issues'
+        type: boolean
+        default: false
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Ensure ai-proposal label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create ai-proposal \
+            --color FBCA04 \
+            --description "Proposed by the AI idea scout; needs human review" \
+            --force || true
+
+      - name: Fetch open issues for dedup context
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue list --state open --limit 200 \
+            --json number,title,labels > /tmp/existing_issues.json
+
+      - name: Run AI idea scout
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ inputs.model || 'gpt-5' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            MODE_FLAG="--dry-run"
+          else
+            MODE_FLAG="--create-issues"
+          fi
+          python tools/ai_idea_scout.py \
+            --repo-root . \
+            --existing-issues /tmp/existing_issues.json \
+            --output /tmp/proposals.json \
+            $MODE_FLAG
+
+      - name: Upload proposals artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proposals
+          path: /tmp/proposals.json
+          if-no-files-found: ignore
