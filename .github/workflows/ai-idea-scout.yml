@@ -16,7 +16,7 @@ on:
       model:
         description: 'OpenAI model id'
         type: string
-        default: 'gpt-5'
+        default: 'gpt-5-mini'
       dry_run:
         description: 'Print proposals but do not open issues'
         type: boolean
@@ -56,7 +56,7 @@ jobs:
       - name: Run AI idea scout
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ inputs.model || 'gpt-5' }}
+          OPENAI_MODEL: ${{ inputs.model || 'gpt-5-mini' }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
