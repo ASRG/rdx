@@ -35,21 +35,24 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          
-          # Conditional prompt based on trigger type
-          direct_prompt: |
+
+          # Prompt sent to Claude. For `issues opened` we send a structured
+          # analysis prompt with project-specific guidance inlined. For
+          # @claude mentions in comments / PR reviews we leave this empty so
+          # the action falls back to reading the comment text as the prompt.
+          prompt: |
             ${{ github.event_name == 'issues' && github.event.action == 'opened' && format('
             🔍 **New Issue Analysis**
-            
+
             A new issue has been created that requires analysis:
-            
+
             **Title:** {0}
             **Issue #{1}**
             **Author:** @{2}
-            
+
             **Description:**
             {3}
-            
+
             Please analyze this issue and provide helpful assistance by:
             1. Determining if this is a bug report, feature request, question, or other type of issue
             2. If it''s a bug report, investigate the codebase for potential causes and suggest fixes
@@ -57,47 +60,32 @@ jobs:
             4. If it''s a question, provide a helpful answer based on the codebase
             5. Suggest next steps or ask clarifying questions if needed
             6. Add relevant labels if appropriate
-            
-            Please be thorough in your analysis and provide actionable feedback.', 
-            github.event.issue.title, 
-            github.event.issue.number, 
-            github.event.issue.user.login, 
-            github.event.issue.body) || '' }}
 
-          # Optional: Customize the trigger phrase (default: @claude)
-          # trigger_phrase: "/claude"
-
-          # Optional: Trigger when specific user is assigned to an issue
-          # assignee_trigger: "claude-bot"
-          
-          # Optional: Allow Claude to run specific commands
-          # allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test:*),Bash(npm run lint:*)"
-          
-          # Optional: Add custom instructions for Claude to customize its behavior for your project
-          custom_instructions: |
-            When analyzing new issues:
+            Project-specific guidance:
             - Be thorough but concise in your analysis
             - Always suggest actionable next steps
             - Ask clarifying questions when issue details are unclear
             - Suggest appropriate labels for issue categorization
             - If investigating bugs, check related files and recent changes
             - For feature requests, consider impact on existing architecture
-            
-          # Optional: Custom environment variables for Claude
-          # claude_env: |
-          #   NODE_ENV: test
+            - Follow the rules in CLAUDE.md, especially the requirement that all
+              changes are tracked via a GitHub issue and that schema changes
+              update both JSON Schema and XSD plus an example
 
-          # Optional: Configure Claude's behavior with CLI arguments
+            Please be thorough in your analysis and provide actionable feedback.',
+            github.event.issue.title,
+            github.event.issue.number,
+            github.event.issue.user.login,
+            github.event.issue.body) || '' }}
+
+          # Optional: trigger phrase override (default: @claude)
+          # trigger_phrase: "/claude"
+
+          # Optional: trigger when a specific user is assigned to an issue
+          # assignee_trigger: "claude-bot"
+
+          # Optional: extra CLI arguments to pass to claude-code
           # claude_args: |
           #   --model claude-opus-4-1-20250805
           #   --max-turns 10
-          #   --allowedTools "Bash(npm install),Bash(npm run build),Bash(npm run test:*),Bash(npm run lint:*)"
-          #   --system-prompt "Follow our coding standards. Ensure all new code has tests. Use TypeScript for new files."
-
-          # Optional: Advanced settings configuration
-          # settings: |
-          #   {
-          #     "env": {
-          #       "NODE_ENV": "test"
-          #     }
-          #   }
+          #   --system-prompt "Follow our coding standards."
